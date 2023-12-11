@@ -7,7 +7,7 @@ const setupRouter = () =>
     {
       path: "/",
       element: <App />,
-      errorElement: <>Error Cuyyy...</>,
+      errorElement: <>Error Cuyyy....</>,
       children: [
         {
           path: "login",
