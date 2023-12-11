@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -9,6 +10,7 @@ export default {
     fontSize: {
       title: "28px",
       subtitle: "25px",
+      logo: "24px",
     },
     extend: {
       colors: {
