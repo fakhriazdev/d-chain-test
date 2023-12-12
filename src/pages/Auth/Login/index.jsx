@@ -1,6 +1,33 @@
 import AuthLayout from "../../../components/AuthLayout";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
 export default function Login() {
+  const schema = Yup.object({
+    email: Yup.string()
+      .matches("[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$", "Invalid Email")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be greater than 6 character")
+      .required("Password is required"),
+  });
+
+  const {
+    values: { email, password },
+    errors,
+    dirty,
+    isValid,
+    touched,
+    handleChange,
+    handleBlur,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: schema,
+  });
+
   return (
     <AuthLayout>
       <div className="mt-52">
@@ -11,11 +38,20 @@ export default function Login() {
             <div className="mb-4">
               <label className="block text-base mb-2">Email</label>
               <input
-                className="shadow-md border-0 rounded w-80 h-12"
-                id="username"
+                className={`shadow-md border-0 rounded w-80 h-12 ${
+                  touched.email && errors.email
+                }`}
+                id="email"
                 type="text"
                 placeholder="Enter your email"
+                required
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={email}
               />
+            </div>
+            <div className="text-red">
+              {touched.email && errors.email}
             </div>
             <div className="mb-0">
               <label className="block text-base mb-2">Password</label>
@@ -24,14 +60,22 @@ export default function Login() {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
+                required
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={password}
               />
             </div>
-            <div className="mb-4 ml-44">
+            <div className="mb-2 text-red">
+              {touched.password && errors.password}
+            </div>
+            <div className="mb-4 text-end">
               <a className="text-orange">Forget Password?</a>
             </div>
             <button
-              className="bg-orange text-white font-bold rounded focus:outline-none focus:shadow-outline w-80 h-12"
-              type="button"
+              disabled={!isValid || !dirty}
+              className="bg-orange text-white rounded focus:outline-none focus:shadow-outline w-80 h-12 disabled:bg-opacity-70"
+              type="submit"
             >
               Login
             </button>
