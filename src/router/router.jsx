@@ -10,6 +10,9 @@ import ListPartnership from "../pages/BackOffice/Partnership/components/ListPart
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
 
 import ForgetPassword from "../pages/Auth/ForgetPassword";
+import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
+import NewPassword from "../pages/Auth/NewPassword";
+import Profile from "../pages/User/Profile";
 
 
 const setupRouter = () =>
@@ -56,8 +59,16 @@ const setupRouter = () =>
         },
         {
           path: "forget",
-          element: <ForgetPassword />,
+          element: <NewPassword />,
         },
+        {
+          path: "/forget/success",
+          element: <SuccessSendMail/>
+        },
+        {
+          path: "user",
+          element: <Profile/>
+        }
       ],
     },
   ]);
