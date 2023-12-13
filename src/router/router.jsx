@@ -13,16 +13,8 @@ import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx"
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
 
-import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
-import NewPassword from "../pages/Auth/NewPassword";
-import Profile from "../pages/User/Profile";
-import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
-import { element } from "prop-types";
-import PDFViewer from "../utils/PDFViewer.jsx";
-import Invoice from "../pages/Invoice/index.jsx";
-import InvoiceDetail from "../pages/Invoice/components/InvoiceDetail.jsx";
-import InvoiceProcessed from "../pages/Invoice/components/InvoiceProcessed.jsx";
-import InvoiceReject from "../pages/Invoice/components/InvoiceReject.jsx";
+import ForgetPassword from "../pages/Auth/ForgetPassword";
+
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -68,65 +60,9 @@ const setupRouter = () =>
           element: <OtpPage />,
         },
         {
-          path: "user/forget",
+          path: "forget",
           element: <ForgetPassword />,
         },
-        {
-          path: "/forget/success",
-          element: <SuccessSendMail />,
-        },
-        {
-          path: "/user/forget/:id",
-          element: <NewPassword />,
-        },
-        {
-          path: "profile",
-          element: <Profile />,
-          children: [
-            {
-              path: "superuser/:companyId",
-              element: <SuperUserProfile />,
-            },
-          ],
-        },
-        {
-          path: "pdf",
-          element: (
-            <PDFViewer
-              pdfUrl={"/api/companies/8a8ae4058c6ccf41018c6ccf66a60000/file"}
-            />
-          ),
-        },
-        {
-          path: "backoffice",
-          element: <LoginBackOffice />,
-        },
-        {
-          path: "backoffice/otppage",
-          element: <OtpPage />,
-        },
-        {
-          path: "dashboard",
-          element: <Dashboard />,
-        },
-        {
-          path: "invoice",
-          element: <Invoice/>,
-          children:[
-            {
-              path: "detail",
-              element: <InvoiceDetail/>
-            },
-            {
-              path: "processed",
-              element: <InvoiceProcessed/>
-            },
-            {
-              path: "reject",
-              element: <InvoiceReject/>
-            }
-          ]
-        }
       ],
     },
   ]);
