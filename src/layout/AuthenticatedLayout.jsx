@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import Sidebar from '../components/Sidebar';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { ServiceContext } from '../context/ServiceContext';
+import { ServiceContext } from '../context/ServiceContext.jsx';
 import { useContext, useEffect } from 'react';
 import { authAction } from '../slices/authSlice';
 
