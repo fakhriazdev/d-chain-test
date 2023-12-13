@@ -11,6 +11,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
+    message: "",
   },
   extraReducers: (builder) => {
     builder.addCase(authAction.fulfilled, (state, { payload }) => {
@@ -18,8 +19,8 @@ const authSlice = createSlice({
         state.user = payload.data;
       }
     });
-    builder.addCase(forgetAction.fulfilled, (state) => {
-
+    builder.addCase(forgetAction.fulfilled, (state, { payload }) => {
+      state.message = payload;
     });
   },
 });

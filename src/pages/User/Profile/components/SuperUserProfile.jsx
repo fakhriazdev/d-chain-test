@@ -28,9 +28,9 @@ export default function SuperUserProfile() {
   const dispatch = useDispatch();
   const { selectedCompany } = useSelector((state) => state.companies);
   const { companyService } = useContext(ServiceContext);
-  const { id } = useParams();
+  const { companyId } = useParams();
   const navigate = useNavigate();
-
+  let selectedProvince;
 
   useEffect(() => {
     const fetchProvince = async () => {
@@ -52,9 +52,9 @@ export default function SuperUserProfile() {
 
   const fetchCity = async (provinceId) => {
     try {
-      const response = await fetch(`/api/locations/city/${provinceId}`);
-      const result = await response.json();
-      setListCity(result);
+      // const response = await fetch(`/api/locations/city/${provinceId}`);
+      // const result = await response.json();
+      // setListCity(result);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -62,7 +62,7 @@ export default function SuperUserProfile() {
 
   const {
     values: {
-      companyId,
+      id,
       companyName,
       province,
       city,
@@ -89,7 +89,7 @@ export default function SuperUserProfile() {
     setFieldValue,
   } = useFormik({
     initialValues: {
-      companyId: "",
+      id: "",
       companyName: "",
       province: "",
       city: "",
@@ -106,12 +106,11 @@ export default function SuperUserProfile() {
     },
     onSubmit: async (values) => {
       if (!isValid) return;
-
       dispatch(
-        menuAction(async () => {
-          const result = await menuService.updateMenu(values);
+        companyAction(async () => {
+          const result = await companyService.updateCompany(values);
           if (result.statusCode === 200) {
-            Navigate("/backoffice/menus");
+            alert("Berhasil yey");
           }
           return null;
         })
@@ -124,22 +123,20 @@ export default function SuperUserProfile() {
     const onGetCompanyById = () => {
       dispatch(
         selectCompanyAction(async () => {
-          const result = await companyService.fetchCompanyById(id);
+          const result = await companyService.fetchCompanyById(companyId);
           const updatedData = {
             ...result.data,
           };
 
           const values = {
-            companyId: updatedData.companyId,
+            id: companyId,
             companyName: updatedData.companyName,
             province: updatedData.province,
-            city: updatedData.province,
+            city: updatedData.city,
             address: updatedData.address,
             phoneNumber: updatedData.phoneNumber,
             companyEmail: updatedData.companyEmail,
             accountNumber: updatedData.accountNumber,
-            financingLimit: updatedData.financingLimit,
-            reaminingLimit: updatedData.reaminingLimit,
             files: updatedData.files,
             userId: updatedData.userId,
             username: updatedData.username,
@@ -151,6 +148,7 @@ export default function SuperUserProfile() {
         })
       );
     };
+    handleProvinceChange(selectedProvince);
     onGetCompanyById();
   }, []);
 
@@ -160,11 +158,20 @@ export default function SuperUserProfile() {
 
   const handlePreview = (idx) => {
     // <PDFViewer pdfUrl={files[idx].url} />;
-    navigate('/pdf')
+    navigate("/pdf");
   };
 
   return (
     <>
+      {listProvince && listProvince.length !== 0
+        ? listProvince.map((prov) => {
+            if (province === prov.name) {
+              selectedProvince = prov.id;
+              // handleProvinceChange(selectedProvince );
+            }
+          })
+        : "data kosong"}
+      {console.log(companyId)}
       <div className="flex justify-center flex-col items-center">
         <div className="flex w-3/4">
           <h1 className="text-subtitle ">
@@ -174,7 +181,7 @@ export default function SuperUserProfile() {
       </div>
       <div className="flex justify-center mt-5 flex-col items-center">
         <div className="flex w-3/4 rounded-2xl shadow-md justify-center flex-col items-center mb-5">
-          <form className="w-full p-10">
+          <form className="w-full p-10" onSubmit={handleSubmit}>
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full px-3">
                 <label
@@ -206,8 +213,8 @@ export default function SuperUserProfile() {
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 mb-3 rounded leading-tight focus:ring-orange focus:border-orange"
                     id="province"
                     name="province"
-                    value={province}
-                    onChange={(e) => handleProvinceChange(e.target.value)}
+                    value={selectedProvince}
+                    onChange={handleChange}
                   >
                     {listProvince && listProvince.length !== 0
                       ? listProvince.map((listProvince) => {
@@ -236,7 +243,6 @@ export default function SuperUserProfile() {
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 mb-3 rounded leading-tight focus:ring-orange focus:border-orange"
                     id="city"
                     name="city"
-                    value={city}
                     onChange={handleChange}
                   >
                     {listCity && listCity.length !== 0
@@ -315,7 +321,7 @@ export default function SuperUserProfile() {
                       <p className="text-gray">{file.filename}</p>
                       <span
                         className="flex gap-2"
-                        onClick={() => handlePreview(idx)}
+                        onClick={() => handleDownload(idx)}
                       >
                         <ArticleOutlinedIcon className="text-gray" />
                         <FileDownloadOutlinedIcon className="text-green" />
@@ -424,7 +430,10 @@ export default function SuperUserProfile() {
                 </button>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-2">
-                <button className="text-white bg-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white">
+                <button
+                  type="submit"
+                  className="text-white bg-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white"
+                >
                   <FileUploadOutlinedIcon /> Save
                 </button>
               </div>

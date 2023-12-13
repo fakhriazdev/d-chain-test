@@ -2,6 +2,12 @@ import { useFormik } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import AuthLayout from "../../../components/AuthLayout";
+import { authAction, forgetAction } from "../../../slices/authSlice";
+import { useDispatch } from "react-redux";
+import { useContext } from "react";
+import { ServiceContext } from "../../../context/ServiceContext";
+
+import { useSearchParams } from "react-router-dom";
 
 export default function NewPassword() {
   const schema = Yup.object({
@@ -10,6 +16,9 @@ export default function NewPassword() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [searchParam, setSearchParam] = useSearchParams();
+  const { authService } = useContext(ServiceContext);
   const {id} = useParams();
 
   const {
@@ -27,29 +36,23 @@ export default function NewPassword() {
       confirm: "",
     },
     onSubmit: async (values) => {
-      try {
-        const {body} = await fetch(
-          `/api/auth/recovery-password/${id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: values.newPassword , 
+      dispatch(
+        forgetAction(async () => {
+          const result = await authService.recoveryPassword({id, newPassword});
+          if (result.statusCode === 200) {
+            alert("Change password success");
           }
-          );
-          console.log("Response:", body);
-
-        alert("berhasil")
-      } catch (error) {
-        console.error("Error during POST request:", error);
-      }
+          console.log(result);
+          alert(result.data);
+        })
+      );
     },
     validationSchema: schema,
   });
 
   return (
     <AuthLayout>
+      {console.log(id)}
       <div className="w-full max-w-sm mt-52">
         <h2 className="text-title">Create New Password</h2>
         <form className="pt-6 pb-8 mb-4" onSubmit={handleSubmit}>

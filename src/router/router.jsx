@@ -19,6 +19,10 @@ import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
 import { element } from "prop-types";
 import PDFViewer from "../utils/PDFViewer.jsx";
+import Invoice from "../pages/Invoice/index.jsx";
+import InvoiceDetail from "../pages/Invoice/components/InvoiceDetail.jsx";
+import InvoiceProcessed from "../pages/Invoice/components/InvoiceProcessed.jsx";
+import InvoiceReject from "../pages/Invoice/components/InvoiceReject.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -80,7 +84,7 @@ const setupRouter = () =>
           element: <Profile />,
           children: [
             {
-              path: "superuser/:id",
+              path: "superuser/:companyId",
               element: <SuperUserProfile />,
             },
           ],
@@ -105,6 +109,24 @@ const setupRouter = () =>
           path: "dashboard",
           element: <Dashboard />,
         },
+        {
+          path: "invoice",
+          element: <Invoice/>,
+          children:[
+            {
+              path: "detail",
+              element: <InvoiceDetail/>
+            },
+            {
+              path: "processed",
+              element: <InvoiceProcessed/>
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject/>
+            }
+          ]
+        }
       ],
     },
   ]);
