@@ -11,6 +11,7 @@ export default {
       title: "28px",
       subtitle: "25px",
       logo: "24px",
+      message: "15px"
     },
     extend: {
       colors: {

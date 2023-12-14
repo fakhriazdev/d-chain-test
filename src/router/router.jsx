@@ -4,6 +4,7 @@ import Login from "../pages/Auth/Login";
 import ForgetPassword from "../pages/Auth/ForgetPassword";
 import OtpPage from "../pages/Auth/OTP";
 import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
+import OtpBackoffice from "../pages/Auth/OTP/otpBackoffice";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -13,20 +14,24 @@ const setupRouter = () =>
       errorElement: <>Error Cuyyy....</>,
       children: [
         {
-          path: "login",
+          path: "user",
           element: <Login />,
         },
         {
-          path: "forget",
-          element: <ForgetPassword />,
-        },
-        {
-          path: "otppage",
+          path: "user/otppage",
           element: <OtpPage />,
         },
         {
-          path: "backoffice/login",
+          path: "user/forget",
+          element: <ForgetPassword />,
+        },
+        {
+          path: "backoffice",
           element: <LoginBackOffice />,
+        },
+        {
+          path: "backoffice/otppage",
+          element: <OtpBackoffice />,
         },
       ],
     },

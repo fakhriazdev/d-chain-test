@@ -42,11 +42,11 @@ export default function LoginBackOffice() {
             <h5 className="text-lightgray">Login dibawah untuk akses akunmu</h5>
             <div className="w-full max-w-xs">
               <form className="rounded px-0 pt-6 pb-8 mb-4">
-                <div className="mb-4">
+                <div>
                   <label className="block text-base mb-2">Email</label>
                   <input
-                    className={`shadow-md border-1 rounded-lg w-80 h-12 ${
-                      touched.email && errors.email
+                    className={`shadow border-1 rounded-lg w-80 h-12 ${
+                      touched.email && errors.email && "border-red"
                     }`}
                     id="email"
                     type="text"
@@ -57,11 +57,13 @@ export default function LoginBackOffice() {
                     value={email}
                   />
                 </div>
-                <div className="text-red">{touched.email && errors.email}</div>
-                <div className="mb-0">
+                <div className="text-red text-message italic">{touched.email && errors.email}</div>
+                <div className="mb-0 mt-4">
                   <label className="block text-base mb-2">Password</label>
                   <input
-                    className="shadow-md appearance-none border-1 rounded-lg w-80 h-12 text-gray-700 mb-5 leading-tight focus:outline-none focus:shadow-outline"
+                    className={`shadow border-1 rounded w-80 h-12 ${
+                      touched.password && errors.password && "border-red"
+                    }`}
                     id="password"
                     type="password"
                     placeholder="Masukkan password"
@@ -71,12 +73,12 @@ export default function LoginBackOffice() {
                     value={password}
                   />
                 </div>
-                <div className="mb-2 text-red">
+                <div className="mb-6 text-red text-message italic">
                   {touched.password && errors.password}
                 </div>
                 <button
                   disabled={!isValid || !dirty}
-                  className="bg-orange text-white focus:outline-none focus:shadow-outline w-80 h-12 disabled:bg-opacity-70"
+                  className="bg-orange font-bold text-white focus:outline-none focus:shadow-outline w-80 h-12 disabled:bg-opacity-70"
                   type="submit"
                 >
                   Login
