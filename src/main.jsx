@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Provider } from 'react-redux';
 import "flowbite";
 import setupRouter from "./router/router";
 import { RouterProvider } from "react-router-dom";
