@@ -13,6 +13,7 @@ import ForgetPassword from "../pages/Auth/ForgetPassword";
 import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
+import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
 
 
 const setupRouter = () =>
@@ -58,16 +59,26 @@ const setupRouter = () =>
           ]
         },
         {
-          path: "forget",
-          element: <NewPassword />,
+          path: "user/forget",
+          element: <ForgetPassword />,
         },
         {
           path: "/forget/success",
           element: <SuccessSendMail/>
         },
         {
-          path: "user",
-          element: <Profile/>
+          path: "/user/forget/:id",
+          element: <NewPassword/>
+        },
+        {
+          path: "profile",
+          element: <Profile/>,
+          children:[
+            {
+              path: "superuser",
+              element: <SuperUserProfile/>
+            },
+          ]
         }
       ],
     },

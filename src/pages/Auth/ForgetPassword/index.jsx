@@ -1,7 +1,11 @@
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authAction } from "../../../slices/authSlice";
 import * as Yup from "yup";
 import AuthLayout from "../../../components/AuthLayout";
+import { ServiceContext } from "../../../context/ServiceContext";
+import { useContext } from "react";
 
 function ForgetPassword() {
   const schema = Yup.object({
@@ -9,6 +13,8 @@ function ForgetPassword() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { authService } = useContext(ServiceContext);
 
   const {
     values: { email },
@@ -23,9 +29,26 @@ function ForgetPassword() {
     initialValues: {
       email: "",
     },
-    onSubmit: (values) => {
-      if (values) {
-        navigate("success");
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch(
+          "/api/auth/forget-password",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: values.email , 
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        console.log("Response:");
+        alert("Check your email")
+      } catch (error) {
+        console.error("Error during POST request:", error);
       }
     },
     validationSchema: schema,
@@ -42,7 +65,7 @@ function ForgetPassword() {
             </label>
             <input
               className={`shadow appearance-none border-1 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${
-                errors.email && "border-red"
+                touched.email && errors.email && "border-red"
               }`}
               name="email"
               id="email"
@@ -52,7 +75,7 @@ function ForgetPassword() {
               onBlur={handleBlur}
             />
           </div>
-          <p className="text-red text-message">{errors.email}</p>
+          <p className="text-red text-message italic">{errors.email}</p>
           <div className="flex mt-4 items-center justify-between">
             <button
               className="bg-orange text-white font-bold w-full h-11 rounded focus:outline-none focus:shadow-outline"

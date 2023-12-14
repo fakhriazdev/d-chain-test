@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import AuthLayout from "../../../components/AuthLayout";
 
@@ -10,6 +10,7 @@ export default function NewPassword() {
   });
 
   const navigate = useNavigate();
+  const {id} = useParams();
 
   const {
     values: { password, confirm },
@@ -22,11 +23,26 @@ export default function NewPassword() {
     handleSubmit,
   } = useFormik({
     initialValues: {
-      email: "",
+      password: "",
+      confirm: "",
     },
-    onSubmit: (values) => {
-      if (values) {
-        navigate("success");
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch(
+          `/api/auth/recovery-password/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: values.password , 
+          }
+        );
+
+        console.log("Response:");
+        alert("berhasil")
+      } catch (error) {
+        console.error("Error during POST request:", error);
       }
     },
     validationSchema: schema,

@@ -1,10 +1,11 @@
 
-import React from 'react';
 import CompanyService from "./CompanyService.js";
+import RegionService from "./regionServices.js";
 
 const ServiceFactory = () => {
     return {
-        companyService: CompanyService()
+        companyService: CompanyService(),
+        regionService: RegionService(),
     };
 };
 
