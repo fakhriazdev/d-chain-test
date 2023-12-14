@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { authAction } from "../../../slices/authSlice";
+import { authAction, forgetAction } from "../../../slices/authSlice";
 import * as Yup from "yup";
 import AuthLayout from "../../../components/AuthLayout";
 import { ServiceContext } from "../../../context/ServiceContext";
@@ -30,26 +30,14 @@ function ForgetPassword() {
       email: "",
     },
     onSubmit: async (values) => {
-      try {
-        const response = await fetch(
-          "/api/auth/forget-password",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: values.email , 
+      dispatch(
+        forgetAction(async () => {
+          const result = await authService.forgetPassword(values);
+          if (result.statusCode === 200) {
+            alert("check your email");
           }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        console.log("Response:");
-        alert("Check your email")
-      } catch (error) {
-        console.error("Error during POST request:", error);
-      }
+        })
+      );
     },
     validationSchema: schema,
   });
