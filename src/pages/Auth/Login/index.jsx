@@ -13,7 +13,7 @@ export default function Login() {
       .matches("[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$", "Invalid Email")
       .required("Email is required"),
     password: Yup.string()
-      .min(3, "Password must be greater than 3 character")
+      .min(6, "Password must be greater than 6 character")
       .required("Password is required"),
   });
 
@@ -40,7 +40,7 @@ export default function Login() {
         authAction(async () => {
           const result = await authService.login(values);
           if (result.statusCode === 200) {
-            navigate("/user/otppage");
+            navigate("/verifyOtp");
           }
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
@@ -50,15 +50,15 @@ export default function Login() {
     validationSchema: schema,
   });
 
-  // useEffect(() => {
-  //   const onGetUserInfo = async () => {
-  //     const result = await authService.getUserInfo();
-  //     if (result.statusCode === 200) {
-  //       navigate("/backoffice");
-  //     }
-  //   };
-  //   onGetUserInfo();
-  // }, [authService, navigate]);
+  useEffect(() => {
+    const onGetUserInfo = async () => {
+      const result = await authService.getUserInfo();
+      if (result.statusCode === 200) {
+        navigate("/backoffice");
+      }
+    };
+    onGetUserInfo();
+  }, [authService, navigate]);
 
   return (
     <AuthLayout>

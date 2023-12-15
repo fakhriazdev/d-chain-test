@@ -5,14 +5,12 @@ const AuthService = () => {
 
   const login = async (user) => {
     const { data } = await axiosInstance.post("/api/auth/login", user);
-    console.log(user);
-    console.log(data);
     return data;
   };
 
-  const verifyOtp = async (user) => {
-    const { data } = await axiosInstance.post("/api/auth/varifyOtp", user);
-    console.log(user);
+  const verifyOtp = async (payload) => {
+    const { data } = await axiosInstance.post("/api/auth/verifyOtp", payload);
+    console.log(payload);
     console.log(data);
     return data;
   };

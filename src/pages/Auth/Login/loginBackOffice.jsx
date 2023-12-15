@@ -1,6 +1,11 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import loginBackoffice from "../../../assets/images/LoginBackoffice.png"
+import loginBackoffice from "../../../assets/images/LoginBackoffice.png";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useContext } from "react";
+import { ServiceContext } from "../../../context/ServiceContext";
+import { authAction } from "../../../slices/authSlice";
 
 export default function LoginBackOffice() {
   const schema = Yup.object({
@@ -12,6 +17,10 @@ export default function LoginBackOffice() {
       .required("Password is required"),
   });
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { authService } = useContext(ServiceContext);
+
   const {
     values: { email, password },
     errors,
@@ -20,10 +29,23 @@ export default function LoginBackOffice() {
     touched,
     handleChange,
     handleBlur,
+    handleSubmit
   } = useFormik({
     initialValues: {
       email: "",
       password: "",
+    },
+    onSubmit: async (values) => {
+      dispatch(
+        authAction(async () => {
+          const result = await authService.login(values);
+          if (result.statusCode === 200) {
+            navigate("/verifyOtp");
+          }
+          const resultInfo = await authService.getUserInfo();
+          return resultInfo;
+        })
+      );
     },
     validationSchema: schema,
   });
@@ -41,7 +63,7 @@ export default function LoginBackOffice() {
             <h1 className="text-title mb-3">Selamat Datang</h1>
             <h5 className="text-lightgray">Login dibawah untuk akses akunmu</h5>
             <div className="w-full max-w-xs">
-              <form className="rounded px-0 pt-6 pb-8 mb-4">
+              <form onSubmit={handleSubmit} className="rounded px-0 pt-6 pb-8 mb-4">
                 <div>
                   <label className="block text-base mb-2">Email</label>
                   <input
@@ -57,11 +79,13 @@ export default function LoginBackOffice() {
                     value={email}
                   />
                 </div>
-                <div className="text-red text-message italic">{touched.email && errors.email}</div>
+                <div className="text-red text-message italic">
+                  {touched.email && errors.email}
+                </div>
                 <div className="mb-0 mt-4">
                   <label className="block text-base mb-2">Password</label>
                   <input
-                    className={`shadow border-1 rounded w-80 h-12 ${
+                    className={`shadow border-1 rounded-lg w-80 h-12 ${
                       touched.password && errors.password && "border-red"
                     }`}
                     id="password"

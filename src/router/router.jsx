@@ -4,7 +4,7 @@ import Login from "../pages/Auth/Login";
 import ForgetPassword from "../pages/Auth/ForgetPassword";
 import OtpPage from "../pages/Auth/OTP";
 import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
-import OtpBackoffice from "../pages/Auth/OTP/otpBackoffice";
+import Dashboard from "../pages/Dashboard";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -18,7 +18,7 @@ const setupRouter = () =>
           element: <Login />,
         },
         {
-          path: "user/otppage",
+          path: "verifyOtp",
           element: <OtpPage />,
         },
         {
@@ -31,7 +31,11 @@ const setupRouter = () =>
         },
         {
           path: "backoffice/otppage",
-          element: <OtpBackoffice />,
+          element: <OtpPage />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
         },
       ],
     },
