@@ -31,6 +31,7 @@ function ForgetPassword() {
       email: "",
     },
     onSubmit: async (values) => {
+      console.log(values.email);
       dispatch(
         forgetAction(async () => {
           const result = await authService.forgetPassword({email: values.email});
