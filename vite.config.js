@@ -15,11 +15,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace("^/api/", ""),
       },
-      // '/api': {
-      //   target: 'https://www.emsifa.com/api-wilayah-indonesia',
-      //   changeOrigin: true,
-      //   rewrite: (path) => path.replace('^/api/', ''),
-      // }
     },
   },
 });

@@ -19,7 +19,7 @@ import {
     useEffect(() => {
       const fetchProvince = async () => {
         try {
-          // const response = await fetch('/api/provinces.json');
+          const response = await fetch('/api/locations/provinces');
           const result = await response.json();
           setProvince(result);
         } catch (error) {
@@ -36,7 +36,7 @@ import {
   
     const fetchCity = async (provinceId) => {
       try {
-        const response = await fetch(`/api/regencies/${provinceId}.json`);
+        const response = await fetch(`/api/locations/city/${provinceId}`);
         const result = await response.json();
         setCity(result);
       } catch (error) {
@@ -167,7 +167,6 @@ import {
                 <span className="flex gap-2">
                   <ArticleOutlinedIcon className="text-gray" />
                   <FileDownloadOutlinedIcon className="text-green" />
-                  <DeleteOutlineIcon className="text-red" />
                 </span>
               </div>
               <div className="flex flex-wrap mb-2 justify-between">
@@ -175,7 +174,6 @@ import {
                 <span className="flex gap-2">
                   <ArticleOutlinedIcon className="text-gray" />
                   <FileDownloadOutlinedIcon className="text-green" />
-                  <DeleteOutlineIcon className="text-red" />
                 </span>
               </div>
               <label
@@ -205,14 +203,64 @@ import {
                     className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
                     htmlFor="phoneNumber"
                   >
-                    Password
+                    Email
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="password"
-                    name="password"
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="budiono@gmail.com"
+                  />
+                </div>
+              </div>
+              <label
+                className="block text-[18px] font-medium leading-6 text-darkgray mb-1 mt-5"
+                htmlFor="companyEmail"
+              >
+                Change Password
+              </label>
+              <div className="flex flex-wrap -mx-3 mb-2">
+                <div className="w-full md:w-1/3 px-3 mb-2 md:mb-0">
+                  <label
+                    className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                    htmlFor="companyEmail"
+                  >
+                    Current Password
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    id="currentPassword"
+                    name="currentPassword"
                     type="password"
-                    placeholder="*******"
+                  />
+                </div>
+                <div className="w-full md:w-1/3 px-3">
+                  <label
+                    className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                    htmlFor="phoneNumber"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="newPassword"
+                    name="newPassword"
+                    type="password"
+                  />
+                </div>
+                <div className="w-full md:w-1/3 px-3">
+                  <label
+                    className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                    htmlFor="phoneNumber"
+                  >
+                    Confirm New Password
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="confirmNewPassword"
+                    name="confirmNewPassword"
+                    type="password"
                   />
                 </div>
               </div>
