@@ -5,15 +5,15 @@ import AuthLayout from "../../../components/AuthLayout";
 
 export default function NewPassword() {
   const schema = Yup.object({
-    password: Yup.string().min(6, "Password must grather than 6").required("Password is required"),
-    confirm: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match').required("Confirm Password is required"),
+    newPassword: Yup.string().min(6, "Password must grather than 6").required("Password is required"),
+    confirm: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Passwords must match').required("Confirm Password is required"),
   });
 
   const navigate = useNavigate();
   const {id} = useParams();
 
   const {
-    values: { password, confirm },
+    values: { newPassword, confirm },
     errors,
     dirty,
     isValid,
@@ -23,23 +23,23 @@ export default function NewPassword() {
     handleSubmit,
   } = useFormik({
     initialValues: {
-      password: "",
+      newPassword: "",
       confirm: "",
     },
     onSubmit: async (values) => {
       try {
-        const response = await fetch(
+        const {body} = await fetch(
           `/api/auth/recovery-password/${id}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
-            body: values.password , 
+            body: values.newPassword , 
           }
-        );
+          );
+          console.log("Response:", body);
 
-        console.log("Response:");
         alert("berhasil")
       } catch (error) {
         console.error("Error during POST request:", error);
@@ -59,16 +59,16 @@ export default function NewPassword() {
             </label>
             <input
               className={`shadow appearance-none border-1 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${
-                touched.password && errors.password && "border-red"
+                touched.newPassword && errors.newPassword && "border-red"
               }`}
-              name="password"
-              id="password"
+              name="newPassword"
+              id="newPassword"
               type="password"
               placeholder="Enter new password"
               onChange={handleChange}
               onBlur={handleBlur}
             />
-          <p className="text-red text-message italic">{touched.password && errors.password}</p>
+          <p className="text-red text-message italic">{touched.newPassword && errors.newPassword}</p>
           </div>
           <div className=" mb-4 ">
             <label className="block text-sm mb-2" htmlFor="username">

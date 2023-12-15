@@ -1,21 +1,25 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  resolve: {
+    alias: {
+      src: "/src",
+    },
+  },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8081',
+      "/api": {
+        target: "http://localhost:8081",
         changeOrigin: true,
-        rewrite: (path) => path.replace('^/api/', ''),
+        rewrite: (path) => path.replace("^/api/", ""),
       },
-      '/api': {
-        target: 'https://www.emsifa.com/api-wilayah-indonesia',
-        changeOrigin: true,
-        rewrite: (path) => path.replace('^/api/', ''),
-      }
-    }
-  }
-})
+      // '/api': {
+      //   target: 'https://www.emsifa.com/api-wilayah-indonesia',
+      //   changeOrigin: true,
+      //   rewrite: (path) => path.replace('^/api/', ''),
+      // }
+    },
+  },
+});

@@ -22,7 +22,9 @@ function ForgetPassword() {
     dirty,
     isValid,
     touched,
-    handleChange,
+    handleChange = () => {
+
+    },
     handleBlur,
     handleSubmit,
   } = useFormik({
@@ -30,12 +32,14 @@ function ForgetPassword() {
       email: "",
     },
     onSubmit: async (values) => {
+      console.log(values.email);
       dispatch(
         forgetAction(async () => {
           const result = await authService.forgetPassword(values);
           if (result.statusCode === 200) {
             alert("check your email");
           }
+          alert(result);
         })
       );
     },

@@ -18,7 +18,6 @@ const AuthService = () => {
       "/api/auth/forget-password",
       email
     );
-    console.log(data);
     return data;
   };
 
