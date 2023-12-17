@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ServiceContext } from "../../../context/ServiceContext";
 import { authAction } from "../../../slices/authSlice";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 export default function Login() {
   const schema = Yup.object({
@@ -22,7 +24,7 @@ export default function Login() {
   const { authService } = useContext(ServiceContext);
 
   const {
-    values: { email, password },
+    values: { email, password, showPassword },
     errors,
     dirty,
     isValid,
@@ -30,17 +32,18 @@ export default function Login() {
     handleChange,
     handleBlur,
     handleSubmit,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       dispatch(
         authAction(async () => {
-          const result = await authService.login(values);
+          const result = await authService.login({email, password});
           if (result.statusCode === 200) {
-            navigate("/verifyOtp");
+            alert(result.data)
           }
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
@@ -92,13 +95,23 @@ export default function Login() {
                   touched.password && errors.password && "border-red"
                 }`}
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 required
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={password}
               />
+              <span
+                onClick={() => setFieldValue("showPassword", !showPassword)}
+                className="absolute mt-3 -ml-8 cursor-pointer"
+              >
+                {showPassword ? (
+                  <VisibilityOffOutlinedIcon />
+                ) : (
+                  <RemoveRedEyeOutlinedIcon />
+                )}
+              </span>
             </div>
             <div className="mb-2 text-red text-message italic">
               {touched.password && errors.password}

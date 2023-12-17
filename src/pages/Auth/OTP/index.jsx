@@ -34,15 +34,17 @@ export default function OtpPage() {
         code: values.code.join(""),
         email: email,
       };
+      console.log(data);
 
       dispatch(
         authAction(async () => {
           const result = await authService.verifyOtp(data);
-          if (result.statusCode === 200) {
-            sessionStorage.setItem('token', result.data.token)
-            navigate('/dashboard');
-          }
           console.log(result.data);
+          
+          if (result.statusCode === 200) {
+            sessionStorage.setItem("token", result.data.token);
+            navigate("/dashboard");
+          }
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
         })
@@ -54,7 +56,7 @@ export default function OtpPage() {
     const onGetUserInfo = async () => {
       const result = await authService.getUserInfo();
       if (result.statusCode === 200) {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     };
     onGetUserInfo();

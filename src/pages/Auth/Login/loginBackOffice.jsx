@@ -3,9 +3,11 @@ import * as Yup from "yup";
 import loginBackoffice from "../../../assets/images/LoginBackoffice.png";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ServiceContext } from "../../../context/ServiceContext";
 import { authAction } from "../../../slices/authSlice";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 export default function LoginBackOffice() {
   const schema = Yup.object({
@@ -22,25 +24,26 @@ export default function LoginBackOffice() {
   const { authService } = useContext(ServiceContext);
 
   const {
-    values: { email, password },
+    values: { email, password, showPassword },
     errors,
     dirty,
     isValid,
     touched,
     handleChange,
     handleBlur,
-    handleSubmit
+    handleSubmit,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       dispatch(
         authAction(async () => {
-          const result = await authService.login(values);
+          const result = await authService.login({email, password});
           if (result.statusCode === 200) {
-            navigate("/verifyOtp");
+            alert(result.data);
           }
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
@@ -49,6 +52,16 @@ export default function LoginBackOffice() {
     },
     validationSchema: schema,
   });
+
+  useEffect(() => {
+    const onGetUserInfo = async () => {
+      const result = await authService.getUserInfo();
+      if (result.statusCode === 200) {
+        navigate("/backoffice");
+      }
+    };
+    onGetUserInfo();
+  }, [authService, navigate]);
 
   return (
     <div className="flex h-screen bg-gradient-to-l from-white to-orange justify-end">
@@ -63,7 +76,10 @@ export default function LoginBackOffice() {
             <h1 className="text-title mb-3">Selamat Datang</h1>
             <h5 className="text-lightgray">Login dibawah untuk akses akunmu</h5>
             <div className="w-full max-w-xs">
-              <form onSubmit={handleSubmit} className="rounded px-0 pt-6 pb-8 mb-4">
+              <form
+                onSubmit={handleSubmit}
+                className="rounded px-0 pt-6 pb-8 mb-4"
+              >
                 <div>
                   <label className="block text-base mb-2">Email</label>
                   <input
@@ -89,13 +105,23 @@ export default function LoginBackOffice() {
                       touched.password && errors.password && "border-red"
                     }`}
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Masukkan password"
                     required
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={password}
                   />
+                  <span
+                    onClick={() => setFieldValue("showPassword", !showPassword)}
+                    className="absolute mt-3 -ml-8 cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <VisibilityOffOutlinedIcon />
+                    ) : (
+                      <RemoveRedEyeOutlinedIcon />
+                    )}
+                  </span>
                 </div>
                 <div className="mb-6 text-red text-message italic">
                   {touched.password && errors.password}
