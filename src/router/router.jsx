@@ -18,6 +18,8 @@ import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
+import { element } from "prop-types";
+import PDFViewer from "../utils/PDFViewer.jsx";
 
 
 const setupRouter = () =>
@@ -80,11 +82,15 @@ const setupRouter = () =>
           element: <Profile/>,
           children:[
             {
-              path: "superuser",
+              path: "superuser/:id",
               element: <SuperUserProfile/>
             },
           ]
-        }
+        },
+       {
+        path: "pdf",
+        element: <PDFViewer pdfUrl={'/api/companies/8a8ae4058c6ccf41018c6ccf66a60000/file'}/>
+       }
       ],
     },
   ]);

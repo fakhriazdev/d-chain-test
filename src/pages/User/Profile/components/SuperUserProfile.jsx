@@ -52,9 +52,9 @@ export default function SuperUserProfile() {
 
   const fetchCity = async (provinceId) => {
     try {
-      // const response = await fetch(`/api/locations/city/${provinceId}`);
-      // const result = await response.json();
-      // setListCity(result);
+      const response = await fetch(`/api/locations/city/${provinceId}`);
+      const result = await response.json();
+      setListCity(result);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
