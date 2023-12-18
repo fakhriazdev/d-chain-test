@@ -1,22 +1,24 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Login from "../pages/Auth/Login";
+import ForgetPassword from "../pages/Auth/ForgetPassword";
+import OtpPage from "../pages/Auth/OTP";
+import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
+import Dashboard from "../pages/Dashboard";
 
-import Company from "../pages/BackOffice/Company"
+import Company from "../pages/BackOffice/Company";
 import ListCompany from "../pages/BackOffice/Company/components/ListCompany.jsx";
 import FormCompany from "../pages/BackOffice/Company/components/FormCompany.jsx";
 import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx";
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
 
-import ForgetPassword from "../pages/Auth/ForgetPassword";
 import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
 import { element } from "prop-types";
 import PDFViewer from "../utils/PDFViewer.jsx";
-
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -26,7 +28,7 @@ const setupRouter = () =>
       errorElement: <>Error Cuyyy....</>,
       children: [
         {
-          path: "login",
+          path: "user",
           element: <Login />,
         },
         {
@@ -38,27 +40,28 @@ const setupRouter = () =>
               element: <ListCompany />,
             },
             {
-              path: 'add',
+              path: "add",
               element: <FormCompany />,
             },
             {
-              path: ':id/edit',
+              path: ":id/edit",
               element: <EditCompany />,
-
             },
-
           ],
-
         },
         {
           path: "/backoffice/:id/partnership",
           element: <Partnership />,
-          children:[
+          children: [
             {
               index: true,
               element: <ListPartnership />,
             },
-          ]
+          ],
+        },
+        {
+          path: "verifyOtp",
+          element: <OtpPage />,
         },
         {
           path: "user/forget",
@@ -66,26 +69,42 @@ const setupRouter = () =>
         },
         {
           path: "/forget/success",
-          element: <SuccessSendMail/>
+          element: <SuccessSendMail />,
         },
         {
           path: "/user/forget/:id",
-          element: <NewPassword/>
+          element: <NewPassword />,
         },
         {
           path: "profile",
-          element: <Profile/>,
-          children:[
+          element: <Profile />,
+          children: [
             {
               path: "superuser/:id",
-              element: <SuperUserProfile/>
+              element: <SuperUserProfile />,
             },
-          ]
+          ],
         },
-       {
-        path: "pdf",
-        element: <PDFViewer pdfUrl={'/api/companies/8a8ae4058c6ccf41018c6ccf66a60000/file'}/>
-       }
+        {
+          path: "pdf",
+          element: (
+            <PDFViewer
+              pdfUrl={"/api/companies/8a8ae4058c6ccf41018c6ccf66a60000/file"}
+            />
+          ),
+        },
+        {
+          path: "backoffice",
+          element: <LoginBackOffice />,
+        },
+        {
+          path: "backoffice/otppage",
+          element: <OtpPage />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
+        },
       ],
     },
   ]);

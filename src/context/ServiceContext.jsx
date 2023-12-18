@@ -1,22 +1,19 @@
-
-import React, { Component } from 'react';
-
-import PropTypes from 'prop-types';
+import React from "react";
+import { PropTypes } from "prop-types";
 
 export const ServiceContext = React.createContext({});
 
+const ServiceProvider = ({ service, children, ...rest }) => {
+  return (
+    <ServiceContext.Provider value={service} {...rest}>
+      {children}
+    </ServiceContext.Provider>
+  );
+};
 
-export default class ServiceProvider extends Component {
-    static propTypes = {
-        children: PropTypes.any,
-        service: PropTypes.any,
-    };
+ServiceProvider.propTypes = {
+  children: PropTypes.any,
+  service: PropTypes.any,
+};
 
-    render() {
-        return (
-            <ServiceContext.Provider value={this.props.service} {...this.props}>
-                {this.props.children}
-            </ServiceContext.Provider>
-        );
-    }
-}
+export default ServiceProvider;
