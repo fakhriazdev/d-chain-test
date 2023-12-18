@@ -4,6 +4,7 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
 import { Link } from "react-router-dom";
+import Logo from "../assets/images/logo.png"
 
 const Sidebar = (props) => {
   const { children } = props;
@@ -37,7 +38,7 @@ const Sidebar = (props) => {
               </button>
               <a href="#" className="flex ms-2 md:me-24">
                 <img
-                  src="../assets/images/logo.png"
+                  src={Logo}
                   className="h-8 me-3"
                   alt="D Auto Change"
                 />
