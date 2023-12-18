@@ -1,9 +1,11 @@
-import React from 'react';
+import AuthService from "./AuthService";
 import CompanyService from "./CompanyService.js";
+
 
 const ServiceFactory = () => {
     return {
-        companyService: CompanyService()
+        authService: AuthService(),
+        companyService:CompanyService(),
     };
 };
 

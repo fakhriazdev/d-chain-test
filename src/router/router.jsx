@@ -7,6 +7,7 @@ import FormCompany from "../pages/BackOffice/Company/components/FormCompany.jsx"
 import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx";
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
+import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -47,6 +48,10 @@ const setupRouter = () =>
             {
               index: true,
               element: <ListPartnership />,
+            },
+            {
+              path: 'add',
+              element: <FormPartnership />,
             },
           ]
         },
