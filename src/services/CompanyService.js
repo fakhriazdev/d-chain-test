@@ -1,35 +1,61 @@
 import React from 'react';
+import axiosInstance from '../api/axiosInstance';
 
-let data = [
-    {
-        "id":"FI-C-36974019-6.23",
-        "name":"Astra International Tbk.",
-        "email":"astra_1@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.24",
-        "name":"Astra International Tbk.",
-        "email":"astra_2@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-
-]
 
 const CompanyService = () => {
-    const fetchCompanys =()=>{
-        return new Promise((resolve) => {
-            setTimeout(()=>{
-                console.log(data)
-                resolve(data)
-            },2000)
-        })
+    const saveCompany= async (menu) => {
+        const formData = new FormData();
+        formData.append('name', menu.name);
+        formData.append('price', menu.price);
+        formData.append('category', menu.category);
+        formData.append('image', menu.image);
+        const { data } = await axiosInstance.post('/api/menus', formData)
+        return data;
     }
+
+    const fetchCompanyById = async (id) => {
+        const { data } = await axiosInstance.get(`/api/companies/${id}`);
+        return data;
+    }
+
+    const updateCompany= async (newMenu) => {
+        const formData = new FormData();
+        formData.append('id', newMenu.id);
+        formData.append('name', newMenu.name);
+        formData.append('price', newMenu.price);
+        formData.append('category', newMenu.category);
+        formData.append('image', newMenu.image);
+        const { data } = await axiosInstance.put(`/api/menus`, formData);
+        return data;
+    }
+
+    const deleteCompany= async (id) => {
+        const { data } = await axiosInstance.delete(`/api/menus/${id}`);
+        return data;
+    }
+
+    const fetchCompanies = async (queryParams) => {
+        const { data } = await axiosInstance.get(`/api/menus`, { params: queryParams });
+        
+        return data;
+    }
+
+    const downloadImageCompany= async (url) => {
+        const {data} = await axiosInstance.get(url, { responseType: 'blob' });
+        console.log(data);
+
+        return  data;
+    }
+
     return {
-        fetchCompanys,
+        saveCompany,
+        fetchCompanyById,
+        updateCompany,
+        deleteCompany,
+        fetchCompanies,
+        downloadImageCompany
     }
+    
 };
 
 export default CompanyService;
