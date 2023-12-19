@@ -22,7 +22,7 @@ const Badge = (props) => {
     }, []);
     return (
         <span
-            className={`bg-blue-100 text-${type} text-xs font-medium me-2 px-2.5 py-0.5 rounded rounded-md border border-${type}`}>{children}</span>
+            className={`bg-${type}/20 text-${type} text-xs font-medium me-2 px-2.5 py-0.5 rounded rounded-md border-[3px] border-${type}/40`}>{children}</span>
     );
 };
 

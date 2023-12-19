@@ -95,13 +95,13 @@ const Sidebar = (props) => {
                         <li>
                             <a href="#"
                                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group">
-                               <LibraryBooksOutlinedIcon/>
+                                <LibraryBooksOutlinedIcon/>
                                 <span className="ms-3">Financing</span>
                             </a>
                         </li>
                         <li>
                             <Link to={`/backoffice/company`}
-                               className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group">
+                                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group">
                                 <GroupsOutlinedIcon/>
                                 <span className="ms-3">Manage Company</span>
                             </Link>
@@ -109,9 +109,16 @@ const Sidebar = (props) => {
                         <li>
                             <a href="#"
                                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group">
-                               <ViewCarouselOutlinedIcon/>
+                                <ViewCarouselOutlinedIcon/>
                                 <span className="flex-1 ms-3 whitespace-nowrap">Manage User</span>
                             </a>
+                        </li>
+                        <li>
+                            <Link to={`/backoffice/partnership`}
+                               className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group">
+                                <GroupsOutlinedIcon/>
+                                <span className="flex-1 ms-3 whitespace-nowrap">Partnership</span>
+                            </Link>
                         </li>
                     </ul>
                 </div>
