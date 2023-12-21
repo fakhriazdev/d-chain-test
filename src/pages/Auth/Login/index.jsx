@@ -1,14 +1,14 @@
 import AuthLayout from "../../../components/AuthLayout";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ServiceContext } from "../../../context/ServiceContext";
 import { authAction } from "../../../slices/authSlice";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-
+import MessageBox from "../../../components/MessageBox";
 
 export default function Login() {
   const schema = Yup.object({
@@ -23,6 +23,7 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { authService } = useContext(ServiceContext);
+  const { error, errorKey } = useSelector((state) => state.ui);
 
   const {
     values: { email, password, showPassword },
@@ -42,7 +43,7 @@ export default function Login() {
     onSubmit: async () => {
       dispatch(
         authAction(async () => {
-          const result = await authService.login({email, password});
+          const result = await authService.login({ email, password });
           if (result.statusCode === 200) {
             alert(result.data)
           }

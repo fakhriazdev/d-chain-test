@@ -4,12 +4,12 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
 import { Link } from "react-router-dom";
-import Logo from "../assets/images/logo.png"
+import Logo from "../assets/images/logo.png";
 
 const Sidebar = (props) => {
   const { children } = props;
   return (
-    <>  
+    <>
       <nav className="fixed top-0 z-50 w-full bg-white">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
@@ -37,11 +37,7 @@ const Sidebar = (props) => {
                 </svg>
               </button>
               <a href="#" className="flex ms-2 md:me-24">
-                <img
-                  src={Logo}
-                  className="h-8 me-3"
-                  alt="D Auto Change"
-                />
+                <img src={Logo} className="h-8 me-3" alt="D Auto Change" />
               </a>
             </div>
             <div className="flex items-center">
@@ -168,6 +164,15 @@ const Sidebar = (props) => {
                   Manage User
                 </span>
               </a>
+            </li>
+            <li>
+              <Link
+                to={`/profile/superuser/:id`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              >
+                <GroupsOutlinedIcon />
+                <span className="ms-3">Profile</span>
+              </Link>
             </li>
           </ul>
         </div>

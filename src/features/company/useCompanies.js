@@ -1,102 +1,50 @@
 import React, {useEffect, useState} from 'react';
+import axiosInstance from "../../api/axiosInstance.js";
+import {data} from "autoprefixer";
+
+
 export const useCompanies = () => {
-let cloud = [
-    {
-        "id":"FI-C-36974019-6.23",
-        "name":"Astra International Tbk.",
-        "email":"astra_1@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.24",
-        "name":"Makmur",
-        "email":"astra_2@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.25",
-        "name":"Manusia Setengah Macan",
-        "email":"astra_3@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Manusia kok macan?",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Jakarta kok macan?",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Kemeja sampit",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Kemeja sampit",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Kemeja sampit",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Kemeja sampit",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-    {
-        "id":"FI-C-36974019-6.26",
-        "name":"Kemeja sampit",
-        "email":"astra_4@mail.com",
-        "phoenNumber":"+62 888=888-888",
-        "limit":2000000000,
-    },
-]
+
     const [companies, setCompanies] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [sortOrder, setSortOrder] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
 
     const handlerSort = (e) => {
         setSortOrder(e.target.value)
     };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     const fetchCompanies = async () =>{
         setIsLoading(true);
         try {
-            setTimeout(async()=>{
-                const companiesResponse = cloud
-               if(sortOrder){
-                   const sortedData = companiesResponse.sort((a,b)=>{
-                       return sortOrder === 'asc'
-                           ? a.name.localeCompare(b.name)
-                           : b.name.localeCompare(a.name)
-                   })
+                const companiesResponse = await axiosInstance.get("/api/companies",{
+                    params:{
+                        sortOrder,
+                        page: currentPage,
+                        size: pageSize,
+                    }
+                })
 
-                   setCompanies(sortedData)
-                   setIsLoading(false)
-               }
-                setCompanies(companiesResponse)
+            const {  data } = companiesResponse.data;
+            const {count, totalPages} = companiesResponse.data.paging
+            setTotalPages(totalPages)
+
+            let sortedData = data;
+
+            if (sortOrder) {
+                sortedData = sortedData.sort((a, b) =>
+                    sortOrder === 'asc' ? a.companyName.localeCompare(b.companyName) : b.companyName.localeCompare(a.companyName)
+                );
+            }
+
+            setCompanies(sortedData);
                 setIsLoading(false)
-            },1500)
         }catch (e) {
             console.log(e)
         }
@@ -104,7 +52,8 @@ let cloud = [
 
     useEffect(() => {
         fetchCompanies();
-    }, [sortOrder]);
+    }, [sortOrder,currentPage,pageSize]);
+
 
 
     return {
@@ -112,6 +61,10 @@ let cloud = [
         handlerSort,
         sortOrder,
         isLoading,
+        currentPage,
+        pageSize,
+        totalPages,
+        handlePageChange,
     };
 };
 

@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       {isLoading && <Loading />}
-      {error && <MessageBox key={errorKey} message={error}/> && console.log(errorKey)}
+      {error && <MessageBox key={errorKey} message={error}/>}
       <Outlet />
     </>
   );

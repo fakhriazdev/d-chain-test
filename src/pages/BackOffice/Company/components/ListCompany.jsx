@@ -9,7 +9,7 @@ import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined.js";
 import {Link} from "react-router-dom";
 const ListCompany = () => {
-  const {data:companies,handlerSort,isLoading,sortOrder} = useCompanies()
+  const {data:companies,handlerSort,isLoading,sortOrder,totalPages,currentPage,pageSize, handlePageChange} = useCompanies()
 
 
   return (
@@ -79,9 +79,9 @@ const ListCompany = () => {
             </ul>
           </div>
         </div>
-        <div class="relative overflow-x-auto mx-4 sm:rounded-lg">
+        <div className="relative overflow-x-auto mx-4 sm:rounded-lg">
           {isLoading === true ? <Loading/> :
-              <table className="w-full h-96 text-sm text-left rtl:text-right mb-2">
+              <table className="w-full text-sm text-left rtl:text-right mb-2">
                 <thead className="text-white text-[16px] font-[300] bg-orange ">
                 <tr>
                   <th scope="col" className="px-6 py-3">
@@ -110,31 +110,31 @@ const ListCompany = () => {
                       <tr className="bg-white" key={i+1}>
                         <th scope="col-span-4"
                             className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                          {company.id}
+                          {company.companyId}
                         </th>
                         <th scope="col"
                             className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                          {company.name}
+                          {company.companyName}
                         </th>
                         <th scope="col"
                             className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                          {company.email}
+                          {company.companyEmail}
                         </th>
                         <th scope="col"
                             className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                          {company.phoenNumber}
+                          {company.phoneNumber}
                         </th>
                         <th scope="col" className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
-                          {`Rp. ${company.limit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                          {`Rp. ${company.financingLimit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
                         </th>
                         <th scope="col"
                             className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
                           <div className="flex gap-2 my-auto">
-                            <Link to={`/backoffice/company/${company.id}/edit`}
+                            <Link to={`/backoffice/company/${company.companyId}/edit`}
                                className="font-medium text-green hover:text-green/60 dark:text-blue-500 hover:underline">
                               <EditNoteOutlinedIcon/>
                             </Link>
-                            <Link to={`/backoffice/${company.id}/partnership`}
+                            <Link to={`/backoffice/${company.companyId}/partnership`}
                                className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline">
                               <ArticleOutlinedIcon/>
                             </Link>
@@ -155,37 +155,41 @@ const ListCompany = () => {
               <p
                   className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">loading...</p>
               :
-              <p className="my-auto">Showing 1 to 10 of 50 entries</p>
+              <p className="my-auto">{`Showing ${currentPage} to ${pageSize} of ${companies.length} entries`}</p>
           }
           <nav aria-label="Page navigation example">
             <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
               <li>
-
-                <a
-                    href="#"
+                <button onClick={()=>handlePageChange(currentPage -1)} disabled={currentPage === 1}
                     className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
                 >
                   <ChevronLeftOutlined/>
                   <span className="sr-only">Previous</span>
-                </a>
+                </button>
               </li>
+              {[...Array(totalPages).keys()].map((page) => (
+                  <li key={page + 1}>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 ${
+                            currentPage === page + 1
+                                ? 'bg-gray/20 text-orange font-bold'
+                                : 'bg-gray/20 hover:bg-orange/20 hover:text-orange'
+                        } rounded-md`}
+                    >
+                      {page + 1}
+                    </button>
+                  </li>
+              ))}
               <li>
-                <a
-                    href="#"
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
-                >
-                  1
-                </a>
-              </li>
-
-              <li>
-                <a
-                    href="#"
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
                     className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
                 >
                   <ChevronRightOutlinedIcon/>
                   <span className="sr-only">Next</span>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>

@@ -21,6 +21,7 @@ import { useContext } from "react";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
 import PDFViewer from "../../../../utils/PDFViewer";
+import * as Yup from "yup";
 
 export default function SuperUserProfile() {
   const [listProvince, setListProvince] = useState(null);
@@ -31,6 +32,12 @@ export default function SuperUserProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const schema = Yup.object({
+    newPassword: Yup.string()
+      .min(6, "Password must grather than 6"),
+    confirmNewPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], "Passwords must match"),
+  });
 
   useEffect(() => {
     const fetchProvince = async () => {
@@ -45,6 +52,21 @@ export default function SuperUserProfile() {
 
     fetchProvince();
   }, []);
+
+  // useEffect(() => {
+  //   const postNewPassword = async () => {
+  //     try {
+  //       selectCompanyAction(async () => {
+  //         const result = await companyService.changePassword();
+  //         const updatedData = {
+  //           ...result.data,
+  //         };
+  //       });
+  //     } catch (error) {
+  //       console.log("ERRORRRRRRR: ", error);
+  //     }
+  //   };
+  // });
 
   const handleProvinceChange = async (provinceId) => {
     fetchCity(provinceId);
@@ -76,6 +98,10 @@ export default function SuperUserProfile() {
       userId,
       username,
       emailUser,
+      partnerships,
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
     },
     errors,
     dirty,
@@ -103,6 +129,10 @@ export default function SuperUserProfile() {
       userId: "",
       username: "",
       emailUser: "",
+      partnerships: null,
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
     },
     onSubmit: async (values) => {
       if (!isValid) return;
@@ -111,13 +141,15 @@ export default function SuperUserProfile() {
         menuAction(async () => {
           const result = await menuService.updateMenu(values);
           if (result.statusCode === 200) {
-            Navigate("/backoffice/menus");
+            navigate("/backoffice/menus");
           }
+          console.log(selectedCompany);
+
           return null;
         })
       );
     },
-    // validationSchema: validationSchema(id),
+    validationSchema: schema,
   });
 
   useEffect(() => {
@@ -133,7 +165,7 @@ export default function SuperUserProfile() {
             companyId: updatedData.companyId,
             companyName: updatedData.companyName,
             province: updatedData.province,
-            city: updatedData.province,
+            city: updatedData.city,
             address: updatedData.address,
             phoneNumber: updatedData.phoneNumber,
             companyEmail: updatedData.companyEmail,
@@ -144,6 +176,7 @@ export default function SuperUserProfile() {
             userId: updatedData.userId,
             username: updatedData.username,
             emailUser: updatedData.emailUser,
+            partnerships: null,
           };
           setValues(values);
 
@@ -152,7 +185,7 @@ export default function SuperUserProfile() {
       );
     };
     onGetCompanyById();
-  }, []);
+  }, [dispatch, id, companyService, setValues]);
 
   const handleDownload = (idx) => {
     window.location.href = files[idx].url;
@@ -160,7 +193,7 @@ export default function SuperUserProfile() {
 
   const handlePreview = (idx) => {
     // <PDFViewer pdfUrl={files[idx].url} />;
-    navigate('/pdf')
+    navigate("/pdf");
   };
 
   return (
@@ -174,14 +207,14 @@ export default function SuperUserProfile() {
       </div>
       <div className="flex justify-center mt-5 flex-col items-center">
         <div className="flex w-3/4 rounded-2xl shadow-md justify-center flex-col items-center mb-5">
-          <form className="w-full p-10">
+          <form className="w-full p-10" onSubmit={handleSubmit}>
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="companyName"
                 >
-                  Conpany Name
+                  Company Name
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:ring-orange focus:border-orange"
@@ -196,7 +229,7 @@ export default function SuperUserProfile() {
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="province"
                 >
                   Province
@@ -226,7 +259,7 @@ export default function SuperUserProfile() {
               </div>
               <div className="w-full md:w-1/2 px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="city"
                 >
                   City
@@ -255,7 +288,7 @@ export default function SuperUserProfile() {
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="address"
                 >
                   Address
@@ -273,7 +306,7 @@ export default function SuperUserProfile() {
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="companyEmail"
                 >
                   Company Email
@@ -289,7 +322,7 @@ export default function SuperUserProfile() {
               </div>
               <div className="w-full md:w-1/2 px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray mb-2"
+                  className="block text-[18px] font-medium leading-6 mb-2"
                   htmlFor="phoneNumber"
                 >
                   Phone Number
@@ -326,7 +359,7 @@ export default function SuperUserProfile() {
               : "data kosong"}
 
             <label
-              className="block text-[18px] font-medium leading-6 text-darkgray mb-1 mt-5"
+              className="block text-[18px] font-medium leading-6 mb-1 mt-5"
               htmlFor="companyEmail"
             >
               User Account
@@ -334,7 +367,7 @@ export default function SuperUserProfile() {
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full md:w-1/2 px-3 mb-2 md:mb-0">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                  className="block font-medium leading-6 text-lable text-gray mb-2"
                   htmlFor="companyEmail"
                 >
                   Username
@@ -351,7 +384,7 @@ export default function SuperUserProfile() {
               </div>
               <div className="w-full md:w-1/2 px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                  className="block font-medium leading-6 text-lable text-gray mb-2"
                   htmlFor="phoneNumber"
                 >
                   Email
@@ -368,7 +401,7 @@ export default function SuperUserProfile() {
               </div>
             </div>
             <label
-              className="block text-[18px] font-medium leading-6 text-darkgray mb-1 mt-5"
+              className="block text-[18px] font-medium leading-6 mb-1 mt-5"
               htmlFor="companyEmail"
             >
               Change Password
@@ -376,7 +409,7 @@ export default function SuperUserProfile() {
             <div className="flex flex-wrap -mx-3 mb-2">
               <div className="w-full md:w-1/3 px-3 mb-2 md:mb-0">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                  className="block font-medium leading-6 text-lable text-gray mb-2"
                   htmlFor="companyEmail"
                 >
                   Current Password
@@ -386,45 +419,72 @@ export default function SuperUserProfile() {
                   id="currentPassword"
                   name="currentPassword"
                   type="password"
+                  value={currentPassword}
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                  className="block font-medium leading-6 text-lable text-gray mb-2"
                   htmlFor="phoneNumber"
                 >
                   New Password
                 </label>
                 <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className={`appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${
+                    touched.newPassword && errors.newPassword && "border-red"
+                  }`}
                   id="newPassword"
                   name="newPassword"
                   type="password"
+                  value={newPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
               </div>
+              <p className="text-red text-message italic">
+                {touched.newPassword && errors.newPassword}
+              </p>
+
               <div className="w-full md:w-1/3 px-3">
                 <label
-                  className="block text-[18px] font-medium leading-6 text-darkgray text-lable text-gray mb-2"
+                  className="block font-medium leading-6 text-lable text-gray mb-2"
                   htmlFor="phoneNumber"
                 >
                   Confirm New Password
                 </label>
                 <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className={`appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${
+                    touched.confirmNewPassword &&
+                    errors.confirmNewPassword &&
+                    "border-red"
+                  }`}
                   id="confirmNewPassword"
                   name="confirmNewPassword"
                   type="password"
+                  value={confirmNewPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 />
               </div>
+              <p className="text-red text-message italic">
+                {touched.confirmNewPassword && errors.confirmNewPassword}
+              </p>
             </div>
             <div className="flex flex-wrap -mx-3 mb-3">
               <div className="w-full md:w-1/2 px-3 mb-2">
-                <button className="text-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white">
-                  <CloseOutlinedIcon /> Cancle
+                <button
+                  type="button"
+                  className="text-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white"
+                >
+                  <CloseOutlinedIcon /> Cancel
                 </button>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-2">
-                <button className="text-white bg-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white">
+                <button
+                  type="submit"
+                  className="text-white bg-orange font-bold w-full h-10 rounded-lg border-2 border-orange hover:bg-orange hover:text-white"
+                >
                   <FileUploadOutlinedIcon /> Save
                 </button>
               </div>

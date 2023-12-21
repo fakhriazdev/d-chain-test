@@ -12,6 +12,7 @@ import FormCompany from "../pages/BackOffice/Company/components/FormCompany.jsx"
 import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx";
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
+import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 
 import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
@@ -19,6 +20,10 @@ import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
 import { element } from "prop-types";
 import PDFViewer from "../utils/PDFViewer.jsx";
+
+import Invoice from "../pages/User/Invoice/index.jsx";
+import ListInvoice from "../pages/User/Invoice/components/ListInvoice.jsx";
+import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneration.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -56,6 +61,24 @@ const setupRouter = () =>
             {
               index: true,
               element: <ListPartnership />,
+            },
+            {
+              path: "add",
+              element: <FormPartnership />,
+            },
+          ],
+        },
+        {
+          path: "/user/:id/invoice",
+          element: <Invoice />,
+          children: [
+            {
+              index: true,
+              element: <ListInvoice />,
+            },
+            {
+              path: "add",
+              element: <InvoiceGeneration />,
             },
           ],
         },
@@ -96,10 +119,6 @@ const setupRouter = () =>
         {
           path: "backoffice",
           element: <LoginBackOffice />,
-        },
-        {
-          path: "backoffice/otppage",
-          element: <OtpPage />,
         },
         {
           path: "dashboard",
