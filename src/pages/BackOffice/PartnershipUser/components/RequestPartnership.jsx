@@ -4,7 +4,7 @@ const RequestPartnership = () => {
     return (
         <div>
             <div className="relative p-4 max-h-full">
-                <div className="relative bg-white rounded-lg shadow px-4 py-3 max-w-[700px] mx-auto">
+                <div className="relative bg-white rounded-lg shadow px-4 py-3 min-w-[700px] mx-auto">
                     <div className="flex items-center justify-end px-4 md:px-5 md:py-2 rounded-t">
                         <button type="button"
                                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -19,50 +19,35 @@ const RequestPartnership = () => {
                         </button>
                     </div>
                     <div className="px-6 py-3">
-                        <h1 className="text-[20px]">Add Partnership</h1>
+                        <h1 className="text-[20px]">Request Partnership</h1>
                     </div>
                     <div className="px-6">
                         <form>
-                            <div className="my-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                <div className="col-span-full">
-                                    <label htmlFor="companyName"
-                                           className="block mb-2 text-[12px] font-medium text-gray">
-                                        Company Name</label>
-                                    <select id="companyName"
-                                            name="companyName"
-                                            className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full">
-                                        <option defaultValue={""} value={""}>Select Company Name</option>
-                                        <option value={"Jawa Barat"}>Jawa Barat</option>
-                                        <option value={"Jawa Timur"}>Jawa Timur</option>
+                            <div className="">
+                                <form className="my-auto">
+                                    <div className="flex flex-col">
+                                        <label
+                                            className="block text-[14px] font-normal leading-6 text-darkgray mb-2">
+                                            Company ID
+                                        </label>
+                                        <div className="relative w-full">
+                                            <input type="search" id="search-dropdown"
+                                                   className="block p-2.5 w-full z-20 py-3 text-sm text-gray bg-white rounded-lg border border-lightgray focus:outline-none"
+                                                   placeholder="Search..." required/>
+                                            <button type="submit"
+                                                    className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-orange rounded-e-lg border border-orange hover:bg-white hover:text-orange focus:ring-none focus:outline-none focus:ring-orange">
+                                                <p>Search</p>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
 
-                                    </select>
-                                </div>
-                                <div className="col-span-full">
-                                    <label htmlFor="partnershipName"
-                                           className="block mb-2 text-[12px] font-medium text-gray">Partnership Name
-                                    </label>
-                                    <select id="partnershipName"
-                                            name="partnershipName"
-                                            className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full">
-                                        <option defaultValue={""} value={""}>Select Partnership Name</option>
-                                        <option value={"Bogor"}>Bogor</option>
-                                        <option value={"Jakarta"}>Jakarta</option>
-
-                                    </select>
-                                </div>
                             </div>
                         </form>
                     </div>
 
                     <div className="flex items-center justify-end p-4 md:p-5 gap-3">
-                        <button data-modal-hide="default-modal" type="button"
-                                className="text-orange bg-white border-2 border-orange hover:bg-orange hover:text-white hover:border-transparent font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Close
-                        </button>
-                        <button data-modal-hide="default-modal" type="button"
-                                className="text-white bg-orange border-2 border-transparent hover:bg-white hover:text-orange hover:border-orange font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Save
-                        </button>
+
                     </div>
                 </div>
             </div>

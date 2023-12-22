@@ -4,6 +4,7 @@ import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import ViewCarouselOutlinedIcon from '@mui/icons-material/ViewCarouselOutlined';
 import {Link} from "react-router-dom";
+import logo from "../assets/icons/D-Auto-Chain-Logo.svg"
 
 const Sidebar = (props) => {
     const {children} = props;
@@ -24,8 +25,7 @@ const Sidebar = (props) => {
                                 </svg>
                             </button>
                             <a href="#" className="flex ms-2 md:me-24">
-                                <img src="../assets/images/logo.png" className="h-8 me-3"
-                                     alt="D Auto Change"/>
+                                <img src={logo} className="h-14 me-3" alt="D Auto Chain"/>
 
                             </a>
                         </div>

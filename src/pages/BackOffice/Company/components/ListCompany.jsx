@@ -8,6 +8,7 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined.js";
 import {Link} from "react-router-dom";
+import {useFetchCompany} from "../../../../features/company/useFetchCompany.js";
 const ListCompany = () => {
   const {data:companies,handlerSort,isLoading,sortOrder,totalPages,currentPage,pageSize, handlePageChange} = useCompanies()
 
@@ -23,7 +24,7 @@ const ListCompany = () => {
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div className="relative flex justify-end mb-5 gap-4 mx-4">
-      <p className="my-auto font-gray text-[14px]">Filter By: </p>
+      <p className="my-auto font-gray text-[14px]">Sort By: </p>
       <button
           id="dropdownDefaultButton"
           data-dropdown-toggle="dropdown"

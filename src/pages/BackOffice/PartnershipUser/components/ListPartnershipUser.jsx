@@ -37,7 +37,7 @@ const ListPartnershipUser = () => {
                         </div>
                     </form>
                     <div className="flex gap-2">
-                        <p className="my-auto font-gray text-[14px]">Short By: </p>
+                        <p className="my-auto font-gray text-[14px]">Sort By: </p>
                         <button
                             id="dropdownDefaultButton"
                             data-dropdown-toggle="dropdown"

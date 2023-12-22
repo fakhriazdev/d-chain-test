@@ -31,26 +31,13 @@ const FormPartnership = () => {
                             <div className="col-span-full">
                                 <label htmlFor="companyName"
                                        className="block mb-2 text-[12px] font-medium text-gray">
-                                    Company Name</label>
+                                    Partner Company Name</label>
                                 <select id="companyName"
                                         name="companyName"
                                         className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full">
-                                    <option defaultValue={""} value={""}>Select Company Name</option>
+                                    <option defaultValue={""} value={""}>Partner Company Name</option>
                                     <option value={"Jawa Barat"}>Jawa Barat</option>
                                     <option value={"Jawa Timur"}>Jawa Timur</option>
-
-                                </select>
-                            </div>
-                            <div className="col-span-full">
-                                <label htmlFor="partnershipName"
-                                       className="block mb-2 text-[12px] font-medium text-gray">Partnership Name
-                                </label>
-                                <select id="partnershipName"
-                                        name="partnershipName"
-                                        className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full">
-                                    <option defaultValue={""} value={""}>Select Partnership Name</option>
-                                    <option value={"Bogor"}>Bogor</option>
-                                    <option value={"Jakarta"}>Jakarta</option>
 
                                 </select>
                             </div>
