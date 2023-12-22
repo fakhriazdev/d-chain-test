@@ -10,55 +10,93 @@ import IconView from "../../../../assets/icons/Icon View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import Status from "../../../../components/Status.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
+import { Link, useSearchParams } from "react-router-dom";
 
 const ListInvoice = () => {
+  const [searchParam, setSearchParam] = useSearchParams();
+
   const dispatch = useDispatch();
   const invoices = useSelector((state) => state.invoice.invoices);
   const { invoiceService } = useContext(ServiceContext);
+  const [paging, setPaging] = useState({});
+
+  const currentPage = parseInt(searchParam.get("page") || 1);
+  const currentSize = parseInt(searchParam.get("size") || 1);
+
+  const onNext = (page) => {
+    if (page === paging.totalPages) return;
+    searchParam.set("page", page + 1);
+    setSearchParam(searchParam);
+  };
+
+  const onPrevious = (page) => {
+    if (page === 1) return;
+    searchParam.set("page", page - 1);
+    setSearchParam(searchParam);
+  };
 
   useEffect(() => {
     const onGetInvoices = () => {
-      dispatch(invoiceAction(() => invoiceService.fetchInvoices()));
+      dispatch(
+        invoiceAction(async () => {
+          const result = await invoiceService.fetchInvoices({
+            page: currentPage,
+            size: currentSize,
+          });
+          if (result) {
+            setPaging(result.paging);
+            const data = await Promise.all();
+            return { data };
+          }
+        })
+      );
     };
     onGetInvoices();
-  }, [dispatch, invoiceService]);
+  }, [dispatch, invoiceService, currentPage, currentSize]);
+
+  useEffect(() => {
+    if (currentPage < 1 || currentPage > paging.totalPages) {
+      searchParam.set("page", 1);
+      setSearchParam(searchParam);
+    }
+  });
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
 
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Invoice</h1>
-        <div className="flex space-x-7">
-          <button
-            data-modal-target="default-modal"
-            data-modal-toggle="default-modal"
-            className="mt-2 text-black border border-black hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 text-center flex space-x-2 items-center opacity-20"
-          >
-            <img src={IconUploadBlack} alt="Icon Upload" />
-            <p className="">Invoice Submission</p>
-          </button>
-          <button
-            data-modal-target="default-modal"
-            data-modal-toggle="default-modal"
-            className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
-          >
-            <img
-              src={InvoiceGenerationButton}
-              alt="Icon Invoice Generation Button"
+        <div>
+          <label className="themeSwitcherTwo shadow-card border border-[#D5D5D7] relative inline-flex cursor-pointer select-none items-center justify-center rounded-xl bg-[#F3F4F6] p-1">
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
             />
-            <p className="">Invoice Generation</p>
-          </button>
-        </div>
-
-        <div
-          id="default-modal"
-          tabIndex="-1"
-          aria-hidden="true"
-          className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-darkgray/40"
-        >
-          <InvoiceGeneration />
+            <span
+              className={`flex items-center space-x-[6px] rounded-xl py-2 px-3 text-sm font-medium ${
+                !isChecked ? "text-white bg-orange" : "text-orange"
+              }`}
+            >
+              Account Payable
+            </span>
+            <span
+              className={`flex items-center space-x-[6px] rounded-xl py-2 px-3 text-sm font-medium ${
+                isChecked ? "text-white bg-orange" : "text-orange"
+              }`}
+            >
+              Account Receivable
+            </span>
+          </label>
         </div>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -78,21 +116,34 @@ const ListInvoice = () => {
               Search
             </button>
           </div>
-          <div className="flex self-center space-x-3">
+          <div className="flex items-center space-x-4">
             <button
               id="dropdownDefaultButton"
               data-dropdown-toggle="dropdown"
-              className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center items-center"
+              className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center mt-3"
               type="button"
             >
-              {/* {" "} */}
               Filter
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
+            <div className="flex space-x-7">
+              <Link to={"/user/:id/invoice/add"}>
+                <button
+                  type="button"
+                  className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
+                >
+                  <img
+                    src={InvoiceGenerationButton}
+                    alt="Icon Invoice Generation Button"
+                  />
+                  <p>Invoice Generation</p>
+                </button>
+              </Link>
+            </div>
           </div>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-40"
+            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-80"
           >
             <div className="">
               <ul
@@ -236,106 +287,117 @@ const ListInvoice = () => {
                   Status
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Type
-                </th>
-                <th scope="col" className="px-6 py-3">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
               {invoices?.length !== 0 &&
-              invoices.map((i, idx) => {
-                return (
-                  <tr key={idx} className="bg-white">
-                    <th
-                      scope="col-span-4"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                    >
-                      {i.supllier}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                    >
-                      {i.invoiceNumber}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
-                    >
-                      Rp. {i.amount}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                    >
-                      {i.dueDate}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                    >
-                      <Status variant="success">{i.status}</Status>
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                    >
-                      {i.type}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
-                    >
-                      <button>
-                        <img src={IconView} alt="Icon View" />
-                      </button>
-                      <button>
-                        <img src={IconDownload} alt="Icon Download" />
-                      </button>
-                    </th>
-                  </tr>
-                );
-              })
-              }
+                invoices.map((i, idx) => {
+                  return (
+                    <tr key={idx} className="bg-white">
+                      <th
+                        scope="col-span-4"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.recipientId}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {/* {i.recipientId} */}kkk
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
+                      >
+                        Rp. {i.amount}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.dueDate}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        <Status variant="success">{i.status}</Status>
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
+                      >
+                        <button>
+                          <img src={IconView} alt="Icon View" />
+                        </button>
+                        <button>
+                          <img src={IconDownload} alt="Icon Download" />
+                        </button>
+                      </th>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
           <p className="my-auto">Showing 1 to 10 of 50 entries</p>
 
-          <nav aria-label="Page navigation example">
-            <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
-                >
-                  <ChevronLeftOutlined />
-                  <span className="sr-only">Previous</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
-                >
-                  1
-                </a>
-              </li>
+          {invoices && invoices.length !== 0 && (
+            <nav aria-label="Page navigation example">
+              <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
+                <li className={`page-item ${currentPage == 1 && "disabled"}`}>
+                  <a
+                    onClick={() => onPrevious(currentPage)}
+                    className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
+                  >
+                    <ChevronLeftOutlined />
+                    <span className="sr-only">Previous</span>
+                  </a>
+                </li>
+                {Array(paging.totalPages)
+                  .fill(null)
+                  .map((_, idx) => {
+                    const page = ++idx;
+                    return (
+                      <li key={page}>
+                        <Link
+                          className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold page-link ${
+                            currentPage == page && "active"
+                          }`}
+                          to={`/user/:id/invoice?page=${page}&size=${currentSize}`}
+                        ></Link>
+                      </li>
+                    );
+                  })}
+                {/* <li>
+                  <a
+                    href="#"
+                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
+                  >
+                    1
+                  </a>
+                </li> */}
 
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                <li
+                  className={`page-item ${
+                    currentPage >= paging.totalPages && "disabled"
+                  }`}
                 >
-                  <ChevronRightOutlinedIcon />
-                  <span className="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+                  <a
+                    onClick={() => onNext(currentPage)}
+                    className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                  >
+                    <ChevronRightOutlinedIcon />
+                    <span className="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          )}
         </div>
       </div>
     </>

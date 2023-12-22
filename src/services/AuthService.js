@@ -10,7 +10,6 @@ const AuthService = () => {
 
   const verifyOtp = async (payload) => {
     const { data } = await axiosInstance.post("/api/auth/verifyOtp", payload);
-    console.log(payload);
     console.log(data);
     return data;
   };

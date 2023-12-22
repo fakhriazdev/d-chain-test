@@ -1,17 +1,28 @@
 import axiosInstance from "../api/axiosInstance";
 
 const InvoiceService = () => {
-  const fetchInvoices = async () => {
-    const { data } = await axiosInstance.get(
-      `https://run.mocky.io/v3/f10278db-0d5f-423b-bf8e-c2cf1b234d89`
-    );
+  const fetchInvoices = async (queryParams) => {
+    const { data } = await axiosInstance.get(`/api/invoice`, {
+      params: queryParams,
+    });
     return data;
   };
 
+  const saveInvoice = async (invoice) => {
+    const formData = new FormData();
+    formData.append('recipientId', invoice.recipientId);
+    formData.append('dueDate', invoice.dueDate);
+    formData.append('invDate', invoice.invDate);
+    formData.append('amount', invoice.amount);
+    formData.append('itemList', invoice.itemList);
+    const {data} = await axiosInstance.post('/api/invoice', formData);
+    return data;
+  }
+
   return {
     fetchInvoices,
+    saveInvoice
   };
 };
 
 export default InvoiceService;
-// https://run.mocky.io/v3/8ed53fee-a9f5-4bd8-b27e-32587466b6e0

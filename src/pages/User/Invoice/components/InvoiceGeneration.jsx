@@ -1,12 +1,90 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ChevronLeftOutlined } from "@mui/icons-material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
 import IconCalender from "../../../../assets/icons/Calendar.svg";
 import IconDelete from "../../../../assets/icons/Icon Delete.svg";
 import AddIcon from "@mui/icons-material/Add";
 import IconUpload from "../../../../assets/icons/Icon Upload.svg";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { ServiceContext } from "../../../../context/ServiceContext";
+import { useFormik } from "formik";
+import { invoiceAction } from "../../../../slices/invoiceSlice";
 
 const InvoiceGeneration = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { invoiceService } = useContext(ServiceContext);
+  const { id } = useParams();
+  
+
+  const {
+    values: { recipientId, dueDate, invDate, amount, itemList },
+    errors,
+    dirty,
+    isValid,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setValues,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      recipientId: "",
+      dueDate: "",
+      invDate: "",
+      amount: "",
+      itemList: "",
+    },
+    onSubmit: async (values) => {
+      if (!isValid) return;
+
+      if (!id) {
+        dispatch(
+          invoiceAction(async () => {
+            const result = await invoiceService.saveInvoice(values);
+            if (result.statusCode === 201) {
+              navigate(`/user/${id}/invoice`);
+            }
+            return null;
+          })
+        );
+        return;
+      }
+
+      // dispatch(
+      //   invoiceAction(async () => {
+      //     const result = await menuService.updateMenu(values);
+      //     if (result.statusCode === 200) {
+      //       navigate('/backoffice/menus');
+      //     }
+      //     return null;
+      //   })
+      // );
+    },
+  });
+
+  // useEffect(() => {
+  //   if (id) {
+  //     const onGetTableById = async () => {
+  //       const result = await dispatch(
+  //         selectTableAction(() => tableService.fetchTableById(id))
+  //       );
+
+  //       if (result.payload) {
+  //         const { tableId, tableName, status } = result.payload.data;
+  //         setValues({
+  //           id: tableId,
+  //           name: tableName,
+  //           status: status === 'AVAILABLE' ? true : false,
+  //         });
+  //       }
+  //     };
+  //     onGetTableById();
+  //   }
+  // }, [dispatch, setValues, id, tableService]);
+
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
@@ -26,8 +104,9 @@ const InvoiceGeneration = () => {
                   name="companyEmail"
                   autoComplete="email"
                   placeholder="FI-C-36974019-6.24"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                  className="block bg-slate-100 rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                   multiple
+                  disabled
                 />
               </div>
             </div>
@@ -43,6 +122,9 @@ const InvoiceGeneration = () => {
                   placeholder="Select Invoice Date"
                   className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                   multiple
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={invDate}
                 />
                 {/* <img src={IconCalender} alt="" className="absolute" /> */}
               </div>
@@ -59,6 +141,9 @@ const InvoiceGeneration = () => {
                   placeholder="Select Due Date"
                   className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                   multiple
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={dueDate}
                 />
               </div>
             </div>
@@ -96,6 +181,9 @@ const InvoiceGeneration = () => {
                   placeholder="Input Item Name"
                   className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                   multiple
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={itemList}
                 />
               </div>
             </div>
@@ -181,11 +269,14 @@ const InvoiceGeneration = () => {
           </div>
 
           <div className="mt-10 mb-10 text-orange flex justify-center text-[18px] text-center gap-2">
-            <AddIcon className="text-center"/> Add More Item
+            <AddIcon className="text-center" /> Add More Item
           </div>
 
           <div>
-            <input type="checkbox" className="rounded-md checked:bg-lime-600 w-6 h-6"/>
+            <input
+              type="checkbox"
+              className="rounded-md checked:bg-lime-600 w-6 h-6"
+            />
             <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
               I Acknowledge that the data inputed is true
             </label>
