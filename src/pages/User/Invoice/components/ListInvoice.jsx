@@ -127,7 +127,7 @@ const ListInvoice = () => {
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
             <div className="flex space-x-7">
-              <Link to={"/user/:id/invoice/add"}>
+              <Link to={"/user/invoice/add"}>
                 <button
                   type="button"
                   className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"

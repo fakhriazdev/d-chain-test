@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ChevronLeftOutlined } from "@mui/icons-material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
 import IconCalender from "../../../../assets/icons/Calendar.svg";
@@ -6,20 +6,32 @@ import IconDelete from "../../../../assets/icons/Icon Delete.svg";
 import AddIcon from "@mui/icons-material/Add";
 import IconUpload from "../../../../assets/icons/Icon Upload.svg";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ServiceContext } from "../../../../context/ServiceContext";
 import { useFormik } from "formik";
 import { invoiceAction } from "../../../../slices/invoiceSlice";
+import * as Yup from "yup";
 
 const InvoiceGeneration = () => {
+  const schema = Yup.object().shape({
+    checkbox: Yup.boolean().oneOf([true]),
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
-  
+  const [partnerships, setPartnerships] = useState([]);
+  const companyId = "ff8081818c8f71a1018c8f71e26c0001";
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const currentPage = parseInt(searchParam.get("page") || 1);
+  const currentSize = parseInt(searchParam.get("size") || 1);
 
   const {
-    values: { recipientId, dueDate, invDate, amount, itemList },
+    values: { recipientId, dueDate, invDate, amount, itemList, checkbox },
     errors,
     dirty,
     isValid,
@@ -31,39 +43,97 @@ const InvoiceGeneration = () => {
     setFieldValue,
   } = useFormik({
     initialValues: {
+      checkbox: false,
       recipientId: "",
       dueDate: "",
       invDate: "",
-      amount: "",
-      itemList: "",
+      amount: 0,
+      itemList: [
+        {
+          itemsName: "",
+          itemsQuantity: 0,
+          unitPrice: 0,
+        },
+      ],
     },
     onSubmit: async (values) => {
-      if (!isValid) return;
-
-      if (!id) {
-        dispatch(
-          invoiceAction(async () => {
-            const result = await invoiceService.saveInvoice(values);
-            if (result.statusCode === 201) {
-              navigate(`/user/${id}/invoice`);
-            }
-            return null;
-          })
-        );
-        return;
-      }
+      const resultAmount = values.itemList.map((item, idx) => {
+        return item.itemsQuantity * item.unitPrice;
+      });
+      const totalAmount = resultAmount.reduce(
+        (acc, currentValue) => acc + currentValue,
+        0
+      );
+      const stringifyData = JSON.stringify(values.itemList);
+      const dataInvoice = {
+        recipientId: values.recipientId,
+        dueDate: values.dueDate,
+        invDate: values.invDate,
+        amount: totalAmount,
+        itemList: stringifyData,
+      };
+      dispatch(
+        invoiceAction(async () => {
+          const result = await invoiceService.saveInvoice(dataInvoice);
+          console.log(result);
+          if (result.statusCode === 201) {
+            navigate(`/user/invoice`);
+          }
+          return null;
+        })
+      );
 
       // dispatch(
       //   invoiceAction(async () => {
-      //     const result = await menuService.updateMenu(values);
+      //     const result = await invoiceService.updateMenu(values);
       //     if (result.statusCode === 200) {
-      //       navigate('/backoffice/menus');
+      //       navigate("/user/invoice");
       //     }
       //     return null;
       //   })
       // );
     },
+    validationSchema: schema,
   });
+
+  const handleAddItem = () => {
+    setValues((prevValues) => {
+      return {
+        ...prevValues,
+        itemList: [
+          ...prevValues.itemList,
+          {
+            itemsName: "",
+            itemsQuantity: 0,
+            unitPrice: 0,
+          },
+        ],
+      };
+    });
+  };
+
+  const handleRemoveItem = (idx) => {
+    const updatedItems = [...itemList];
+    updatedItems.splice(idx, 1);
+    setValues({
+      itemList: updatedItems,
+    });
+  };
+
+  useEffect(() => {
+    const getPartnerships = async () => {
+      try {
+        const data = await invoiceService.fetchPartnership(companyId, {
+          page: currentPage,
+          size: currentSize,
+        });
+        setPartnerships(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getPartnerships();
+  }, []);
 
   // useEffect(() => {
   //   if (id) {
@@ -91,7 +161,11 @@ const InvoiceGeneration = () => {
         <h1 className="text-title my-auto">Invoice Generation</h1>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg ">
-        <form className="p-6" encType="multipart/form-data">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6"
+          encType="multipart/form-data"
+        >
           <h1 className="text-logo">Invoice Information</h1>
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-2">
@@ -100,12 +174,10 @@ const InvoiceGeneration = () => {
               </label>
               <div className="mt-2">
                 <input
-                  type="email"
-                  name="companyEmail"
-                  autoComplete="email"
+                  type="text"
+                  name="invNumber"
                   placeholder="FI-C-36974019-6.24"
                   className="block bg-slate-100 rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  multiple
                   disabled
                 />
               </div>
@@ -117,14 +189,13 @@ const InvoiceGeneration = () => {
               <div className="mt-2 flex">
                 <input
                   type="date"
-                  name="companyEmail"
-                  autoComplete="email"
+                  name="invDate"
                   placeholder="Select Invoice Date"
                   className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  multiple
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={invDate}
+                  min={currentDate}
                 />
                 {/* <img src={IconCalender} alt="" className="absolute" /> */}
               </div>
@@ -136,14 +207,13 @@ const InvoiceGeneration = () => {
               <div className="mt-2">
                 <input
                   type="date"
-                  name="companyEmail"
-                  autoComplete="email"
+                  name="dueDate"
                   placeholder="Select Due Date"
                   className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  multiple
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={dueDate}
+                  min={currentDate}
                 />
               </div>
             </div>
@@ -153,11 +223,23 @@ const InvoiceGeneration = () => {
               </label>
               <div className="mt-2">
                 <select
-                  name="province"
-                  placeholder="car"
+                  name="recipientId"
                   className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                  onChange={handleChange}
                 >
                   <option selected>Choose Invoice Recipient</option>
+                  {partnerships.data &&
+                    partnerships.data.length &&
+                    partnerships.data.map((partnership) => {
+                      return (
+                        <option
+                          key={partnership.companyId}
+                          value={partnership.partnerId}
+                        >
+                          {partnership.partnerId}
+                        </option>
+                      );
+                    })}
                 </select>
               </div>
             </div>
@@ -168,113 +250,79 @@ const InvoiceGeneration = () => {
           </div>
 
           <h1 className="text-logo mt-8">Items</h1>
-          <div className="flex mt-4 w-full gap-x-6 gap-y-8">
-            <div className=" w-1/2">
-              <label className="block text-[18px] font-medium leading-6">
-                Item Name
-              </label>
-              <div className="mt-2">
-                <input
-                  type="email"
-                  name="companyEmail"
-                  autoComplete="email"
-                  placeholder="Input Item Name"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  multiple
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={itemList}
-                />
+          {itemList.map((item, idx) => (
+            <div key={idx} className="flex mt-4 w-full gap-x-6 gap-y-8">
+              <div className=" w-1/2">
+                <label className="block text-[18px] font-medium leading-6">
+                  Item Name
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name={`itemList.${idx}.itemsName`}
+                    placeholder="Input Item Name"
+                    className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={itemList[idx].itemsName}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="w-2/6">
-              <label className="block text-[18px] font-medium leading-6">
-                Item Quantity
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  autoComplete="phoneNumber"
-                  placeholder="Input Item Quantity"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                />
+              <div className="w-2/6">
+                <label className="block text-[18px] font-medium leading-6">
+                  Item Quantity
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    name={`itemList.${idx}.itemsQuantity`}
+                    placeholder="Input Item Quantity"
+                    className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={itemList[idx].itemsQuantity}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="w-2/6 me-3">
-              <label className="block text-[18px] font-medium leading-6">
-                Unit Price
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  autoComplete="phoneNumber"
-                  placeholder="Input Item Price"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                />
+              <div className="w-2/6 me-3">
+                <label className="block text-[18px] font-medium leading-6">
+                  Unit Price
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    name={`itemList.${idx}.unitPrice`}
+                    placeholder="Input Item Price"
+                    className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={itemList[idx].unitPrice}
+                  />
+                </div>
               </div>
+              <button
+                type="button"
+                className="mt-6 mr-2"
+                onClick={() => handleRemoveItem(idx)}
+              >
+                <img src={IconDelete} alt="Icon Delete" width={30} />
+              </button>
             </div>
-            <button className="mt-6 mr-2">
-              <img src={IconDelete} alt="Icon Delete" width={30} />
-            </button>
-          </div>
-          <div className="flex mt-4 w-full gap-x-6 gap-y-8">
-            <div className=" w-1/2">
-              <label className="block text-[18px] font-medium leading-6">
-                Item Name
-              </label>
-              <div className="mt-2">
-                <input
-                  type="email"
-                  name="companyEmail"
-                  autoComplete="email"
-                  placeholder="Input Item Name"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  multiple
-                />
-              </div>
-            </div>
-            <div className="w-2/6">
-              <label className="block text-[18px] font-medium leading-6">
-                Item Quantity
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  autoComplete="phoneNumber"
-                  placeholder="Input Item Quantity"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                />
-              </div>
-            </div>
-            <div className="w-2/6 me-3">
-              <label className="block text-[18px] font-medium leading-6">
-                Unit Price
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  autoComplete="phoneNumber"
-                  placeholder="Input Item Price"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                />
-              </div>
-            </div>
-            <button className="mt-6 mr-2">
-              <img src={IconDelete} alt="Icon Delete" width={30} />
-            </button>
-          </div>
+          ))}
 
           <div className="mt-10 mb-10 text-orange flex justify-center text-[18px] text-center gap-2">
-            <AddIcon className="text-center" /> Add More Item
+            <button type="button" onClick={() => handleAddItem()}>
+              <AddIcon className="text-center" /> Add More Item
+            </button>
           </div>
 
-          <div>
+          <div className="">
             <input
               type="checkbox"
+              name="checkbox"
+              checked={checkbox}
+              onChange={handleChange}
+              onBlur={handleBlur}
               className="rounded-md checked:bg-lime-600 w-6 h-6"
             />
             <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -284,6 +332,7 @@ const InvoiceGeneration = () => {
           <div className="mt-6">
             <button
               type="submit"
+              disabled={!isValid}
               className="text-[18px] py-3 lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
             >
               <img src={IconUpload} alt="Icon Upload" />

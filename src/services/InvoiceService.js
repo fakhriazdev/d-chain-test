@@ -9,19 +9,26 @@ const InvoiceService = () => {
   };
 
   const saveInvoice = async (invoice) => {
-    const formData = new FormData();
-    formData.append('recipientId', invoice.recipientId);
-    formData.append('dueDate', invoice.dueDate);
-    formData.append('invDate', invoice.invDate);
-    formData.append('amount', invoice.amount);
-    formData.append('itemList', invoice.itemList);
-    const {data} = await axiosInstance.post('/api/invoice', formData);
+    try {
+      const { data } = await axiosInstance.post("/api/invoice", invoice);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPartnership = async (id, queryParams) => {
+    const { data } = await axiosInstance.get(`/api/partnerships/${id}`, {
+      params: queryParams,
+    });
     return data;
-  }
+  };
 
   return {
     fetchInvoices,
-    saveInvoice
+    saveInvoice,
+    fetchPartnership,
   };
 };
 

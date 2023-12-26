@@ -69,7 +69,7 @@ const setupRouter = () =>
           ],
         },
         {
-          path: "/user/:id/invoice",
+          path: "/user/invoice",
           element: <Invoice />,
           children: [
             {
