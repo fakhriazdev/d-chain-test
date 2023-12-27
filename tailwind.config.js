@@ -4,7 +4,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    'node_modules/flowbite-react/lib/esm/**/*.js',
+
   ],
   theme: {
     fontSize: {
@@ -18,7 +18,7 @@ export default {
       colors: {
         orange: "#f47321",
         red: "#f34646",
-        yellow: "#FFF490",
+        yellow: "#DCCD42",
         green: "#66B56E",
         blue: "#5BB0FF",
         darkgray: "#616161",

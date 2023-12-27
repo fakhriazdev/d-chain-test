@@ -35,6 +35,9 @@ dependencies:
   formik:
     specifier: ^2.4.5
     version: 2.4.5(react@18.2.0)
+  prop-types:
+    specifier: ^15.8.1
+    version: 15.8.1
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -47,9 +50,15 @@ dependencies:
   react-redux:
     specifier: ^9.0.4
     version: 9.0.4(@types/react@18.2.43)(react@18.2.0)(redux@5.0.0)
+  react-hot-toast:
+    specifier: ^2.4.1
+    version: 2.4.1(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0)
   react-router-dom:
     specifier: ^6.20.1
     version: 6.20.1(react-dom@18.2.0)(react@18.2.0)
+  source-map:
+    specifier: ^0.7.4
+    version: 0.7.4
   yup:
     specifier: ^1.3.2
     version: 1.3.2
@@ -1556,9 +1565,9 @@ packages:
     dependencies:
       immer: 10.0.3
       react: 18.2.0
-      react-redux: 9.0.4(@types/react@18.2.43)(react@18.2.0)(redux@5.0.0)
-      redux: 5.0.0
-      redux-thunk: 3.1.0(redux@5.0.0)
+      react-redux: 9.0.4(@types/react@18.2.43)(react@18.2.0)(redux@5.0.1)
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
       reselect: 5.0.1
     dev: false
 
@@ -3347,6 +3356,14 @@ packages:
     dependencies:
       define-properties: 1.2.1
     dev: true
+
+  /goober@2.1.13(csstype@3.1.3):
+    resolution: {integrity: sha512-jFj3BQeleOoy7t93E9rZ2de+ScC4lQICLwiAQmKMg9F6roKGaLSHoCDYKkWlSafg138jejvq/mTdvmnwDQgqoQ==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dependencies:
+      csstype: 3.1.3
+    dev: false
 
   /gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
@@ -5612,6 +5629,20 @@ packages:
     resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
     dev: false
 
+  /react-hot-toast@2.4.1(csstype@3.1.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.13(csstype@3.1.3)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - csstype
+    dev: false
+
   /react-icons@4.12.0(react@18.2.0):
     resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
     peerDependencies:
@@ -5663,8 +5694,8 @@ packages:
       - supports-color
     dev: false
 
-  /react-redux@9.0.3(@types/react@18.2.43)(react@18.2.0):
-    resolution: {integrity: sha512-bilZStJN00qYqAXBpu/taUXv0tcuOrhBFD86fSERgYUm0+IHi/OQnqopbNalhgSo7+KMjSW5H/UTrWasXDvtug==}
+  /react-redux@9.0.4(@types/react@18.2.43)(react@18.2.0)(redux@5.0.1):
+    resolution: {integrity: sha512-9J1xh8sWO0vYq2sCxK2My/QO7MzUMRi3rpiILP/+tDr8krBHixC6JMM17fMK88+Oh3e4Ae6/sHIhNBgkUivwFA==}
     peerDependencies:
       '@types/react': ^18.2.25
       react: ^18.0
@@ -5681,7 +5712,7 @@ packages:
       '@types/react': 18.2.43
       '@types/use-sync-external-store': 0.0.3
       react: 18.2.0
-      redux: 5.0.0
+      redux: 5.0.1
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
@@ -5766,16 +5797,16 @@ packages:
     dependencies:
       picomatch: 2.3.1
 
-  /redux-thunk@3.1.0(redux@5.0.0):
+  /redux-thunk@3.1.0(redux@5.0.1):
     resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
     peerDependencies:
       redux: ^5.0.0
     dependencies:
-      redux: 5.0.0
+      redux: 5.0.1
     dev: false
 
-  /redux@5.0.0:
-    resolution: {integrity: sha512-blLIYmYetpZMET6Q6uCY7Jtl/Im5OBldy+vNPauA8vvsdqyt66oep4EUpAMWNHauTC6xa9JuRPhRB72rY82QGA==}
+  /redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
     dev: false
 
   /reflect.getprototypeof@1.0.4:

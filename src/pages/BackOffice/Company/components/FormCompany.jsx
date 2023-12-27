@@ -26,16 +26,16 @@ const FormCompany = () => {
             address:"",
             companyEmail:"",
             phoneNumber:"",
-            files:[],
+            files:{},
             username:"",
             financingLimit:20000000,
             remainingLimit:20000000,
             emailUser: "",
+
         },
         //validationSchema: validationSchema,
         onSubmit:()=>{
             const formData = new FormData();
-
             // Append form values to FormData
             formData.append('accountNumber', formik.values.accountNumber);
             formData.append('companyName', formik.values.companyName);
@@ -47,12 +47,11 @@ const FormCompany = () => {
             formData.append('financingLimit', formik.values.financingLimit);
             formData.append('remainingLimit', formik.values.remainingLimit);
             formData.append('username', formik.values.username);
-            formData.append("companyEmail",encodeURIComponent(formik.values.companyEmail));
-            formData.append("emailUser",encodeURIComponent(formik.values.emailUser));
+            formData.append("emailUser",formik.values.emailUser);
             formData.append("files",formik.values.files);
             // Append documents
             //
-            // formik.values.files.map((document,asdasd index) => {
+            // formik.values.files.map((document, index) => {
             //     formData.append(`files`, document.file);
             // });
 
@@ -63,7 +62,7 @@ const FormCompany = () => {
     const {mutate,isPending} = useCreateCompany({
         onSuccess:() =>{
             formik.resetForm();
-            //navigate("/backoffice/company");
+            navigate("/backoffice/company");
         }
     })
 
@@ -82,12 +81,10 @@ const FormCompany = () => {
         }
     };
 
-
     const handleDeleteDoc = (id) =>{
-        const filtered = formik.values.files.filter((_, index) => index !== id);
-        formik.setFieldValue('files', filtered);
-
-
+        formik.setFieldValue('files',{})
+        // const filtered = formik.values.files.filter((_, index) => index !== id);
+        // formik.setFieldValue('files', filtered);
     }
 
     console.log(formik.values)
@@ -109,6 +106,7 @@ const FormCompany = () => {
                             </label>
                             <div className="mt-2">
                                 <input
+                                    required={true}
                                     type="text"
                                     name="companyName"
                                     autoComplete="name"
@@ -125,6 +123,7 @@ const FormCompany = () => {
                                 className="block mb-2 text-[18px] font-medium text-gray">
                                 Province</label>
                             <select
+                                required={true}
                                 name="province"
                                 placeholder="car"
                                 className="rounded-md border-0 py-3 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
@@ -146,6 +145,7 @@ const FormCompany = () => {
                                 className="block mb-2 text-[18px] font-medium text-gray">City
                             </label>
                             <select
+                                required={true}
                                 name="city"
                                 className="rounded-md border-0 py-3 text-lightgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                                 onChange={handleFormInput}
@@ -168,6 +168,7 @@ const FormCompany = () => {
                             </label>
                             <div className="mt-2">
                                 <input
+                                    required={true}
                                     type="text"
                                     name="address"
                                     autoComplete="address"
@@ -185,6 +186,7 @@ const FormCompany = () => {
                             </label>
                             <div className="mt-2">
                                 <input
+                                    required={true}
                                     type="email"
                                     name="companyEmail"
                                     autoComplete="email"
@@ -203,6 +205,7 @@ const FormCompany = () => {
                             </label>
                             <div className="mt-2">
                                 <input
+                                    required={true}
                                     type="text"
                                     name="phoneNumber"
                                     value={formik.values.phoneNumber}
@@ -229,7 +232,7 @@ const FormCompany = () => {
                                             className="relative cursor-pointer rounded-md bg-white font-semibold text-lightgray hover:text-orange">
                                             <p className=" text-gray-600"><CloudUploadOutlinedIcon/></p>
                                             <span>Select one or more Document</span>
-                                            <input name="files" type="file" className="sr-only"
+                                            <input required={true} name="files" type="file" className="sr-only"
                                                    onInput={handleFormInput}/>
                                         </label>
                                     </div>
@@ -237,19 +240,22 @@ const FormCompany = () => {
                             </div>
                         </div>
                     </div>
-                    {/*{formik.values.files.map((doc,idx)=>{*/}
-                    {/*    return (*/}
-                    {/*        <div className="mt-3 flex mx-6 gap-y-8 justify-between" key={idx}>*/}
-                    {/*            <p className="text-[14px] text-darkgray my-auto">{doc.name}</p>*/}
-                    {/*            <div className="flex gap-2">*/}
-                    {/*                <div className="flex gap-2">*/}
-                    {/*                    <span*/}
-                    {/*                        className="cursor-pointer text-red hover:text-red/50" onClick={()=>handleDeleteDoc(idx)}><DeleteOutlinedIcon/></span>*/}
-                    {/*                </div>*/}
-                    {/*            </div>*/}
-                    {/*        </div>*/}
-                    {/*    )*/}
-                    {/*})}*/}
+                    {formik.values.files?.name !== undefined ?
+                            <div className="mt-3 flex mx-6 gap-y-8 justify-between">
+                                <p className="text-[14px] text-darkgray my-auto">{formik.values.files.name}</p>
+                                <div className="flex gap-2">
+                                    <div className="flex gap-2">
+                                        <span
+                                            className="cursor-pointer text-red hover:text-red/50"
+                                            onClick={() => handleDeleteDoc()}><DeleteOutlinedIcon/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        :
+                        <>
+                        </>
+                    }
+
 
                     <div className="relative mt-4 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
                         <div className="sm:col-span-3">
@@ -261,12 +267,13 @@ const FormCompany = () => {
 
                     </div>
                     <div className="relative mt-2 grid grid-cols-1 gap-x-6 sm:grid-cols-6">
-                        <div className="sm:col-span-3 ">
+                    <div className="sm:col-span-3 ">
                             <label className="block text-[13px] leading-6 text-darkgray">
                                 Username
                             </label>
                             <div className="mt-1">
                                 <input
+                                    required={true}
                                     type="text"
                                     name="username"
                                     autoComplete="username"
@@ -283,6 +290,7 @@ const FormCompany = () => {
                             </label>
                             <div className="mt-1">
                                 <input
+                                    required={true}
                                     type="email"
                                     name="emailUser"
                                     autoComplete="username"
@@ -305,8 +313,7 @@ const FormCompany = () => {
                 </form>
             </div>
         </>
-    )
-        ;
+    );
 };
 
 export default FormCompany;
