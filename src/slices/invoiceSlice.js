@@ -19,7 +19,7 @@ const invoiceSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(invoiceAction.fulfilled, (state, { payload }) => {
         if (payload) {
-        state.invoices = payload;
+        state.invoices = payload.data;
       }
     });
     builder.addCase(selectInvoiceAction.fulfilled, (state, { payload }) => {

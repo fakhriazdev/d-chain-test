@@ -22,7 +22,7 @@ const InvoiceGeneration = () => {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
-  const companyId = "ff8081818c8f71a1018c8f71e26c0001";
+  const companyId = "ff8081818ca91729018ca9185c930001";
   const currentDate = new Date().toISOString().split("T")[0];
 
   const [searchParam, setSearchParam] = useSearchParams();
@@ -332,7 +332,7 @@ const InvoiceGeneration = () => {
           <div className="mt-6">
             <button
               type="submit"
-              disabled={!isValid}
+              disabled={!isValid || !dirty}
               className="text-[18px] py-3 lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
             >
               <img src={IconUpload} alt="Icon Upload" />

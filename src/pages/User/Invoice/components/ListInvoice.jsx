@@ -14,12 +14,13 @@ import { useContext, useEffect, useState } from "react";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
+import { useFormik } from "formik";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
 
   const dispatch = useDispatch();
-  const invoices = useSelector((state) => state.invoice.invoices);
+  const { invoices } = useSelector((state) => state.invoice);
   const { invoiceService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
 
@@ -38,19 +39,52 @@ const ListInvoice = () => {
     setSearchParam(searchParam);
   };
 
+  const formik = useFormik({
+    initialValues: {
+      status: "",
+      type: "Payable",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+      dispatch(
+        invoiceAction(async () => {
+          const result = await invoiceService.fetchInvoices({
+            page: 1,
+            size: 10,
+            direction: "asc",
+            type: values.type,
+            status: values.status,
+          });
+          console.log(result);
+          return result;
+          // if (result) {
+          //   setPaging(result.paging);
+          //   const data = await Promise.all();
+          //   return { data };
+          // }
+        })
+      );
+    },
+  });
+
   useEffect(() => {
     const onGetInvoices = () => {
       dispatch(
         invoiceAction(async () => {
           const result = await invoiceService.fetchInvoices({
-            page: currentPage,
-            size: currentSize,
+            page: 1,
+            size: 10,
+            direction: "asc",
+            type: "Payable",
+            status: null,
           });
-          if (result) {
-            setPaging(result.paging);
-            const data = await Promise.all();
-            return { data };
-          }
+          console.log(result);
+          return result;
+          // if (result) {
+          //   setPaging(result.paging);
+          //   const data = await Promise.all();
+          //   return { data };
+          // }
         })
       );
     };
@@ -68,6 +102,47 @@ const ListInvoice = () => {
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
+    console.log(isChecked);
+    let checked = "";
+    if (!isChecked) {
+      formik.setValues({
+        type: "Receivable",
+      });
+      checked = "Receivable";
+    } else {
+      formik.setValues({
+        type: "Payable",
+      });
+      checked = "Payable";
+    }
+    console.log(checked);
+
+    dispatch(
+      invoiceAction(async () => {
+        const result = await invoiceService.fetchInvoices({
+          page: 1,
+          size: 10,
+          direction: "asc",
+          type: checked,
+          status: null,
+        });
+        console.log(result);
+        return result;
+      })
+    );
+  };
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const filterInvoices = invoices.filter((item) =>
+    item.company.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -101,21 +176,29 @@ const ListInvoice = () => {
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="relative flex justify-between mb-5 gap-4 mx-4">
-          <div className="flex items-center py-2">
-            <input
-              className="border-none bg-orange bg-opacity-10 rounded-l-lg w-72 h-11 placeholder:opacity-50 pl-12 "
-              id="email"
-              type="text"
-              placeholder="Search..."
-            />
-            <img src={IconSearch} className="absolute ml-5" alt="Search Icon" />
-            <button
-              className="bg-orange text-white rounded-r-lg focus:outline-none focus:shadow-outline w-24 h-11 disabled:bg-opacity-70"
-              type="submit"
-            >
-              Search
-            </button>
-          </div>
+          <form onSubmit={handleSearchSubmit}>
+            <div className="flex items-center py-2">
+              <input
+                className="border-none bg-orange bg-opacity-10 rounded-l-lg w-72 h-11 placeholder:opacity-50 pl-12 "
+                id="email"
+                type="text"
+                placeholder="Search..."
+                onChange={handleSearch}
+                value={searchTerm}
+              />
+              <img
+                src={IconSearch}
+                className="absolute ml-5"
+                alt="Search Icon"
+              />
+              <button
+                className="bg-orange text-white rounded-r-lg focus:outline-none focus:shadow-outline w-24 h-11 disabled:bg-opacity-70"
+                type="submit"
+              >
+                Search
+              </button>
+            </div>
+          </form>
           <div className="flex items-center space-x-4">
             <button
               id="dropdownDefaultButton"
@@ -143,128 +226,148 @@ const ListInvoice = () => {
           </div>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-80"
+            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60"
           >
-            <div className="">
-              <ul
-                className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-                aria-labelledby="dropdownRadioButton"
-              >
-                Status
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-1"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Unpaid
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="dsc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Paid
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="dsc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Late
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="dsc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Disputed
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div className="">
-              <ul
-                className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-                aria-labelledby="dropdownRadioButton"
-              >
-                Type
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-1"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Payable
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      value="dsc"
-                      name="default-radio"
-                      className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                    />
-                    <label
-                      htmlFor="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Receivable
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div className="flex space-x-5">
-              <button className="bg-gray/20 hover:bg-gray/20 text-zinc-800 py-2 px-4 rounded">
-                Cancel
-              </button>
-              <button className="bg-orange hover:bg-orange text-white py-2 px-4 rounded">
-                Apply
-              </button>
-            </div>
+            <form onSubmit={formik.handleSubmit}>
+              <div className="">
+                <ul
+                  className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
+                  aria-labelledby="dropdownRadioButton"
+                >
+                  Status
+                  <li>
+                    <div className="flex items-center mt-3">
+                      <input
+                        type="radio"
+                        value="Unpaid"
+                        name="status"
+                        checked={formik.values.status === "Unpaid"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-1"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Unpaid
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Paid"
+                        name="status"
+                        checked={formik.values.status === "Paid"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Paid
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Late"
+                        name="status"
+                        checked={formik.values.status === "Late"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Late
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Disputed"
+                        name="status"
+                        checked={formik.values.status === "Disputed"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Disputed
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              {/* <div className="">
+                <ul
+                  className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="dropdownRadioButton"
+                >
+                  Type
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Payable"
+                        name="type"
+                        checked={formik.values.type === 'Payable'}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-1"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Payable
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Receivable"
+                        name="type"
+                        checked={formik.values.type === 'Receivable'}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Receivable
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </div> */}
+              <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
+                <button
+                  type="button"
+                  className="bg-gray/20 hover:bg-gray/20 text-zinc-800 py-2 px-4 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-orange hover:bg-orange text-white py-2 px-4 rounded"
+                >
+                  Apply
+                </button>
+              </div>
+            </form>
           </div>
         </div>
         <div className="relative overflow-x-auto mx-4 sm:rounded-lg">
@@ -292,21 +395,21 @@ const ListInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {invoices?.length !== 0 &&
-                invoices.map((i, idx) => {
+              {filterInvoices?.length !== 0 &&
+                filterInvoices.map((i, idx) => {
                   return (
                     <tr key={idx} className="bg-white">
                       <th
                         scope="col-span-4"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.recipientId}
+                        {i.company}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {/* {i.recipientId} */}kkk
+                        {i.invoice_id}
                       </th>
                       <th
                         scope="col"
@@ -349,7 +452,7 @@ const ListInvoice = () => {
           {invoices && invoices.length !== 0 && (
             <nav aria-label="Page navigation example">
               <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
-                <li className={`page-item ${currentPage == 1 && "disabled"}`}>
+                {/* <li className={`page-item ${currentPage == 1 && "disabled"}`}>
                   <a
                     onClick={() => onPrevious(currentPage)}
                     className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
@@ -357,8 +460,8 @@ const ListInvoice = () => {
                     <ChevronLeftOutlined />
                     <span className="sr-only">Previous</span>
                   </a>
-                </li>
-                {Array(paging.totalPages)
+                </li> */}
+                {/* {Array(paging.totalPages)
                   .fill(null)
                   .map((_, idx) => {
                     const page = ++idx;
@@ -372,7 +475,7 @@ const ListInvoice = () => {
                         ></Link>
                       </li>
                     );
-                  })}
+                  })} */}
                 {/* <li>
                   <a
                     href="#"
@@ -382,7 +485,7 @@ const ListInvoice = () => {
                   </a>
                 </li> */}
 
-                <li
+                {/* <li
                   className={`page-item ${
                     currentPage >= paging.totalPages && "disabled"
                   }`}
@@ -394,7 +497,7 @@ const ListInvoice = () => {
                     <ChevronRightOutlinedIcon />
                     <span className="sr-only">Next</span>
                   </a>
-                </li>
+                </li> */}
               </ul>
             </nav>
           )}
