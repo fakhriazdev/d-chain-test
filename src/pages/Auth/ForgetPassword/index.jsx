@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authAction, forgetAction } from "../../../slices/authSlice";
 import * as Yup from "yup";
@@ -14,6 +14,7 @@ function ForgetPassword() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParam, setSearchParam] = useSearchParams();
   const { authService } = useContext(ServiceContext);
 
   const {
@@ -22,9 +23,7 @@ function ForgetPassword() {
     dirty,
     isValid,
     touched,
-    handleChange = () => {
-
-    },
+    handleChange = () => {},
     handleBlur,
     handleSubmit,
   } = useFormik({
@@ -35,7 +34,7 @@ function ForgetPassword() {
       console.log(values.email);
       dispatch(
         forgetAction(async () => {
-          const result = await authService.forgetPassword(values);
+          const result = await authService.forgetPassword({email: values.email});
           if (result.statusCode === 200) {
             alert("check your email");
           }

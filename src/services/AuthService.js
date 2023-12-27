@@ -18,10 +18,26 @@ const AuthService = () => {
     sessionStorage.removeItem("token");
   };
 
-  const forgetPassword = async (email) => {
+  const forgetPassword = async (queryParams) => {
     const { data } = await axiosInstance.post(
-      "/api/auth/forget-password",
-      email
+      `/api/auth/forgot-password?email=${queryParams.email}`
+    );
+    return data;
+  };
+
+  const recoveryPassword = async (payload) => {
+    const data = await axiosInstance.put(
+      "/api/auth/recovery-password",
+      payload
+    );
+    return data;
+  };
+
+  const changePassword = async (payload) => {
+    console.log(payload);
+    const { data } = await axiosInstance.post(
+      "/api/auth/change-password",
+      payload
     );
     return data;
   };
@@ -42,6 +58,8 @@ const AuthService = () => {
     getTokenFromStorage,
     forgetPassword,
     verifyOtp,
+    recoveryPassword,
+    changePassword,
   };
 };
 

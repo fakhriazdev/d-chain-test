@@ -4,7 +4,7 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
 import { Link } from "react-router-dom";
-import Logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo.png"
 
 const Sidebar = (props) => {
   const { children } = props;
@@ -37,7 +37,11 @@ const Sidebar = (props) => {
                 </svg>
               </button>
               <a href="#" className="flex ms-2 md:me-24">
-                <img src={Logo} className="h-8 me-3" alt="D Auto Change" />
+                <img
+                  src={logo}
+                  className="h-6 me-3"
+                  alt="D Auto Change"
+                />
               </a>
             </div>
             <div className="flex items-center">
@@ -142,7 +146,7 @@ const Sidebar = (props) => {
                 className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
                 <LibraryBooksOutlinedIcon />
-                <span className="ms-3">Financing</span>
+                <span className="ms-3">Invoice</span>
               </a>
             </li>
             <li>

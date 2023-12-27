@@ -54,26 +54,68 @@ const CompanyService = () => {
     const { data } = await axiosInstance.get(`/api/menus`, {
       params: queryParams,
     });
+    const saveCompany = async (menu) => {
+      const formData = new FormData();
+      formData.append("name", menu.name);
+      formData.append("price", menu.price);
+      formData.append("category", menu.category);
+      formData.append("image", menu.image);
+      const { data } = await axiosInstance.post("/api/menus", formData);
+      return data;
+    };
 
-    return data;
-  };
+    const fetchCompanyById = async (id) => {
+      const { data } = await axiosInstance.get(`/api/companies/${id}`);
+      return data;
+    };
 
-  const downloadImageCompany = async (url) => {
-    const { data } = await axiosInstance.get(url, { responseType: "blob" });
-    console.log(data);
+    const updateCompany = async (newCompany) => {
+      const formData = {
+        id: newCompany.id,
+        companyName: newCompany.companyName,
+        province: newCompany.province,
+        city: newCompany.city,
+        address: newCompany.address,
+        phoneNumber: newCompany.phoneNumber,
+        companyEmail: newCompany.companyEmail,
+      };
+      console.log(formData);
+      const { data } = await axiosInstance.put(
+        `/api/companies/profile`,
+        formData
+      );
+      return data;
+    };
 
-    return data;
-  };
+    const deleteCompany = async (id) => {
+      const { data } = await axiosInstance.delete(`/api/menus/${id}`);
+      return data;
+    };
 
-  return {
-    getAllCompanies,
-    saveCompany,
-    fetchCompanyById,
-    updateCompany,
-    deleteCompany,
-    fetchCompanies,
-    downloadImageCompany,
-    changePassword,
+    const fetchCompanies = async (queryParams) => {
+      const { data } = await axiosInstance.get(`/api/menus`, {
+        params: queryParams,
+      });
+
+      return data;
+    };
+
+    const downloadImageCompany = async (url) => {
+      const { data } = await axiosInstance.get(url, { responseType: "blob" });
+      console.log(data);
+
+      return data;
+    };
+
+    return {
+      saveCompany,
+      fetchCompanyById,
+      updateCompany,
+      deleteCompany,
+      fetchCompanies,
+      downloadImageCompany,
+      changePassword,
+    };
   };
 };
 

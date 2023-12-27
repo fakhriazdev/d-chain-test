@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Login from "../pages/Auth/Login";
-import ForgetPassword from "../pages/Auth/ForgetPassword";
 import OtpPage from "../pages/Auth/OTP";
 import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
 import Dashboard from "../pages/Dashboard";
@@ -12,8 +11,13 @@ import FormCompany from "../pages/BackOffice/Company/components/FormCompany.jsx"
 import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx";
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
-import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
+// import Invoice from "../pages/Invoice";
+import InvoiceDetail from "../pages/Invoice/components/InvoiceDetail.jsx";
+import InvoiceProcessed from "../pages/Invoice/components/InvoiceProcessed.jsx";
+import InvoiceReject from "../pages/Invoice/components/InvoiceReject.jsx";
+import InvoiceRejected from "../pages/Invoice/components/InvoiceRejected.jsx";
 
+import ForgetPassword from "../pages/Auth/ForgetPassword";
 import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
@@ -92,21 +96,21 @@ const setupRouter = () =>
         },
         {
           path: "/forget/success",
-          element: <SuccessSendMail />,
+          element: <SuccessSendMail/>
         },
         {
           path: "/user/forget/:id",
-          element: <NewPassword />,
+          element: <NewPassword/>
         },
         {
           path: "profile",
-          element: <Profile />,
-          children: [
+          element: <Profile/>,
+          children:[
             {
-              path: "superuser/:id",
-              element: <SuperUserProfile />,
+              path: "superuser/:companyId",
+              element: <SuperUserProfile/>
             },
-          ],
+          ]
         },
         {
           path: "pdf",
@@ -123,7 +127,27 @@ const setupRouter = () =>
         {
           path: "dashboard",
           element: <Dashboard />,
-        },
+          path: "invoice",
+          element: <Invoice/>,
+          children:[
+            {
+              path: "detail",
+              element: <InvoiceDetail/>
+            },
+            {
+              path: "processed",
+              element: <InvoiceProcessed/>
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject/>
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected/>
+            },
+          ]
+        }
       ],
     },
   ]);

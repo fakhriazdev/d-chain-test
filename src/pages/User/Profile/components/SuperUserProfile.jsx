@@ -17,8 +17,10 @@ import {
   selectCompanyAction,
   downloadFile,
 } from "../../../../slices/companySlice";
+import { authAction, forgetAction } from "../../../../slices/authSlice";
 import { useContext } from "react";
 import { useFormik } from "formik";
+import validationSchema from './validationSchema';
 import { Link } from "react-router-dom";
 import PDFViewer from "../../../../utils/PDFViewer";
 import * as Yup from "yup";
@@ -28,8 +30,8 @@ export default function SuperUserProfile() {
   const [listCity, setListCity] = useState(null);
   const dispatch = useDispatch();
   const { selectedCompany } = useSelector((state) => state.companies);
-  const { companyService } = useContext(ServiceContext);
-  const { id } = useParams();
+  const { companyService, authService } = useContext(ServiceContext);
+  const { companyId } = useParams();
   const navigate = useNavigate();
 
   const schema = Yup.object({
@@ -53,22 +55,7 @@ export default function SuperUserProfile() {
     fetchProvince();
   }, []);
 
-  // useEffect(() => {
-  //   const postNewPassword = async () => {
-  //     try {
-  //       selectCompanyAction(async () => {
-  //         const result = await companyService.changePassword();
-  //         const updatedData = {
-  //           ...result.data,
-  //         };
-  //       });
-  //     } catch (error) {
-  //       console.log("ERRORRRRRRR: ", error);
-  //     }
-  //   };
-  // });
-
-  const handleProvinceChange = async (provinceId) => {
+  const handleProvinceChange = (provinceId) => {
     fetchCity(provinceId);
   };
 
@@ -84,22 +71,17 @@ export default function SuperUserProfile() {
 
   const {
     values: {
-      companyId,
+      id,
       companyName,
       province,
       city,
       address,
       phoneNumber,
       companyEmail,
-      accountNumber,
-      financingLimit,
-      reaminingLimit,
       files,
-      userId,
       username,
       emailUser,
-      partnerships,
-      currentPassword,
+      oldPassword,
       newPassword,
       confirmNewPassword,
     },
@@ -115,33 +97,43 @@ export default function SuperUserProfile() {
     setFieldValue,
   } = useFormik({
     initialValues: {
-      companyId: "",
+      id: "",
       companyName: "",
       province: "",
       city: "",
       address: "",
       phoneNumber: "",
       companyEmail: "",
-      accountNumber: "",
-      financingLimit: 0,
-      reaminingLimit: 0,
       files: "",
       userId: "",
       username: "",
       emailUser: "",
-      partnerships: null,
-      currentPassword: "",
+      oldPassword: "",
       newPassword: "",
       confirmNewPassword: "",
     },
     onSubmit: async (values) => {
       if (!isValid) return;
-
+      if (oldPassword && confirmNewPassword) {
+        dispatch(
+          forgetAction(async () => {
+            const result = await authService.changePassword({
+              email: emailUser,
+              oldPassword,
+              newPassword,
+            });
+            if (result.statusCode === 201) {
+              alert(result.data);
+            }
+            return null;
+          })
+        );
+      }
       dispatch(
-        menuAction(async () => {
-          const result = await menuService.updateMenu(values);
+        companyAction(async () => {
+          const result = await companyService.updateCompany(values);
           if (result.statusCode === 200) {
-            navigate("/backoffice/menus");
+            alert(result.message);
           }
           console.log(selectedCompany);
 
@@ -149,20 +141,20 @@ export default function SuperUserProfile() {
         })
       );
     },
-    validationSchema: schema,
+    validationSchema: validationSchema,
   });
 
   useEffect(() => {
     const onGetCompanyById = () => {
       dispatch(
         selectCompanyAction(async () => {
-          const result = await companyService.fetchCompanyById(id);
+          const result = await companyService.fetchCompanyById(companyId);
           const updatedData = {
             ...result.data,
           };
 
           const values = {
-            companyId: updatedData.companyId,
+            id: companyId,
             companyName: updatedData.companyName,
             province: updatedData.province,
             city: updatedData.city,
@@ -170,8 +162,6 @@ export default function SuperUserProfile() {
             phoneNumber: updatedData.phoneNumber,
             companyEmail: updatedData.companyEmail,
             accountNumber: updatedData.accountNumber,
-            financingLimit: updatedData.financingLimit,
-            reaminingLimit: updatedData.reaminingLimit,
             files: updatedData.files,
             userId: updatedData.userId,
             username: updatedData.username,
@@ -198,6 +188,9 @@ export default function SuperUserProfile() {
 
   return (
     <>
+      {console.log(errors)}
+      {province && listCity === null ? handleProvinceChange(province) : ""}
+
       <div className="flex justify-center flex-col items-center">
         <div className="flex w-3/4">
           <h1 className="text-subtitle ">
@@ -240,7 +233,7 @@ export default function SuperUserProfile() {
                     id="province"
                     name="province"
                     value={province}
-                    onChange={(e) => handleProvinceChange(e.target.value)}
+                    onChange={handleChange}
                   >
                     {listProvince && listProvince.length !== 0
                       ? listProvince.map((listProvince) => {
@@ -248,6 +241,7 @@ export default function SuperUserProfile() {
                             <option
                               key={listProvince.id}
                               value={listProvince.id}
+                              // onClick={()=>handleProvinceChange(listProvince.id)}
                             >
                               {listProvince.name}
                             </option>
@@ -348,7 +342,7 @@ export default function SuperUserProfile() {
                       <p className="text-gray">{file.filename}</p>
                       <span
                         className="flex gap-2"
-                        onClick={() => handlePreview(idx)}
+                        onClick={() => handleDownload(idx)}
                       >
                         <ArticleOutlinedIcon className="text-gray" />
                         <FileDownloadOutlinedIcon className="text-green" />
@@ -416,10 +410,9 @@ export default function SuperUserProfile() {
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="currentPassword"
-                  name="currentPassword"
+                  id="oldPassword"
+                  name="oldPassword"
                   type="password"
-                  value={currentPassword}
                   onChange={handleChange}
                 />
               </div>
@@ -437,7 +430,6 @@ export default function SuperUserProfile() {
                   id="newPassword"
                   name="newPassword"
                   type="password"
-                  value={newPassword}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
@@ -462,7 +454,6 @@ export default function SuperUserProfile() {
                   id="confirmNewPassword"
                   name="confirmNewPassword"
                   type="password"
-                  value={confirmNewPassword}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />

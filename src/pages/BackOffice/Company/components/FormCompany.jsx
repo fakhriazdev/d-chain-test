@@ -100,7 +100,7 @@ const FormCompany = () => {
                 <h1 className="text-title my-auto">Add Company</h1>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg ">
-                <form className="p-6" encType="multipart/form-data" onSubmit={formik.handleSubmit}>
+                <form className="p-6" onSubmit={formik.handleSubmit} encType='multipart/form-data'>
                     <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div className="col-span-full">
                             <label
