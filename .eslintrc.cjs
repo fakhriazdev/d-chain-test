@@ -14,7 +14,7 @@ module.exports = {
   rules: {
     'react-refresh/only-export-components': [
       'warn',
-      'eslint-disable',
+      // 'eslint-disable',
       { allowConstantExport: true },
     ],
   },

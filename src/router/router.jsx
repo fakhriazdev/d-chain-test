@@ -28,6 +28,7 @@ import PDFViewer from "../utils/PDFViewer.jsx";
 import Invoice from "../pages/User/Invoice/index.jsx";
 import ListInvoice from "../pages/User/Invoice/components/ListInvoice.jsx";
 import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneration.jsx";
+import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -96,21 +97,21 @@ const setupRouter = () =>
         },
         {
           path: "/forget/success",
-          element: <SuccessSendMail/>
+          element: <SuccessSendMail />,
         },
         {
           path: "/user/forget/:id",
-          element: <NewPassword/>
+          element: <NewPassword />,
         },
         {
           path: "profile",
-          element: <Profile/>,
-          children:[
+          element: <Profile />,
+          children: [
             {
               path: "superuser/:companyId",
-              element: <SuperUserProfile/>
+              element: <SuperUserProfile />,
             },
-          ]
+          ],
         },
         {
           path: "pdf",
@@ -127,27 +128,29 @@ const setupRouter = () =>
         {
           path: "dashboard",
           element: <Dashboard />,
+        },
+        {
           path: "invoice",
-          element: <Invoice/>,
-          children:[
+          element: <Invoice />,
+          children: [
             {
               path: "detail",
-              element: <InvoiceDetail/>
+              element: <InvoiceDetail />,
             },
             {
               path: "processed",
-              element: <InvoiceProcessed/>
+              element: <InvoiceProcessed />,
             },
             {
               path: "reject",
-              element: <InvoiceReject/>
+              element: <InvoiceReject />,
             },
             {
               path: "rejected",
-              element: <InvoiceRejected/>
+              element: <InvoiceRejected />,
             },
-          ]
-        }
+          ],
+        },
       ],
     },
   ]);
