@@ -68,63 +68,63 @@ export default function InvoiceProcessed() {
               <h4 className="w-1/2">+6252828282929</h4>
               <h4 className="w-1/2">+6293983983938</h4>
             </div>
-            <div class="relative overflow-x-auto">
-              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <td scope="col" class="py-3">
+                    <td scope="col" className="py-3">
                       Name
                     </td>
-                    <td scope="col" class="py-3">
+                    <td scope="col" className="py-3">
                       Quantity
                     </td>
-                    <td scope="col" class=" py-3">
+                    <td scope="col" className=" py-3">
                       Price
                     </td>
-                    <td scope="col" class=" py-3">
+                    <td scope="col" className=" py-3">
                       Amount
                     </td>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
                       scope="row"
-                      class=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      Apple MacBook Pro 17"
+                      Apple MacBook Pro 17
                     </th>
-                    <td class=" py-4">100</td>
-                    <td class=" py-4">Laptop</td>
-                    <td class=" py-4">$2999</td>
+                    <td className=" py-4">100</td>
+                    <td className=" py-4">Laptop</td>
+                    <td className=" py-4">$2999</td>
                   </tr>
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
                       scope="row"
-                      class=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       Microsoft Surface Pro
                     </th>
-                    <td class=" py-4">120</td>
-                    <td class=" py-4">Laptop PC</td>
-                    <td class=" py-4">$1999</td>
+                    <td className=" py-4">120</td>
+                    <td className=" py-4">Laptop PC</td>
+                    <td className=" py-4">$1999</td>
                   </tr>
-                  <tr class="bg-white border-b dark:bg-gray-800">
+                  <tr className="bg-white border-b dark:bg-gray-800">
                     <th
                       scope="row"
-                      class=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      className=" py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       Magic Mouse 2
                     </th>
-                    <td class=" py-4">100</td>
-                    <td class=" py-4">Accessories</td>
-                    <td class=" py-4">$99</td>
+                    <td className=" py-4">100</td>
+                    <td className=" py-4">Accessories</td>
+                    <td className=" py-4">$99</td>
                   </tr>
-                  <tr class="bg-white dark:bg-gray-800">
+                  <tr className="bg-white dark:bg-gray-800">
                     <td></td>
                     <td></td>
-                    <td class=" py-4">Total</td>
-                    <td class=" py-4">Rp.120.000.000</td>
+                    <td className=" py-4">Total</td>
+                    <td className=" py-4">Rp.120.000.000</td>
                   </tr>
                 </tbody>
               </table>
@@ -168,7 +168,7 @@ export default function InvoiceProcessed() {
                     <p className="w-1/3">Transaction Number</p>
                     <p className="w-1/3 text-gray">FI-C-36974019-6.23</p>
                   </p>
-                  
+
                   <button id="excludeButton" className="border-2 border-orange w-36 rounded-lg text-orange hover:bg-orange hover:text-white h-10 mt-5">
                     Payment Detail
                   </button>

@@ -23,7 +23,6 @@ import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
 import { element } from "prop-types";
-import PDFViewer from "../utils/PDFViewer.jsx";
 
 import Invoice from "../pages/User/Invoice/index.jsx";
 import ListInvoice from "../pages/User/Invoice/components/ListInvoice.jsx";
@@ -114,14 +113,6 @@ const setupRouter = () =>
               element: <SuperUserProfile />,
             },
           ],
-        },
-        {
-          path: "pdf",
-          element: (
-            <PDFViewer
-              pdfUrl={"/api/companies/8a8ae4058c6ccf41018c6ccf66a60000/file"}
-            />
-          ),
         },
         {
           path: "backoffice",

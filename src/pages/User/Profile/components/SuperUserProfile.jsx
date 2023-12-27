@@ -22,7 +22,6 @@ import { useContext } from "react";
 import { useFormik } from "formik";
 import validationSchema from './validationSchema';
 import { Link } from "react-router-dom";
-import PDFViewer from "../../../../utils/PDFViewer";
 import * as Yup from "yup";
 
 export default function SuperUserProfile() {
@@ -179,11 +178,6 @@ export default function SuperUserProfile() {
 
   const handleDownload = (idx) => {
     window.location.href = files[idx].url;
-  };
-
-  const handlePreview = (idx) => {
-    // <PDFViewer pdfUrl={files[idx].url} />;
-    navigate("/pdf");
   };
 
   return (
