@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 export default function ModalExit() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+      navigate("logout")
+  }
+
   return (
     <div
       id="default-modal"
@@ -47,6 +55,7 @@ export default function ModalExit() {
             <button
               data-modal-hide="default-modal"
               type="button"
+              onClick={() => handleClick}
               className="ms-3 text-white w-1/2 md:w-1/3 bg-orange hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
               Ok

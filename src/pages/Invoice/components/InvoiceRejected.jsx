@@ -10,7 +10,7 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import rejectPayment from "../../../assets/icons/Icon Reject.svg";
 
-export default function InvoiceReject() {
+export default function InvoiceRejected() {
   return (
     <div>
       <h1 className="text-title">Invoicing Detail - Receivable</h1>
@@ -128,16 +128,25 @@ export default function InvoiceReject() {
           </div>
         </div>
       </div>
-
-      <button
-        data-modal-target="modal-reject"
-        data-modal-toggle="modal-reject"
-        type="button"
-        className="flex justify-center items-center gap-2 text-red mt-5 font-bold w-full h-12 rounded-lg border-2 hover:bg-red hover:opacity-90 hover:text-white"
-      >
-        <img src={rejectPayment} alt="" className="" />
-        <p>Cancel Invoice</p>
-      </button>
+      <div className="flex flex-wrap w-full mt-5 mb-3 gap-">
+        <div className="w-full md:w-1/2 md:pr-2 px-0 mb-2">
+          <button
+            data-modal-target="modal-reject"
+            data-modal-toggle="modal-reject"
+            type="button"
+            className="flex justify-center items-center gap-2 text-red font-bold w-full h-12 rounded-lg border-2 hover:bg-red hover:opacity-90 hover:text-white"
+          >
+            <img src={rejectPayment} alt="" className="" />
+            <p>Cancel Invoice</p>
+          </button>
+        </div>
+        <div className="w-full md:w-1/2 md:pl-2 pl-0 mb-2">
+          <button className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 bg-red rounded-lg hover:opacity-90">
+            <img src={rejectPayment} alt="" className="" />
+            <p>Resolve Invoice</p>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

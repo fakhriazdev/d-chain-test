@@ -11,6 +11,11 @@ import FormCompany from "../pages/BackOffice/Company/components/FormCompany.jsx"
 import EditCompany from "../pages/BackOffice/Company/components/EditCompany.jsx";
 import ListPartnership from "../pages/BackOffice/Partnership/components/ListPartnership.jsx";
 import Partnership from "../pages/BackOffice/Partnership/index.jsx";
+import Invoice from "../pages/Invoice";
+import InvoiceDetail from "../pages/Invoice/components/InvoiceDetail.jsx";
+import InvoiceProcessed from "../pages/Invoice/components/InvoiceProcessed.jsx";
+import InvoiceReject from "../pages/Invoice/components/InvoiceReject.jsx";
+import InvoiceRejected from "../pages/Invoice/components/InvoiceRejected.jsx";
 
 import ForgetPassword from "../pages/Auth/ForgetPassword";
 import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
@@ -83,6 +88,28 @@ const setupRouter = () =>
             {
               path: "superuser/:companyId",
               element: <SuperUserProfile/>
+            },
+          ]
+        },
+        {
+          path: "invoice",
+          element: <Invoice/>,
+          children:[
+            {
+              path: "detail",
+              element: <InvoiceDetail/>
+            },
+            {
+              path: "processed",
+              element: <InvoiceProcessed/>
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject/>
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected/>
             },
           ]
         },

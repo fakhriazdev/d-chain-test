@@ -22,7 +22,6 @@ export default function InvoiceProcessed() {
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' },
     ignoreElements: (element) => {
-      // Ignore the button with the id 'excludeButton'
       return element.id === 'excludeButton';
     },
   };
@@ -154,7 +153,7 @@ export default function InvoiceProcessed() {
                   </button>
                 </div>
                 <div className="w-1/2">
-                  <h4 className="text-[18px] mt-5">Bank Transfer</h4>
+                  <h4 className="text-[18px] mt-5">Self Payment</h4>
                   <p className="flex mb-3 mt-3">
                     <span className="w-1/3">Amount</span>
                     <span className="w-1/3 text-orange font-bold">
@@ -169,6 +168,7 @@ export default function InvoiceProcessed() {
                     <p className="w-1/3">Transaction Number</p>
                     <p className="w-1/3 text-gray">FI-C-36974019-6.23</p>
                   </p>
+                  
                   <button id="excludeButton" className="border-2 border-orange w-36 rounded-lg text-orange hover:bg-orange hover:text-white h-10 mt-5">
                     Payment Detail
                   </button>

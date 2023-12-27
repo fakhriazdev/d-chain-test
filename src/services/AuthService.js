@@ -27,9 +27,17 @@ const AuthService = () => {
   };
 
   const recoveryPassword = async (payload) => {
-    console.log(payload);
     const data = await axiosInstance.put(
       "/api/auth/recovery-password",
+      payload
+    );
+    return data;
+  };
+
+  const changePassword = async (payload) => {
+    console.log(payload);
+    const { data } = await axiosInstance.post(
+      "/api/auth/change-password",
       payload
     );
     return data;
@@ -52,6 +60,7 @@ const AuthService = () => {
     forgetPassword,
     verifyOtp,
     recoveryPassword,
+    changePassword,
   };
 };
 

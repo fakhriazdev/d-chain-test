@@ -17,8 +17,10 @@ import {
   selectCompanyAction,
   downloadFile,
 } from "../../../../slices/companySlice";
+import { authAction, forgetAction } from "../../../../slices/authSlice";
 import { useContext } from "react";
 import { useFormik } from "formik";
+import validationSchema from './validationSchema';
 import { Link } from "react-router-dom";
 import PDFViewer from "../../../../utils/PDFViewer";
 
@@ -27,7 +29,7 @@ export default function SuperUserProfile() {
   const [listCity, setListCity] = useState(null);
   const dispatch = useDispatch();
   const { selectedCompany } = useSelector((state) => state.companies);
-  const { companyService } = useContext(ServiceContext);
+  const { companyService, authService } = useContext(ServiceContext);
   const { companyId } = useParams();
   const navigate = useNavigate();
   let selectedProvince;
@@ -46,7 +48,7 @@ export default function SuperUserProfile() {
     fetchProvince();
   }, []);
 
-  const handleProvinceChange = async (provinceId) => {
+  const handleProvinceChange = (provinceId) => {
     fetchCity(provinceId);
   };
 
@@ -69,13 +71,12 @@ export default function SuperUserProfile() {
       address,
       phoneNumber,
       companyEmail,
-      accountNumber,
-      financingLimit,
-      reaminingLimit,
       files,
-      userId,
       username,
       emailUser,
+      oldPassword,
+      newPassword,
+      confirmNewPassword,
     },
     errors,
     dirty,
@@ -96,27 +97,42 @@ export default function SuperUserProfile() {
       address: "",
       phoneNumber: "",
       companyEmail: "",
-      accountNumber: "",
-      financingLimit: 0,
-      reaminingLimit: 0,
       files: "",
       userId: "",
       username: "",
       emailUser: "",
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
     },
     onSubmit: async (values) => {
       if (!isValid) return;
+      if (oldPassword && confirmNewPassword) {
+        dispatch(
+          forgetAction(async () => {
+            const result = await authService.changePassword({
+              email: emailUser,
+              oldPassword,
+              newPassword,
+            });
+            if (result.statusCode === 201) {
+              alert(result.data);
+            }
+            return null;
+          })
+        );
+      }
       dispatch(
         companyAction(async () => {
           const result = await companyService.updateCompany(values);
           if (result.statusCode === 200) {
-            alert("Berhasil yey");
+            alert(result.message);
           }
           return null;
         })
       );
     },
-    // validationSchema: validationSchema(id),
+    validationSchema: validationSchema,
   });
 
   useEffect(() => {
@@ -148,7 +164,6 @@ export default function SuperUserProfile() {
         })
       );
     };
-    handleProvinceChange(selectedProvince);
     onGetCompanyById();
   }, []);
 
@@ -163,15 +178,9 @@ export default function SuperUserProfile() {
 
   return (
     <>
-      {listProvince && listProvince.length !== 0
-        ? listProvince.map((prov) => {
-            if (province === prov.name) {
-              selectedProvince = prov.id;
-              // handleProvinceChange(selectedProvince );
-            }
-          })
-        : "data kosong"}
-      {console.log(companyId)}
+      {console.log(errors)}
+      {province && listCity === null ? handleProvinceChange(province) : ""}
+
       <div className="flex justify-center flex-col items-center">
         <div className="flex w-3/4">
           <h1 className="text-subtitle ">
@@ -213,7 +222,7 @@ export default function SuperUserProfile() {
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 mb-3 rounded leading-tight focus:ring-orange focus:border-orange"
                     id="province"
                     name="province"
-                    value={selectedProvince}
+                    value={province}
                     onChange={handleChange}
                   >
                     {listProvince && listProvince.length !== 0
@@ -222,6 +231,7 @@ export default function SuperUserProfile() {
                             <option
                               key={listProvince.id}
                               value={listProvince.id}
+                              // onClick={()=>handleProvinceChange(listProvince.id)}
                             >
                               {listProvince.name}
                             </option>
@@ -243,6 +253,7 @@ export default function SuperUserProfile() {
                     className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 mb-3 rounded leading-tight focus:ring-orange focus:border-orange"
                     id="city"
                     name="city"
+                    value={city}
                     onChange={handleChange}
                   >
                     {listCity && listCity.length !== 0
@@ -389,9 +400,10 @@ export default function SuperUserProfile() {
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="currentPassword"
-                  name="currentPassword"
+                  id="oldPassword"
+                  name="oldPassword"
                   type="password"
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3">
@@ -406,6 +418,7 @@ export default function SuperUserProfile() {
                   id="newPassword"
                   name="newPassword"
                   type="password"
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3">
@@ -420,6 +433,7 @@ export default function SuperUserProfile() {
                   id="confirmNewPassword"
                   name="confirmNewPassword"
                   type="password"
+                  onChange={handleChange}
                 />
               </div>
             </div>

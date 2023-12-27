@@ -121,14 +121,14 @@ export default function InvoiceDetail() {
               data-modal-target="modal-reject"
               data-modal-toggle="modal-reject"
               type="button"
-              className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:bg-orange hover:text-white"
+              className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:opacity-80 hover:text-white"
             >
               <img src={rejectPayment} alt="" className="" />
               <p>Reject Invoice</p>
             </button>
           </div>
           <div className="w-full md:w-1/2 md:pl-2 pl-0 mb-2">
-            <button className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:bg-orange hover:text-white">
+            <button className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:opacity-80 hover:text-white">
               <img src={proceedPayment} alt="" className="" />
               <p>Proceed Payment</p>
             </button>
