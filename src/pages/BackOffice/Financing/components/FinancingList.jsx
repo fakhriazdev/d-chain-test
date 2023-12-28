@@ -1,153 +1,22 @@
-import InvoiceGeneration from "./InvoiceGeneration";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
-import { ChevronLeftOutlined } from "@mui/icons-material";
-import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
-import Badge from "../../../../components/Badge.jsx";
-import InvoiceGenerationButton from "../../../../assets/icons/Icon Invoice Generation Button.svg";
-import IconUploadBlack from "../../../../assets/icons/Icon Upload Black.svg";
 import IconDownload from "../../../../assets/icons/Icon Download.svg";
 import IconView from "../../../../assets/icons/Icon View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
-import { useDispatch, useSelector } from "react-redux";
-import { useContext, useEffect, useState } from "react";
-import { ServiceContext } from "../../../../context/ServiceContext.jsx";
-import { invoiceAction } from "../../../../slices/invoiceSlice.js";
-import { Link, useSearchParams } from "react-router-dom";
-import { useFormik } from "formik";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import Badge from "../../../../components/Badge";
 
-const ListInvoice = () => {
-  const [searchParam, setSearchParam] = useSearchParams();
-
-  const dispatch = useDispatch();
-  const { invoices } = useSelector((state) => state.invoice);
-  const { invoiceService } = useContext(ServiceContext);
-  const [paging, setPaging] = useState({});
-
-  const currentPage = parseInt(searchParam.get("page") || 1);
-  const currentSize = parseInt(searchParam.get("size") || 1);
-
-  const onNext = (page) => {
-    if (page === paging.totalPages) return;
-    searchParam.set("page", page + 1);
-    setSearchParam(searchParam);
-  };
-
-  const onPrevious = (page) => {
-    if (page === 1) return;
-    searchParam.set("page", page - 1);
-    setSearchParam(searchParam);
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      status: "",
-      type: "Payable",
-    },
-    onSubmit: (values) => {
-      console.log(values);
-      dispatch(
-        invoiceAction(async () => {
-          const result = await invoiceService.fetchInvoices({
-            page: 1,
-            size: 10,
-            direction: "asc",
-            type: values.type,
-            status: values.status,
-          });
-          console.log(result);
-          return result;
-          // if (result) {
-          //   setPaging(result.paging);
-          //   const data = await Promise.all();
-          //   return { data };
-          // }
-        })
-      );
-    },
-  });
-
-  useEffect(() => {
-    const onGetInvoices = () => {
-      dispatch(
-        invoiceAction(async () => {
-          const result = await invoiceService.fetchInvoices({
-            page: 1,
-            size: 10,
-            direction: "asc",
-            type: "Payable",
-            status: null,
-          });
-          console.log(result);
-          return result;
-          // if (result) {
-          //   setPaging(result.paging);
-          //   const data = await Promise.all();
-          //   return { data };
-          // }
-        })
-      );
-    };
-    onGetInvoices();
-  }, [dispatch, invoiceService, currentPage, currentSize]);
-
-  useEffect(() => {
-    if (currentPage < 1 || currentPage > paging.totalPages) {
-      searchParam.set("page", 1);
-      setSearchParam(searchParam);
-    }
-  });
-
+const FinancingList = () => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-    console.log(isChecked);
-    let checked = "";
-    if (!isChecked) {
-      formik.setValues({
-        type: "Receivable",
-      });
-      checked = "Receivable";
-    } else {
-      formik.setValues({
-        type: "Payable",
-      });
-      checked = "Payable";
-    }
-    console.log(checked);
-
-    dispatch(
-      invoiceAction(async () => {
-        const result = await invoiceService.fetchInvoices({
-          page: 1,
-          size: 10,
-          direction: "asc",
-          type: checked,
-          status: null,
-        });
-        console.log(result);
-        return result;
-      })
-    );
-  };
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const filterInvoices = invoices.filter((item) =>
-    item.company.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
   };
 
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
-        <h1 className="text-title my-auto">Invoice</h1>
+        <h1 className="text-title my-auto">Financing</h1>
         <div>
           <label className="themeSwitcherTwo shadow-card border border-[#D5D5D7] relative inline-flex cursor-pointer select-none items-center justify-center rounded-xl bg-[#F3F4F6] p-1">
             <input
@@ -175,15 +44,13 @@ const ListInvoice = () => {
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="relative flex justify-between mb-5 gap-4 mx-4">
-          <form onSubmit={handleSearchSubmit}>
+          <form>
             <div className="flex items-center py-2">
               <input
                 className="border-none bg-orange bg-opacity-10 rounded-l-lg w-72 h-11 placeholder:opacity-50 pl-12 "
                 id="email"
                 type="text"
                 placeholder="Search..."
-                onChange={handleSearch}
-                value={searchTerm}
               />
               <img
                 src={IconSearch}
@@ -199,35 +66,21 @@ const ListInvoice = () => {
             </div>
           </form>
           <div className="flex items-center space-x-4">
+            <p className="mt-3">Filter By:</p>
             <button
               id="dropdownDefaultButton"
               data-dropdown-toggle="dropdown"
               className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center mt-3"
               type="button"
             >
-              Filter
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
-            <div className="flex space-x-7">
-              <Link to={"/user/invoice/add"}>
-                <button
-                  type="button"
-                  className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
-                >
-                  <img
-                    src={InvoiceGenerationButton}
-                    alt="Icon Invoice Generation Button"
-                  />
-                  <p>Invoice Generation</p>
-                </button>
-              </Link>
-            </div>
           </div>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60"
+            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-80"
           >
-            <form onSubmit={formik.handleSubmit}>
+            <form>
               <div className="">
                 <ul
                   className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
@@ -238,17 +91,15 @@ const ListInvoice = () => {
                     <div className="flex items-center mt-3">
                       <input
                         type="radio"
-                        value="Unpaid"
+                        value="All"
                         name="status"
-                        checked={formik.values.status === "Unpaid"}
-                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
                         htmlFor="default-radio-1"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Unpaid
+                        All
                       </label>
                     </div>
                   </li>
@@ -256,17 +107,15 @@ const ListInvoice = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Paid"
+                        value="Pending"
                         name="status"
-                        checked={formik.values.status === "Paid"}
-                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Paid
+                        Pending
                       </label>
                     </div>
                   </li>
@@ -274,17 +123,15 @@ const ListInvoice = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Late"
+                        value="Rejected"
                         name="status"
-                        checked={formik.values.status === "Late"}
-                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Late
+                        Rejected
                       </label>
                     </div>
                   </li>
@@ -292,66 +139,52 @@ const ListInvoice = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Disputed"
+                        value="On-Going"
                         name="status"
-                        checked={formik.values.status === "Disputed"}
-                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Disputed
+                        On-Going
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Outstanding"
+                        name="status"
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Outstanding
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Completed"
+                        name="status"
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Completed
                       </label>
                     </div>
                   </li>
                 </ul>
               </div>
-              {/* <div className="">
-                <ul
-                  className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownRadioButton"
-                >
-                  Type
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Payable"
-                        name="type"
-                        checked={formik.values.type === 'Payable'}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-1"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Payable
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Receivable"
-                        name="type"
-                        checked={formik.values.type === 'Receivable'}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Receivable
-                      </label>
-                    </div>
-                  </li>
-                </ul>
-              </div> */}
               <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
                 <button
                   type="button"
@@ -374,7 +207,7 @@ const ListInvoice = () => {
             <thead className="text-white text-[16px] font-[300] bg-orange ">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Supplier
+                  Date
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Inv. Number
@@ -383,7 +216,7 @@ const ListInvoice = () => {
                   Amount
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Due Date
+                  Company
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Status
@@ -394,64 +227,63 @@ const ListInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {filterInvoices?.length !== 0 &&
-                filterInvoices.map((i, idx) => {
-                  return (
-                    <tr key={idx} className="bg-white">
-                      <th
-                        scope="col-span-4"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                      >
-                        {i.company}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                      >
-                        {i.invoice_id}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
-                      >
-                        Rp. {i.amount}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                      >
-                        {i.dueDate}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                      >
-                        <Badge variant={i.status}>{i.status}</Badge>
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
-                      >
-                        <button>
-                          <img src={IconView} alt="Icon View" />
-                        </button>
-                        <button>
-                          <img src={IconDownload} alt="Icon Download" />
-                        </button>
-                      </th>
-                    </tr>
-                  );
-                })}
+              {/* {filterInvoices?.length !== 0 &&
+                filterInvoices.map((i, idx) => { */}
+              {/* return ( */}
+              <tr className="bg-white">
+                <th
+                  scope="col-span-4"
+                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                >
+                  26-06-24
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                >
+                  FI-C-36974019-6.23
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
+                >
+                  Rp. 20.000.000
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                >
+                  Enigma Camp
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                >
+                  <Badge variant="On-Going">On-Going</Badge>
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
+                >
+                  <Link to={"/backoffice/financing/detail/:id"}>
+                    <button className="ml-4">
+                      <img src={IconView} alt="Icon View" />
+                    </button>
+                  </Link>
+                </th>
+              </tr>
+              {/* );
+                })} */}
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
           <p className="my-auto">Showing 1 to 10 of 50 entries</p>
 
-          {invoices && invoices.length !== 0 && (
+          {/* {invoices && invoices.length !== 0 && (
             <nav aria-label="Page navigation example">
-              <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
-                {/* <li className={`page-item ${currentPage == 1 && "disabled"}`}>
+              <ul className="flex items-center -space-x-px h-8 text-sm gap-4"> */}
+          {/* <li className={`page-item ${currentPage == 1 && "disabled"}`}>
                   <a
                     onClick={() => onPrevious(currentPage)}
                     className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
@@ -460,7 +292,7 @@ const ListInvoice = () => {
                     <span className="sr-only">Previous</span>
                   </a>
                 </li> */}
-                {/* {Array(paging.totalPages)
+          {/* {Array(paging.totalPages)
                   .fill(null)
                   .map((_, idx) => {
                     const page = ++idx;
@@ -475,7 +307,7 @@ const ListInvoice = () => {
                       </li>
                     );
                   })} */}
-                {/* <li>
+          {/* <li>
                   <a
                     href="#"
                     className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
@@ -484,7 +316,7 @@ const ListInvoice = () => {
                   </a>
                 </li> */}
 
-                {/* <li
+          {/* <li
                   className={`page-item ${
                     currentPage >= paging.totalPages && "disabled"
                   }`}
@@ -497,13 +329,13 @@ const ListInvoice = () => {
                     <span className="sr-only">Next</span>
                   </a>
                 </li> */}
-              </ul>
+          {/* </ul>
             </nav>
-          )}
+          )} */}
         </div>
       </div>
     </>
   );
 };
 
-export default ListInvoice;
+export default FinancingList;

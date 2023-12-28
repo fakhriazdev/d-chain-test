@@ -22,13 +22,13 @@ const InvoiceGeneration = () => {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
-  const companyId = "ff8081818ca91729018ca9185c930001";
+  const companyId = sessionStorage.getItem("companyId");
   const currentDate = new Date().toISOString().split("T")[0];
 
-  const [searchParam, setSearchParam] = useSearchParams();
+  // const [searchParam, setSearchParam] = useSearchParams();
 
-  const currentPage = parseInt(searchParam.get("page") || 1);
-  const currentSize = parseInt(searchParam.get("size") || 1);
+  // const currentPage = parseInt(searchParam.get("page") || 1);
+  // const currentSize = parseInt(searchParam.get("size") || 1);
 
   const {
     values: { recipientId, dueDate, invDate, amount, itemList, checkbox },
@@ -124,8 +124,8 @@ const InvoiceGeneration = () => {
     const getPartnerships = async () => {
       try {
         const data = await invoiceService.fetchPartnership(companyId, {
-          page: currentPage,
-          size: currentSize,
+          page: 1,
+          size: 1,
         });
         setPartnerships(data);
       } catch (error) {
@@ -233,10 +233,10 @@ const InvoiceGeneration = () => {
                     partnerships.data.map((partnership) => {
                       return (
                         <option
-                          key={partnership.companyId}
-                          value={partnership.partnerId}
+                          key={partnership.partner.companyId}
+                          value={partnership.partner.companyId}
                         >
-                          {partnership.partnerId}
+                          {partnership.partner.companyName}
                         </option>
                       );
                     })}
