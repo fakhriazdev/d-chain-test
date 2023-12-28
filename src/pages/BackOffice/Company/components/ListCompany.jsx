@@ -20,6 +20,9 @@ const ListCompany = () => {
     pageSize,
     handlePageChange,
   } = useCompanies();
+  console.log(currentPage);
+  console.log(totalPages);
+  console.log(pageSize);
 
   return (
     <>
