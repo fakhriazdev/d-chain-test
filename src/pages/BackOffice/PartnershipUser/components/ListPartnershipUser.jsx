@@ -7,7 +7,9 @@ import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import Button from "../../../../components/Button.jsx";
 import RequestPartnership from "./RequestPartnership.jsx";
 
+
 const ListPartnershipUser = () => {
+
     return (
         <>
             <div className="relative flex justify-between my-12 mx-4">
@@ -124,7 +126,7 @@ const ListPartnershipUser = () => {
                             </th>
                             <th scope="col-span-4"
                                 className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <Badge variant="success">In Partner</Badge>
+                                <Badge variant="in partner">In Partner</Badge>
                             </th>
                             <th scope="col-span-4"
                                 className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">

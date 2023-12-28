@@ -12,17 +12,18 @@ import { useFetchCompany } from "../../../../features/company/useFetchCompany.js
 const ListPartnership = () => {
   const params = useParams();
   const {
-    partnership,
+    datas,
     isLoading,
     currentPage,
     pageSize,
     totalPages,
     handlePageChange,
   } = useFetchPartnership(params.id);
-
   console.log(currentPage, "currentPage");
   console.log(pageSize, "pageSize");
   console.log(totalPages, "totalPages");
+  console.log(datas)
+
   return (
     <>
       <div className="relative flex justify-between mb-10 mx-4">
@@ -64,8 +65,9 @@ const ListPartnership = () => {
           </button>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40"
+            className="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-md w-80 p-6"
           >
+            <p className="border-0">Partnership Status</p>
             <ul
               className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
               aria-labelledby="dropdownRadioButton"
@@ -121,36 +123,42 @@ const ListPartnership = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white">
-                <th
-                  scope="col-span-4"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  FI-C-36974019-6.23
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  Cahaya Group
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  <Badge variant="success">Success</Badge>
-                </th>
-              </tr>
+
+            {datas?.map((partnership)=>{
+              return (
+                  <tr className="bg-white" key={partnership?.partnershipId}>
+                    <th
+                        scope="col-span-4"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      {partnership?.partnershipId}
+                    </th>
+                    <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      {partnership?.partnerId}
+                    </th>
+                    <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      <Badge variant={`"${partnership?.partnerStatus}"`}>{partnership?.partnerStatus}</Badge>
+                    </th>
+                  </tr>
+              )
+            })}
+
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
           {isLoading === true ? (
-            <p className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-              loading...
-            </p>
+              <p className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+                loading...
+              </p>
           ) : (
-            <p className="my-auto">{`Showing ${currentPage} to ${pageSize} of ${partnership?.length} entries`}</p>
+              <p className="my-auto">{`Showing ${currentPage} to ${pageSize} of ${datas?.length} entries`}</p>
           )}
           <nav aria-label="Page navigation example">
             <ul className="flex items-center -space-x-px h-8 text-sm gap-4">

@@ -30,6 +30,7 @@ import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneratio
 import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
+import ListFinancing from "../pages/BackOffice/Financing/components/ListFinancing.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -153,7 +154,16 @@ const setupRouter = () =>
               element: <ListPartnershipUser />,
             },
           ],
-
+        },
+        {
+          path: "/backoffice/financing",
+          element: <PartnershipUser />,
+          children: [
+            {
+              index: true,
+              element: <ListFinancing />,
+            },
+          ],
         },
 
 

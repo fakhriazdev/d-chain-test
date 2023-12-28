@@ -5,6 +5,10 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/logo.png"
+import ManageCompanyLogo from '../assets/icons/ManageCompany.svg?react'
+import ManageUser from '../assets/icons/Manage User.svg?react'
+import DashboardLogo from '../assets/icons/Dashboard.svg?react'
+import InvoiceLogo from '../assets/icons/invoice.svg?react'
 
 const Sidebar = (props) => {
   const { children } = props;
@@ -133,37 +137,46 @@ const Sidebar = (props) => {
           <ul className="space-y-4 font-medium">
             <li>
               <a
-                href="#"
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                  href="#"
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <GridViewOutlinedIcon />
+                <DashboardLogo/>
                 <span className="ms-3">Dashboard</span>
               </a>
             </li>
             <li>
               <a
-                href="#"
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                  href="#"
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <LibraryBooksOutlinedIcon />
+                <InvoiceLogo/>
                 <span className="ms-3">Invoice</span>
               </a>
             </li>
             <li>
               <Link
-                to={`/backoffice/company`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                  to={`/backoffice/financing`}
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <GroupsOutlinedIcon />
+                <InvoiceLogo/>
+                <span className="ms-3">Financing</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                  to={`/backoffice/company`}
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              >
+                <ManageCompanyLogo />
                 <span className="ms-3">Manage Company</span>
               </Link>
             </li>
             <li>
               <a
-                href="#"
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                  href="#"
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <ViewCarouselOutlinedIcon />
+                <ManageUser/>
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Manage User
                 </span>
@@ -171,10 +184,10 @@ const Sidebar = (props) => {
             </li>
             <li>
               <Link
-                to={`/profile/superuser/:id`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                  to={`/profile/superuser/:id`}
+                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <GroupsOutlinedIcon />
+                <GroupsOutlinedIcon/>
                 <span className="ms-3">Profile</span>
               </Link>
             </li>

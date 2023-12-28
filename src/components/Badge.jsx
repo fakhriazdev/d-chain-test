@@ -1,28 +1,37 @@
 import React, { useEffect, useState } from "react";
 
 const Badge = (props) => {
-  const { variant, children } = props;
-  const [type, setType] = useState("");
+    const { variant, children } = props;
+    const [type, setType] = useState("");
 
     useEffect(() => {
-        switch (variant) {
+        switch (variant.toLowerCase()) {
             case "pending":
-                setType("yellow")
+                setType("yellow");
                 break;
             case "rejected":
-                setType("red")
+                setType("red");
                 break;
-            case "success":
-                setType("green")
+            case "outstanding":
+                setType("red");
+                break;
+            case "in partner":
+                setType("green");
+                break;
+            case "completed":
+                setType("green");
                 break;
             default:
-            setType("yellow")
-
+                setType("yellow");
         }
     }, []);
+
     return (
         <span
-            className={`bg-${type}/20 text-${type} text-xs font-medium me-2 px-2.5 py-0.5 rounded rounded-md border-[3px] border-${type}/40`}>{children}</span>
+            className={`bg-${type}/20 text-${type} text-xs font-medium me-2 px-3 py-0.5 rounded rounded-md border-${type} border-2`}
+        >
+      {children}
+    </span>
     );
 };
 

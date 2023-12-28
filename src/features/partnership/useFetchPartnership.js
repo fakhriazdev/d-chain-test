@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axiosInstance from "../../api/axiosInstance.js";
 
 const useFetchPartnership = (id) => {
-    const [partnership, setPartnership] = useState(null)
+    const [datas, setDatas] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [sortOrder, setSortOrder] = useState();
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,11 +24,9 @@ const useFetchPartnership = (id) => {
                     sortBy: "company",
                 }
             })
-
-            console.log(partnershipResponse.data)
             const {count,totalPages} = partnershipResponse.data.paging
             setTotalPages(totalPages)
-            setPartnership(partnershipResponse.data.data)
+            setDatas(partnershipResponse.data.data)
             setIsLoading(false)
         }catch (err){
             console.log(err.message)
@@ -38,10 +36,8 @@ const useFetchPartnership = (id) => {
     useEffect(() => {
         fetchPartnership()
     }, [currentPage,pageSize]);
-
-
     return{
-        partnership,
+        datas,
         isLoading,
         currentPage,
         pageSize,
