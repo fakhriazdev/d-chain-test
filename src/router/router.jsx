@@ -127,7 +127,7 @@ const setupRouter = () =>
           element: <Invoice />,
           children: [
             {
-              path: "detail",
+              path: "detail/:id",
               element: <InvoiceDetail />,
             },
             {
