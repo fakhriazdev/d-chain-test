@@ -30,6 +30,9 @@ import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneratio
 import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
+import Financing from "../pages/Financing/index.jsx";
+import FinancingDetailPayable from "../pages/Financing/components/FinancingDetailPayable.jsx";
+import RequestFinancingReceivable from "../pages/Financing/components/RequestFinancingReceivable.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -133,6 +136,28 @@ const setupRouter = () =>
             {
               path: "processed",
               element: <InvoiceProcessed />,
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
+            },
+          ],
+        },
+        {
+          path: "financing",
+          element: <Financing />,
+          children: [
+            {
+              path: "payable",
+              element: <FinancingDetailPayable />,
+            },
+            {
+              path: "request-receivable",
+              element: <RequestFinancingReceivable />,
             },
             {
               path: "reject",

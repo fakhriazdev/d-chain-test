@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState } from "react";
 
-export default function ModalReject(rejectInvoice) {
+export default function ModalReject({rejectInvoice}) {
   const [reasonType, setReasonType] = useState("");
   const [reason, setReason] = useState("");
 
@@ -12,6 +12,7 @@ export default function ModalReject(rejectInvoice) {
       className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 inset-0 overflow-auto bg-black bg-opacity-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       {console.log(reasonType)}
+      {console.log(reason)}
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         <div className="relative bg-white rounded-lg shadow">
           <div className="flex items-center justify-between p-4 h-full md:p-5 rounded-t dark:border-gray-600">
@@ -37,7 +38,7 @@ export default function ModalReject(rejectInvoice) {
               </svg>
             </button>
           </div>
-          <form onSubmit={rejectInvoice}>
+          <form onSubmit={() => rejectInvoice()}>
             <div className="">
               <h3 className="text-xl font-semibold ps-10 text-gray-900 dark:text-white">
                 Sure you want to reject this invoice?
@@ -48,20 +49,21 @@ export default function ModalReject(rejectInvoice) {
                   name="reasonType"
                   id="reasonType"
                   className="w-full rounded-md"
-                  onChange={(e) => setReason(e.target.value)}
+                  onChange={(e) => setReasonType(e.target.value)}
                 >
                   <option value="balbaalala" disabled selected hidden>
                     Why do you want to reject this invoice?
                   </option>
-                  <option value="balbaalala">Quantity Discrepancies</option>
-                  <option value="balbaalala">Price Discrepancies</option>
-                  <option value="balbaalala">Quality Issues</option>
-                  <option value="balbaalala">Others</option>
+                  <option value="Quantity Discrepancies">Quantity Discrepancies</option>
+                  <option value="Price Discrepancies">Price Discrepancies</option>
+                  <option value="Quality Issues">Quality Issues</option>
+                  <option value="Others">Others</option>
                 </select>
                 <textarea
                   name="reason"
                   id="reason"
                   className="mt-2 w-full rounded-md h-40"
+                  onChange={(e) => setReason(e.target.value)}
                   placeholder="What is your reason?"
                 ></textarea>
               </div>
@@ -76,8 +78,7 @@ export default function ModalReject(rejectInvoice) {
               </button>
               <button
                 data-modal-hide="modal-reject"
-                type="button"
-                onClick={() => rejectInvoice()}
+                type="submit"
                 className="ms-3 text-white w-1/2 md:w-1/3 bg-orange hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
               >
                 Ok
