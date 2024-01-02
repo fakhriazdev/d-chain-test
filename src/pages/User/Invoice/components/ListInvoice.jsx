@@ -23,7 +23,6 @@ const ListInvoice = () => {
   const { invoices } = useSelector((state) => state.invoice);
   const { invoiceService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
-  console.log(paging);
 
   const currentPage = parseInt(searchParam.get("page") || 1);
   const currentSize = parseInt(searchParam.get("size") || 10);
@@ -43,7 +42,7 @@ const ListInvoice = () => {
   const formik = useFormik({
     initialValues: {
       status: "",
-      type: "Payable",
+      type: "payable",
     },
     onSubmit: (values) => {
       console.log(values);
@@ -77,7 +76,7 @@ const ListInvoice = () => {
               page: currentPage,
               size: currentSize,
               direction: "asc",
-              type: "Payable",
+              type: "payable",
               status: null,
             });
             console.log(result.paging);
@@ -98,10 +97,11 @@ const ListInvoice = () => {
 
   useEffect(() => {
     if (currentPage < 1 || currentPage > paging.totalPages) {
-      searchParam.set("page", 1);
-      setSearchParam(searchParam);
+      const newSearchParam = new URLSearchParams(searchParam);
+      newSearchParam.set("page", 1);
+      setSearchParam(newSearchParam.toString());
     }
-  });
+  }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -111,14 +111,14 @@ const ListInvoice = () => {
     let checked = "";
     if (!isChecked) {
       formik.setValues({
-        type: "Receivable",
+        type: "receivable",
       });
-      checked = "Receivable";
+      checked = "receivable";
     } else {
       formik.setValues({
-        type: "Payable",
+        type: "payable",
       });
-      checked = "Payable";
+      checked = "payable";
     }
     console.log(checked);
 
@@ -151,6 +151,12 @@ const ListInvoice = () => {
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
+  };
+
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+    console.log(isDropdownOpen);
   };
 
   return (
@@ -213,6 +219,7 @@ const ListInvoice = () => {
               data-dropdown-toggle="dropdown"
               className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center mt-3"
               type="button"
+              onClick={toggleDropdown}
             >
               Filter
               <ExpandMoreOutlinedIcon className="my-auto" />
@@ -234,7 +241,9 @@ const ListInvoice = () => {
           </div>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60"
+            className={`z-20 ${
+              isDropdownOpen ? "block" : "hidden"
+            } bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60`}
           >
             <form onSubmit={formik.handleSubmit}>
               <div className="">
@@ -243,6 +252,24 @@ const ListInvoice = () => {
                   aria-labelledby="dropdownRadioButton"
                 >
                   Status
+                  <li>
+                    <div className="flex items-center mt-3">
+                      <input
+                        type="radio"
+                        value="Pending"
+                        name="status"
+                        checked={formik.values.status === "Pending"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-1"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Pending
+                      </label>
+                    </div>
+                  </li>
                   <li>
                     <div className="flex items-center mt-3">
                       <input
@@ -283,9 +310,9 @@ const ListInvoice = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Late"
+                        value="Late-Unpaid"
                         name="status"
-                        checked={formik.values.status === "Late"}
+                        checked={formik.values.status === "Late-Unpaid"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -293,7 +320,25 @@ const ListInvoice = () => {
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Late
+                        Late-Unpaid
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Late-Paid"
+                        name="status"
+                        checked={formik.values.status === "Late-Paid"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Late-Paid
                       </label>
                     </div>
                   </li>
@@ -315,11 +360,30 @@ const ListInvoice = () => {
                       </label>
                     </div>
                   </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Cancelled"
+                        name="status"
+                        checked={formik.values.status === "Cancelled"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Cancelled
+                      </label>
+                    </div>
+                  </li>
                 </ul>
               </div>
               <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
                 <button
                   type="button"
+                  onClick={toggleDropdown}
                   className="bg-gray/20 hover:bg-gray/20 text-zinc-800 py-2 px-4 rounded"
                 >
                   Cancel
@@ -339,7 +403,7 @@ const ListInvoice = () => {
             <thead className="text-white text-[16px] font-[300] bg-orange ">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Supplier
+                  Company
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Inv. Number
@@ -359,8 +423,7 @@ const ListInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {filterInvoices &&
-                filterInvoices?.length !== 0 &&
+              {filterInvoices && filterInvoices?.length !== 0 ? (
                 filterInvoices.map((i, idx) => {
                   return (
                     <tr key={idx} className="bg-white">
@@ -409,7 +472,14 @@ const ListInvoice = () => {
                       </th>
                     </tr>
                   );
-                })}
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center">
+                    Company Not Found...
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

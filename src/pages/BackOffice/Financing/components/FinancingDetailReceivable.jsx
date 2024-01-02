@@ -1,16 +1,17 @@
 import IconReject from "../../../../assets/icons/Icon Reject.svg";
 import IconProceedPayment from "../../../../assets/icons/Icon Proceed Payment.svg";
+import ModalReject from "../../../Invoice/components/ModalReject";
 
-const FinancingDetail = () => {
+const FinancingDetailReceivable = () => {
   return (
     <>
-      <h1 className="text-title">Financing Detail - Payable</h1>
+      <h1 className="text-title">Financing Detail - Receivable</h1>
 
       <div className="flex justify-center mt-5 flex-col items-center">
         <div className=" w-full rounded-2xl shadow-md min-h-fit p-10">
           <div className="flex justify-between">
             <div>
-              <h1 className="text-subtitle ">Payment No.</h1>
+              <h1 className="text-subtitle ">Invoice No.</h1>
               <h4>FI-C-36974019-6.23</h4>
             </div>
             <div>
@@ -40,19 +41,27 @@ const FinancingDetail = () => {
               <h4 className="w-1/2">+6252828282929</h4>
               <h4 className="w-1/2">+6293983983938</h4>
             </div>
-            <div className="flex justify-end mt-3 mb-10">
-              <h4 className="font-bold w-1/4">Total</h4>
-              <h4 className="font-bold">220.000.000</h4>
+            <div className="flex mt-5">
+              <h4 className="text-[18px]">Financing Detail</h4>
             </div>
-            <div className="flex">
-              <h4 className="w-1/2">Tenuer</h4>
+            <div className="flex justify-between">
+              <h4>Request Amount</h4>
+              <h4 className="font-bold">1.400.000.000</h4>
             </div>
-            <div className="flex">
-              <h4 className="w-1/2 text-subtitle">1 Year</h4>
+            <div className="flex justify-between">
+              <h4>Fee</h4>
+              <h4 className="font-bold">200.000.000</h4>
+            </div>
+            <div>
+                <hr className="opacity-20"/>
+            </div>
+            <div className="flex justify-between">
+              <h4>Receive Amount</h4>
+              <h4 className="text-logo font-bold">1.200.000.000</h4>
             </div>
           </div>
 
-          <div className="flex flex-wrap w-full mt-7">
+          <div className="flex flex-wrap w-full mt-10">
             <div className="w-full md:w-1/2 md:pr-2 px-0">
               <button
                 data-modal-target="modal-reject"
@@ -71,10 +80,11 @@ const FinancingDetail = () => {
               </button>
             </div>
           </div>
+          <ModalReject />
         </div>
       </div>
     </>
   );
 };
 
-export default FinancingDetail;
+export default FinancingDetailReceivable;

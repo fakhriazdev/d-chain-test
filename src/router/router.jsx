@@ -33,6 +33,7 @@ import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/
 import FinancingList from "../pages/BackOffice/Financing/components/FinancingList.jsx";
 import Financing from "../pages/BackOffice/Financing/index.jsx";
 import FinancingDetail from "../pages/BackOffice/Financing/components/FinancingDetail.jsx";
+import FinancingDetailReceivable from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -168,6 +169,10 @@ const setupRouter = () =>
             {
               path: "detail/:id",
               element: <FinancingDetail />,
+            },
+            {
+              path: "detail/receivable/:id",
+              element: <FinancingDetailReceivable />,
             },
           ],
         },

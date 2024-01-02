@@ -37,7 +37,7 @@ export default function ModalReject() {
             </h3>
             <h4 className="text-lable ps-10 pt-5">Write your reason</h4>
             <div className="mx-10">
-              <select name="reason" id="reason" className="w-full rounded-md" pla>
+              <select name="reason" id="reason" className="w-full rounded-md">
                 <option value="balbaalala" disabled selected hidden>Why do you want to reject this invoice?</option>
                 <option value="balbaalala">Quantity Discrepancies</option>
                 <option value="balbaalala">Price Discrepancies</option>

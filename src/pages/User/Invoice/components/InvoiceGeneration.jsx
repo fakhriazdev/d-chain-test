@@ -82,16 +82,6 @@ const InvoiceGeneration = () => {
           return null;
         })
       );
-
-      // dispatch(
-      //   invoiceAction(async () => {
-      //     const result = await invoiceService.updateMenu(values);
-      //     if (result.statusCode === 200) {
-      //       navigate("/user/invoice");
-      //     }
-      //     return null;
-      //   })
-      // );
     },
     validationSchema: schema,
   });
@@ -125,7 +115,7 @@ const InvoiceGeneration = () => {
       try {
         const data = await invoiceService.fetchPartnership(companyId, {
           page: 1,
-          size: 1,
+          size: 1000,
         });
         setPartnerships(data);
       } catch (error) {
@@ -134,26 +124,6 @@ const InvoiceGeneration = () => {
     };
     getPartnerships();
   }, []);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     const onGetTableById = async () => {
-  //       const result = await dispatch(
-  //         selectTableAction(() => tableService.fetchTableById(id))
-  //       );
-
-  //       if (result.payload) {
-  //         const { tableId, tableName, status } = result.payload.data;
-  //         setValues({
-  //           id: tableId,
-  //           name: tableName,
-  //           status: status === 'AVAILABLE' ? true : false,
-  //         });
-  //       }
-  //     };
-  //     onGetTableById();
-  //   }
-  // }, [dispatch, setValues, id, tableService]);
 
   return (
     <>
@@ -197,7 +167,6 @@ const InvoiceGeneration = () => {
                   value={invDate}
                   min={currentDate}
                 />
-                {/* <img src={IconCalender} alt="" className="absolute" /> */}
               </div>
             </div>
             <div className="sm:col-span-2">
@@ -230,10 +199,10 @@ const InvoiceGeneration = () => {
                   <option selected>Choose Invoice Recipient</option>
                   {partnerships.data &&
                     partnerships.data.length &&
-                    partnerships.data.map((partnership) => {
+                    partnerships.data.map((partnership, idx) => {
                       return (
                         <option
-                          key={partnership.partner.companyId}
+                          key={idx}
                           value={partnership.partner.companyId}
                         >
                           {partnership.partner.companyName}
