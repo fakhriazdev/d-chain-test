@@ -1,6 +1,8 @@
 import AuthService from "./AuthService.js";
 import CompanyService from "./CompanyService.js";
+import FinancingService from "./FinancingService.js";
 import InvoiceService from "./InvoiceService.js";
+import PaymentService from "./PaymentService.js";
 
 
 const ServiceFactory = () => {
@@ -8,6 +10,8 @@ const ServiceFactory = () => {
         companyService: CompanyService(),
         authService: AuthService(),
         invoiceService: InvoiceService(),
+        paymentService: PaymentService(),
+        financingService: FinancingService(),
     };
 };
 

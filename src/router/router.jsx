@@ -22,7 +22,7 @@ import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
-import { element } from "prop-types";
+// import { element } from "prop-types";
 
 import Invoice from "../pages/User/Invoice/index.jsx";
 import ListInvoice from "../pages/User/Invoice/components/ListInvoice.jsx";
@@ -30,9 +30,13 @@ import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneratio
 import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
-import Financing from "../pages/Financing/index.jsx";
-import FinancingDetailPayable from "../pages/Financing/components/FinancingDetailPayable.jsx";
-import RequestFinancingReceivable from "../pages/Financing/components/RequestFinancingReceivable.jsx";
+import Financing from "../pages/User/Financing/index.jsx";
+import FinancingDetailPayable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
+import RequestFinancingReceivable from "../pages/User/Financing/components/RequestFinancingReceivable.jsx";
+import Payment from "../pages/User/Payment/index.jsx";
+import PaymentListOngoing from "../pages/User/Payment/components/PaymentListOngoing.jsx";
+import PaymentListHistory from "../pages/User/Payment/components/PaymentListHistory.jsx";
+import FinancingDetailReceivable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -160,8 +164,8 @@ const setupRouter = () =>
               element: <RequestFinancingReceivable />,
             },
             {
-              path: "reject",
-              element: <InvoiceReject />,
+              path: "receivable/:id",
+              element: <FinancingDetailReceivable />,
             },
             {
               path: "rejected",
@@ -178,10 +182,30 @@ const setupRouter = () =>
               element: <ListPartnershipUser />,
             },
           ],
-
         },
 
-
+        {
+          path: "payment",
+          element: <Payment />,
+          children: [
+            {
+              path: "payment-list",
+              element: <PaymentListOngoing />,
+            },
+            {
+              path: "payment-history",
+              element: <PaymentListHistory />,
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
+            },
+          ],
+        },
       ],
     },
   ]);
