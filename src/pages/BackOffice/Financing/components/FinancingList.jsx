@@ -2,15 +2,125 @@ import IconDownload from "../../../../assets/icons/Icon Download.svg";
 import IconView from "../../../../assets/icons/Icon View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { ChevronLeftOutlined } from "@mui/icons-material";
+import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
+import { Link, useSearchParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import Badge from "../../../../components/Badge";
+import { useDispatch, useSelector } from "react-redux";
+import { ServiceContext } from "../../../../context/ServiceContext.jsx";
+import { useFormik } from "formik";
+import { financingAction } from "../../../../slices/financingSlice.js";
 
 const FinancingList = () => {
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const dispatch = useDispatch();
+  const { financing } = useSelector((state) => state.financing);
+  const { financingService } = useContext(ServiceContext);
+  const [paging, setPaging] = useState({});
+
+  console.log(financing);
+
+  const currentPage = parseInt(searchParam.get("page") || 1);
+  const currentSize = parseInt(searchParam.get("size") || 10);
+
+  const onNext = (page) => {
+    if (page === paging.totalPages) return;
+    searchParam.set("page", page + 1);
+    setSearchParam(searchParam);
+  };
+
+  const onPrevious = (page) => {
+    if (page === 1) return;
+    searchParam.set("page", page - 1);
+    setSearchParam(searchParam);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      status: null,
+    },
+    onSubmit: (values) => {
+      console.log(values);
+      dispatch(
+        financingAction(async () => {
+          const result = await financingService.fetchFinancingBoReceivable({
+            page: currentPage,
+            size: currentSize,
+            direction: "asc",
+            status: values.status,
+          });
+          console.log(result);
+          if (result) {
+            setPaging(result.paging);
+            const data = result.data;
+            console.log(data);
+            return { data };
+          }
+        })
+      );
+    },
+  });
+
+  useEffect(() => {
+    const onGetFinancing = () => {
+      try {
+        dispatch(
+          financingAction(async () => {
+            const result = await financingService.fetchFinancingBoReceivable({
+              page: currentPage,
+              size: currentSize,
+              direction: "asc",
+              status: null,
+            });
+            if (result) {
+              setPaging(result.paging);
+              const data = result.data;
+              return { data };
+            }
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    onGetFinancing();
+  }, [dispatch, financingService, currentPage, currentSize]);
+
+  useEffect(() => {
+    if (currentPage < 1 || currentPage > paging.totalPages) {
+      const newSearchParam = new URLSearchParams(searchParam);
+      newSearchParam.set("page", 1);
+      setSearchParam(newSearchParam.toString());
+    }
+  }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const data = financing.data;
+  console.log(data);
+  const filterFinancing = searchTerm
+    ? data.filter((item) =>
+        item.company_name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data;
+
+  const handleSearch = (event) => { 
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+  };
+
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
+    console.log(isChecked);
+    // if (!isChecked) {
+      
+    // }
   };
 
   return (
@@ -44,13 +154,15 @@ const FinancingList = () => {
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="relative flex justify-between mb-5 gap-4 mx-4">
-          <form>
+          <form onSubmit={handleSearchSubmit}>
             <div className="flex items-center py-2">
               <input
                 className="border-none bg-orange bg-opacity-10 rounded-l-lg w-72 h-11 placeholder:opacity-50 pl-12 "
                 id="email"
                 type="text"
                 placeholder="Search..."
+                onChange={handleSearch}
+                value={searchTerm}
               />
               <img
                 src={IconSearch}
@@ -80,7 +192,7 @@ const FinancingList = () => {
             id="dropdown"
             className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-80"
           >
-            <form>
+            <form onSubmit={formik.handleSubmit}>
               <div className="">
                 <ul
                   className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
@@ -91,8 +203,10 @@ const FinancingList = () => {
                     <div className="flex items-center mt-3">
                       <input
                         type="radio"
-                        value="All"
                         name="status"
+                        value={null}
+                        checked={formik.values.status === null}
+                        onChange={() => formik.setFieldValue("status", null)}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -109,6 +223,8 @@ const FinancingList = () => {
                         type="radio"
                         value="Pending"
                         name="status"
+                        checked={formik.values.status === "Pending"}
+                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -125,6 +241,8 @@ const FinancingList = () => {
                         type="radio"
                         value="Rejected"
                         name="status"
+                        checked={formik.values.status === "Rejected"}
+                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -141,6 +259,8 @@ const FinancingList = () => {
                         type="radio"
                         value="On-Going"
                         name="status"
+                        checked={formik.values.status === "On-Going"}
+                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -157,6 +277,8 @@ const FinancingList = () => {
                         type="radio"
                         value="Outstanding"
                         name="status"
+                        checked={formik.values.status === "Outstanding"}
+                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -173,6 +295,8 @@ const FinancingList = () => {
                         type="radio"
                         value="Completed"
                         name="status"
+                        checked={formik.values.status === "Completed"}
+                        onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
                       <label
@@ -227,111 +351,112 @@ const FinancingList = () => {
               </tr>
             </thead>
             <tbody>
-              {/* {filterInvoices?.length !== 0 &&
-                filterInvoices.map((i, idx) => { */}
-              {/* return ( */}
-              <tr className="bg-white">
-                <th
-                  scope="col-span-4"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  26-06-24
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  FI-C-36974019-6.23
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
-                >
-                  Rp. 20.000.000
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  Enigma Camp
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  <Badge variant="On-Going">On-Going</Badge>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
-                >
-                  <Link to={"/backoffice/financing/detail/:id"}>
-                    <button className="ml-4">
-                      <img src={IconView} alt="Icon View" />
-                    </button>
-                  </Link>
-                </th>
-              </tr>
-              {/* );
-                })} */}
+              {filterFinancing && filterFinancing?.length !== 0 ? (
+                filterFinancing.map((i, idx) => {
+                  return (
+                    <tr key={idx} className="bg-white">
+                      <th
+                        scope="col-span-4"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.date}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.invoice_number}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
+                      >
+                        {i.amount}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.company_name}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        <Badge variant="On-Going">
+                          {i.status.toLowerCase()}
+                        </Badge>
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
+                      >
+                        <Link to={"/backoffice/financing/detail/:id"}>
+                          <button className="ml-4">
+                            <img src={IconView} alt="Icon View" />
+                          </button>
+                        </Link>
+                      </th>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center">
+                    Company Not Found...
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
-          <p className="my-auto">Showing 1 to 10 of 50 entries</p>
+          <p className="my-auto">
+            Showing {paging.page} to {paging.size} of {paging.count} entries
+          </p>
 
-          {/* {invoices && invoices.length !== 0 && (
-            <nav aria-label="Page navigation example">
-              <ul className="flex items-center -space-x-px h-8 text-sm gap-4"> */}
-          {/* <li className={`page-item ${currentPage == 1 && "disabled"}`}>
-                  <a
-                    onClick={() => onPrevious(currentPage)}
-                    className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
-                  >
-                    <ChevronLeftOutlined />
-                    <span className="sr-only">Previous</span>
-                  </a>
-                </li> */}
-          {/* {Array(paging.totalPages)
-                  .fill(null)
-                  .map((_, idx) => {
-                    const page = ++idx;
-                    return (
-                      <li key={page}>
-                        <Link
-                          className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold page-link ${
-                            currentPage == page && "active"
-                          }`}
-                          to={`/user/:id/invoice?page=${page}&size=${currentSize}`}
-                        ></Link>
-                      </li>
-                    );
-                  })} */}
-          {/* <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
-                  >
-                    1
-                  </a>
-                </li> */}
-
-          {/* <li
-                  className={`page-item ${
-                    currentPage >= paging.totalPages && "disabled"
-                  }`}
+          <nav aria-label="Page navigation example">
+            <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
+              <li className={`${currentPage == 1 && "disabled"}`}>
+                <button
+                  onClick={() => onPrevious(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
                 >
-                  <a
-                    onClick={() => onNext(currentPage)}
-                    className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
-                  >
-                    <ChevronRightOutlinedIcon />
-                    <span className="sr-only">Next</span>
-                  </a>
-                </li> */}
-          {/* </ul>
-            </nav>
-          )} */}
+                  <ChevronLeftOutlined />
+                  <span className="sr-only">Previous</span>
+                </button>
+              </li>
+              {Array(paging.totalPages)
+                .fill(null)
+                .map((_, idx) => {
+                  const page = ++idx;
+                  return (
+                    <li key={page}>
+                      <Link
+                        className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange page-link ${
+                          currentPage == page &&
+                          "bg-gray/20 text-orange font-bold"
+                        }`}
+                        to={`/user/invoice?page=${page}&size=${currentSize}`}
+                      >
+                        {page}
+                      </Link>
+                    </li>
+                  );
+                })}
+              <li
+                className={`${currentPage >= paging.totalPages && "disabled"}`}
+              >
+                <button
+                  onClick={() => onNext(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                >
+                  <ChevronRightOutlinedIcon />
+                  <span className="sr-only">Next</span>
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>

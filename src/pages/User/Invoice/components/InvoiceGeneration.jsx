@@ -22,7 +22,7 @@ const InvoiceGeneration = () => {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
-  const companyId = sessionStorage.getItem("companyId");
+  const companyId = sessionStorage.getItem("company_id");
   const currentDate = new Date().toISOString().split("T")[0];
 
   // const [searchParam, setSearchParam] = useSearchParams();
@@ -46,7 +46,6 @@ const InvoiceGeneration = () => {
       checkbox: false,
       recipientId: "",
       dueDate: "",
-      invDate: "",
       amount: 0,
       itemList: [
         {
@@ -57,6 +56,7 @@ const InvoiceGeneration = () => {
       ],
     },
     onSubmit: async (values) => {
+      console.log(values);
       const resultAmount = values.itemList.map((item, idx) => {
         return item.itemsQuantity * item.unitPrice;
       });
@@ -68,7 +68,6 @@ const InvoiceGeneration = () => {
       const dataInvoice = {
         recipientId: values.recipientId,
         dueDate: values.dueDate,
-        invDate: values.invDate,
         amount: totalAmount,
         itemList: stringifyData,
       };
@@ -138,7 +137,7 @@ const InvoiceGeneration = () => {
         >
           <h1 className="text-logo">Invoice Information</h1>
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label className="block mb-2 text-[18px] font-medium">
                 Invoice Number
               </label>
@@ -152,24 +151,7 @@ const InvoiceGeneration = () => {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
-              <label className="block mb-2 text-[18px] font-medium">
-                Invoice Date
-              </label>
-              <div className="mt-2 flex">
-                <input
-                  type="date"
-                  name="invDate"
-                  placeholder="Select Invoice Date"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={invDate}
-                  min={currentDate}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label className="block mb-2 text-[18px] font-medium">
                 Due Date
               </label>
@@ -201,10 +183,7 @@ const InvoiceGeneration = () => {
                     partnerships.data.length &&
                     partnerships.data.map((partnership, idx) => {
                       return (
-                        <option
-                          key={idx}
-                          value={partnership.partner.companyId}
-                        >
+                        <option key={idx} value={partnership.partner.companyId}>
                           {partnership.partner.companyName}
                         </option>
                       );

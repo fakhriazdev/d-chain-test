@@ -40,11 +40,10 @@ export default function OtpPage() {
         authAction(async () => {
           const result = await authService.verifyOtp(data);
           console.log(result.data);
-          console.log(result.data.companyId);
 
           if (result.statusCode === 200) {
             sessionStorage.setItem("token", result.data.token);
-            sessionStorage.setItem("companyId", result.data.companyId);
+            sessionStorage.setItem("company_id", result.data.company_id);
             navigate("/dashboard");
           }
           const resultInfo = await authService.getUserInfo();

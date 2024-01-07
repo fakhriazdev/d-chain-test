@@ -14,7 +14,6 @@ import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { startCase } from "lodash";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -23,6 +22,8 @@ const ListInvoice = () => {
   const { invoices } = useSelector((state) => state.invoice);
   const { invoiceService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
+
+  console.log(invoices);
 
   const currentPage = parseInt(searchParam.get("page") || 1);
   const currentSize = parseInt(searchParam.get("size") || 10);
@@ -499,7 +500,7 @@ const ListInvoice = () => {
                   <span className="sr-only">Previous</span>
                 </button>
               </li>
-              {Array(paging.totalPages)
+              {Array(paging.totalPages) 
                 .fill(null)
                 .map((_, idx) => {
                   const page = ++idx;

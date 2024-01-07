@@ -34,6 +34,8 @@ import FinancingList from "../pages/BackOffice/Financing/components/FinancingLis
 import Financing from "../pages/BackOffice/Financing/index.jsx";
 import FinancingDetail from "../pages/BackOffice/Financing/components/FinancingDetail.jsx";
 import FinancingDetailReceivable from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
+import PaymentDetailFinancing from "../pages/User/Payment/components/PaymentDetailFinancing.jsx";
+import PaymentDetailInvoice from "../pages/User/Payment/components/PaymetDetailInvoice.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -173,6 +175,24 @@ const setupRouter = () =>
             {
               path: "detail/receivable/:id",
               element: <FinancingDetailReceivable />,
+            },
+          ],
+        },
+        {
+          path: "/user/payment",
+          element: <Financing />,
+          children: [
+            {
+              index: true,
+              element: <FinancingList />,
+            },
+            {
+              path: "detail/:id",
+              element: <PaymentDetailInvoice />,
+            },
+            {
+              path: "detail/financing/:id",
+              element: <PaymentDetailFinancing />,
             },
           ],
         },
