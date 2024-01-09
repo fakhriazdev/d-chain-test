@@ -1,14 +1,13 @@
+import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar";
 
-const Payment = () => {
+export default function UserBackoffice() {
   return (
-    <div>
+    <>
       <Sidebar>
         <Outlet />
       </Sidebar>
-    </div>
+    </>
   );
-};
-
-export default Payment;
+}

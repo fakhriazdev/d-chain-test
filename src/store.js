@@ -4,8 +4,9 @@ import asyncActionMiddleware from "./middlewares/asyncActionMiddleware";
 import uiSlice from "./slices/uiSlice";
 import companySlice from "./slices/companySlice";
 import invoiceSlice from "./slices/invoiceSlice";
-import financingSlice from "./slices/financingSlice";
 import paymentSlice from "./slices/paymentSlice";
+import financingSlice from "./slices/financingSlice";
+import userSlice from "./slices/userSlice";
 
 const setupStore = () =>
   configureStore({
@@ -14,8 +15,9 @@ const setupStore = () =>
       companies: companySlice.reducer,
       ui: uiSlice.reducer,
       invoice: invoiceSlice.reducer,
+      payment: paymentSlice.reducer,
       financing: financingSlice.reducer,
-      payment: paymentSlice.reducer
+      user: userSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(asyncActionMiddleware),

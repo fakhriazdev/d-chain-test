@@ -42,6 +42,16 @@ const Badge = (props) => {
       case "On-Going":
         setType("blue");
         break;
+
+      case "invoicing":
+        setType("blue");
+        break;
+      case "unpaid":
+        setType("red");
+        break;
+      case "late-unpaid":
+        setType("red");
+        break;
       default:
         setType("yellow");
     }

@@ -22,7 +22,7 @@ import SuccessSendMail from "../pages/Auth/ForgetPassword/SuccessSendMail";
 import NewPassword from "../pages/Auth/NewPassword";
 import Profile from "../pages/User/Profile";
 import SuperUserProfile from "../pages/User/Profile/components/SuperUserProfile.jsx";
-import { element } from "prop-types";
+// import { element } from "prop-types";
 
 import Invoice from "../pages/User/Invoice/index.jsx";
 import ListInvoice from "../pages/User/Invoice/components/ListInvoice.jsx";
@@ -30,12 +30,22 @@ import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneratio
 import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
+import Financing from "../pages/User/Financing/index.jsx";
+import FinancingDetailPayable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
+import RequestFinancingReceivable from "../pages/User/Financing/components/RequestFinancingReceivable.jsx";
+import Payment from "../pages/User/Payment/index.jsx";
+import PaymentListOngoing from "../pages/User/Payment/components/PaymentListOngoing.jsx";
+import PaymentListHistory from "../pages/User/Payment/components/PaymentListHistory.jsx";
+import FinancingDetailReceivable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
 import FinancingList from "../pages/BackOffice/Financing/components/FinancingList.jsx";
-import Financing from "../pages/BackOffice/Financing/index.jsx";
 import FinancingDetail from "../pages/BackOffice/Financing/components/FinancingDetail.jsx";
-import FinancingDetailReceivable from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
-import PaymentDetailFinancing from "../pages/User/Payment/components/PaymentDetailFinancing.jsx";
 import PaymentDetailInvoice from "../pages/User/Payment/components/PaymetDetailInvoice.jsx";
+import PaymentDetailFinancing from "../pages/User/Payment/components/PaymentDetailFinancing.jsx";
+import PaymentSuccessfully from "../pages/User/Payment/components/PaymentSuccesfully.jsx";
+import UserList from "../pages/User/ManageUser/components/UserList.jsx";
+import User from "../pages/User/ManageUser/index.jsx";
+import UserListBackoffice from "../pages/BackOffice/ManageUser/components/UserListBackoffice.jsx";
+import UserBackoffice from "../pages/BackOffice/ManageUser/index.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -133,7 +143,7 @@ const setupRouter = () =>
           element: <Invoice />,
           children: [
             {
-              path: "detail",
+              path: "detail/:id",
               element: <InvoiceDetail />,
             },
             {
@@ -143,6 +153,28 @@ const setupRouter = () =>
             {
               path: "reject",
               element: <InvoiceReject />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
+            },
+          ],
+        },
+        {
+          path: "financing",
+          element: <Financing />,
+          children: [
+            {
+              path: "payable",
+              element: <FinancingDetailPayable />,
+            },
+            {
+              path: "request-receivable",
+              element: <RequestFinancingReceivable />,
+            },
+            {
+              path: "receivable/:id",
+              element: <FinancingDetailReceivable />,
             },
             {
               path: "rejected",
@@ -178,13 +210,26 @@ const setupRouter = () =>
             },
           ],
         },
+
         {
-          path: "/user/payment",
-          element: <Financing />,
+          path: "payment",
+          element: <Payment />,
           children: [
             {
-              index: true,
-              element: <FinancingList />,
+              path: "payment-list",
+              element: <PaymentListOngoing />,
+            },
+            {
+              path: "payment-history",
+              element: <PaymentListHistory />,
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
             },
             {
               path: "detail/:id",
@@ -194,8 +239,33 @@ const setupRouter = () =>
               path: "detail/financing/:id",
               element: <PaymentDetailFinancing />,
             },
+            {
+              path: "detail/:id/success",
+              element: <PaymentSuccessfully/>
+            }
           ],
         },
+
+        {
+          path: "user",
+          element: <User />,
+          children: [
+            {
+              path: "manageuser",
+              element: <UserList />,
+            },
+          ],
+        },{
+          path: "backoffice",
+          element: <UserBackoffice/>,
+          children: [
+            {
+              path: "manageuser",
+              element: <UserListBackoffice />,
+            },
+          ],
+        },
+
       ],
     },
   ]);

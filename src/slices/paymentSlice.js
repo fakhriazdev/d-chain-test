@@ -16,15 +16,15 @@ const paymentSlice = createSlice({
   initialState: {
     payments: [],
     selectedPayment: null,
-  },
+},
   extraReducers: (builder) => {
     builder.addCase(paymentAction.fulfilled, (state, { payload }) => {
-      console.log(payload);
-      if (payload) {
-        state.payments = payload;
+        if (payload) {
+        state.payments = payload.data;
       }
     });
     builder.addCase(selectPaymentAction.fulfilled, (state, { payload }) => {
+      console.log(payload);
       if (payload) {
         state.selectedPayment = payload;
       }

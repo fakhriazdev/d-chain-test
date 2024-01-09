@@ -25,10 +25,22 @@ const InvoiceService = () => {
     return data;
   };
 
+  const getById = async (id) => {
+    const {data} = await axiosInstance.get(`/api/invoice/${id}`);
+    return data;
+  }
+
+  const updateStatusInvoice = async (payload) => {
+    const {data} = await axiosInstance.put('/api/invoice/update', payload)
+    return data;
+  }
+
   return {
     fetchInvoices,
     saveInvoice,
     fetchPartnership,
+    getById,
+    updateStatusInvoice
   };
 };
 

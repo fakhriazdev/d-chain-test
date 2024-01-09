@@ -1,28 +1,29 @@
-import IconDownload from "../../../../assets/icons/Icon Download.svg";
-import IconView from "../../../../assets/icons/Icon View.svg";
-import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
 import { ChevronLeftOutlined } from "@mui/icons-material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
-import { Link, useSearchParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import Badge from "../../../../components/Badge";
+import Badge from "../../../../components/Badge.jsx";
+import InvoiceGenerationButton from "../../../../assets/icons/Icon Invoice Generation Button.svg";
+import IconUploadBlack from "../../../../assets/icons/Icon Upload Black.svg";
+import IconDownload from "../../../../assets/icons/Icon Download.svg";
+import IconView from "../../../../assets/icons/Icon View.svg";
+import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import { useDispatch, useSelector } from "react-redux";
+import { useContext, useEffect, useState } from "react";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
+import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { financingAction } from "../../../../slices/financingSlice.js";
-import { formatDate } from "../../../../utils/utility.js";
+import { startCase } from "lodash";
+import { paymentAction } from "../../../../slices/paymentSlice.js";
+import { formatIDRCurrency, formatDate } from "../../../../utils/utility.js";
 
-const FinancingList = () => {
+
+const PaymentListHistory = () => {
   const [searchParam, setSearchParam] = useSearchParams();
 
   const dispatch = useDispatch();
-  const { financings } = useSelector((state) => state.financing);
-  const { financingService } = useContext(ServiceContext);
+  const { payments } = useSelector((state) => state.payment);
+  const { paymentService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
-  const [isPayable, setIsPayable] = useState("fetchFinancingBoPayable");
-
-  console.log(financings);
 
   const currentPage = parseInt(searchParam.get("page") || 1);
   const currentSize = parseInt(searchParam.get("size") || 10);
@@ -41,19 +42,23 @@ const FinancingList = () => {
 
   const formik = useFormik({
     initialValues: {
-      status: null,
+      status: "",
+      type:"",
+      groupBy: "payable",
     },
     onSubmit: (values) => {
       console.log(values);
       dispatch(
-        financingAction(async () => {
-          const result = await financingService.fetchFinancingBoReceivable({
+        paymentAction(async () => {
+          const result = await paymentService.fetchPaymentHistory({
             page: currentPage,
             size: currentSize,
             direction: "asc",
+            groupBy: values.groupBy,
+            type: values.type,
             status: values.status,
           });
-          console.log(result, "--------");
+          console.log(result);
           if (result) {
             setPaging(result.paging);
             const data = result.data;
@@ -66,20 +71,21 @@ const FinancingList = () => {
   });
 
   useEffect(() => {
-    const onGetFinancing = () => {
+    const onGetInvoices = () => {
       try {
         dispatch(
-          financingAction(async () => {
-            const result = await financingService.fetchFinancingBoPayable({
-              page: currentPage,
+          paymentAction(async () => {
+            const result = await paymentService.fetchPaymentHistory({
               size: currentSize,
               direction: "asc",
+              groupBy: "payable",
+              type: null,
               status: null,
             });
-            console.log(result);
             if (result) {
               setPaging(result.paging);
               const data = result.data;
+              console.log(data);
               return { data };
             }
           })
@@ -88,8 +94,8 @@ const FinancingList = () => {
         console.log(error);
       }
     };
-    onGetFinancing();
-  }, [dispatch, financingService, currentPage, currentSize]);
+    onGetInvoices();
+  }, [dispatch, currentPage, currentSize, paymentService]);
 
   useEffect(() => {
     if (currentPage < 1 || currentPage > paging.totalPages) {
@@ -99,15 +105,47 @@ const FinancingList = () => {
     }
   }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const data = financings;
-  console.log(data);
-  const filterFinancing = searchTerm
-    ? data.filter((item) =>
-        item.company_name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : data;
+  const [isChecked, setIsChecked] = useState(false);
 
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+    console.log(isChecked);
+    let checked = "";
+    if (!isChecked) {
+        formik.setValues({
+          groupBy: "receivable",
+        });
+        checked = "receivable";
+      } else {
+        formik.setValues({
+          groupBy: "payable",
+        });
+        checked = "payable";
+      }
+    console.log(checked);
+
+    dispatch(
+      paymentAction(async () => {
+        const result = await paymentService.fetchPaymentHistory({
+          page: currentPage,
+          size: currentSize,
+          direction: "asc",
+          groupBy:checked,
+          type: null,
+          status: null,
+          recipient: null
+        });
+        console.log(result);
+        return result;
+      })
+    );
+  };
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const filterPayment = payments.filter((item) =>
+    item.recepient.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -116,53 +154,16 @@ const FinancingList = () => {
     event.preventDefault();
   };
 
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-    console.log(isChecked);
-    if (!isChecked) {
-      console.log(isChecked, "receivable");
-      dispatch(
-        financingAction(async () => {
-          const result = await financingService.fetchFinancingBoReceivable({
-            page: currentPage,
-            size: currentSize,
-            direction: "asc",
-            status: null,
-          });
-          console.log(result, "receivable");
-          if (result) {
-            setPaging(result.paging);
-            const data = result.data;
-            return { data };
-          }
-        })
-      );
-    } else {
-      dispatch(
-        financingAction(async () => {
-          const result = await financingService.fetchFinancingBoPayable({
-            page: currentPage,
-            size: currentSize,
-            direction: "asc",
-            status: null,
-          });
-          console.log(result, "payable");
-          if (result) {
-            setPaging(result.paging);
-            const data = result.data;
-            return { data };
-          }
-        })
-      );
-    }
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+    console.log(isDropdownOpen);
   };
 
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
-        <h1 className="text-title my-auto">Financing</h1>
+        <h1 className="text-title my-auto">Payment History</h1>
         <div>
           <label className="themeSwitcherTwo shadow-card border border-[#D5D5D7] relative inline-flex cursor-pointer select-none items-center justify-center rounded-xl bg-[#F3F4F6] p-1">
             <input
@@ -214,140 +215,131 @@ const FinancingList = () => {
             </div>
           </form>
           <div className="flex items-center space-x-4">
-            <p className="mt-3">Filter By:</p>
             <button
               id="dropdownDefaultButton"
-              data-dropdown-toggle="dropdown"
+              data-dropdown-toggle="dropdownListHistory"
               className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center mt-3"
               type="button"
+              onClick={toggleDropdown}
             >
+              Filter
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
+            <div className="flex space-x-7">
+              <Link to={"/payment/payment-list"}>
+                <button
+                  type="button"
+                  className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
+                >
+                  <img
+                    src={InvoiceGenerationButton}
+                    alt="Icon Invoice Generation Button"
+                  />
+                  <p>Payment Ongoing</p>
+                </button>
+              </Link>
+            </div>
           </div>
           <div
-            id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-80"
+            id="dropdownListHistory"
+            className={`divide-y hidden bg-white border border-orange divide-gray-100 rounded-lg shadow w-5/12 relative z-10`}
           >
             <form onSubmit={formik.handleSubmit}>
-              <div className="">
-                <ul
-                  className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
-                  aria-labelledby="dropdownRadioButton"
-                >
-                  Status
-                  <li>
-                    <div className="flex items-center mt-3">
-                      <input
-                        type="radio"
-                        name="status"
-                        value={null}
-                        checked={formik.values.status === null}
-                        onChange={() => formik.setFieldValue("status", null)}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-1"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        All
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Pending"
-                        name="status"
-                        checked={formik.values.status === "Pending"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Pending
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Rejected"
-                        name="status"
-                        checked={formik.values.status === "Rejected"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Rejected
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="On-Going"
-                        name="status"
-                        checked={formik.values.status === "On-Going"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        On-Going
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Outstanding"
-                        name="status"
-                        checked={formik.values.status === "Outstanding"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Outstanding
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Completed"
-                        name="status"
-                        checked={formik.values.status === "Completed"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Completed
-                      </label>
-                    </div>
-                  </li>
-                </ul>
+              <div className="flex">
+                <div className="w-1/2">
+                  <ul
+                    className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
+                    aria-labelledby="dropdownRadioButton"
+                  >
+                    Status
+                    <li>
+                      <div className="flex items-center mt-5">
+                        <input
+                          type="radio"
+                          value="PAID"
+                          name="status"
+                          checked={formik.values.status === "PAID"}
+                          onChange={formik.handleChange}
+                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                        />
+                        <label
+                          htmlFor="default-radio-2"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          Paid
+                        </label>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex items-center">
+                        <input
+                          type="radio"
+                          value="LATE_PAID"
+                          name="status"
+                          checked={formik.values.status === "LATE_PAID"}
+                          onChange={formik.handleChange}
+                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                        />
+                        <label
+                          htmlFor="default-radio-2"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          Late-Paid
+                        </label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div className="w-1/2">
+                  <ul
+                    className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200 ml-10"
+                    aria-labelledby="dropdownRadioButton"
+                  >
+                    Type
+                    <li>
+                      <div className="flex items-center mt-5">
+                        <input
+                          type="radio"
+                          value="INVOICING"
+                          name="type"
+                          checked={formik.values.type === "INVOICING"}
+                          onChange={formik.handleChange}
+                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                        />
+                        <label
+                          htmlFor="default-radio-1"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          Invoicing
+                        </label>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex items-center mt-3">
+                        <input
+                          type="radio"
+                          value="FINANCING"
+                          name="type"
+                          checked={formik.values.type === "FINANCING"}
+                          onChange={formik.handleChange}
+                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                        />
+                        <label
+                          htmlFor="default-radio-1"
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          Financing
+                        </label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
               <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
                 <button
                   type="button"
+                  id="dropdownDefaultButton"
+                  data-bs-dismis="dropdownListHistory"
                   className="bg-gray/20 hover:bg-gray/20 text-zinc-800 py-2 px-4 rounded"
                 >
                   Cancel
@@ -367,71 +359,69 @@ const FinancingList = () => {
             <thead className="text-white text-[16px] font-[300] bg-orange ">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Date
+                  Transaction No.
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Inv. Number
+                  Due Date
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Amount
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Company
+                  Recipent
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Type
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Action
-                </th>
               </tr>
             </thead>
             <tbody>
-              {filterFinancing && filterFinancing?.length !== 0 ? (
-                filterFinancing.map((i, idx) => {
+              {filterPayment && filterPayment?.length !== 0 ? (
+                filterPayment.map((i, idx) => {
                   return (
                     <tr key={idx} className="bg-white">
                       <th
                         scope="col-span-4"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {formatDate(i.date)}
+                        {i.transactionId}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.invoice_number}
+                        {formatDate(1704214800000)}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
                       >
-                        {i.amount}
+                        {formatIDRCurrency(i.amount)}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.company_name}
+                        {i.invoice.companyName}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        <Badge variant="On-Going">
-                          {i.status.toLowerCase()}
+                        <Badge variant={i.type.toString().toLowerCase()}>
+                          {i.type}
                         </Badge>
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        <Link to={"/backoffice/financing/detail/:id"}>
-                          <button className="ml-4">
-                            <img src={IconView} alt="Icon View" />
-                          </button>
-                        </Link>
+                        <Badge variant={i.invoice.status.toLowerCase()}>
+                          {i.invoice.status.toLowerCase()}
+                        </Badge>
                       </th>
                     </tr>
                   );
@@ -439,7 +429,7 @@ const FinancingList = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="px-6 py-4 text-center">
-                    Company Not Found...
+                    Payment Not Found...
                   </td>
                 </tr>
               )}
@@ -499,4 +489,4 @@ const FinancingList = () => {
   );
 };
 
-export default FinancingList;
+export default PaymentListHistory;

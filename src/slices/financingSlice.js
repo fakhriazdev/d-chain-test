@@ -14,14 +14,14 @@ export const selectFinancingAction = createAsyncThunk(
 const financingSlice = createSlice({
   name: "financing",
   initialState: {
-    financing: [],
+    financings: [],
     selectedFinancing: null,
-  },
+},
   extraReducers: (builder) => {
     builder.addCase(financingAction.fulfilled, (state, { payload }) => {
       console.log(payload);
-      if (payload) {
-        state.financing = payload;
+        if (payload) {
+        state.financings = payload.data;
       }
     });
     builder.addCase(selectFinancingAction.fulfilled, (state, { payload }) => {
