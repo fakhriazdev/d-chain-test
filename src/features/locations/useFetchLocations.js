@@ -31,8 +31,6 @@ const handleChooseProvince = (id)=>{
     setCityId(id)
 }
 
-
-
     useEffect(() => {
         fetchProvices()
     }, []);

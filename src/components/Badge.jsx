@@ -3,10 +3,9 @@ import React, { useEffect, useState } from "react";
 const Badge = (props) => {
     const { variant, children } = props;
     const [type, setType] = useState("");
-
     useEffect(() => {
         switch (variant.toLowerCase()) {
-            case "pending":
+            case "PENDING":
                 setType("yellow");
                 break;
             case "rejected":
@@ -15,7 +14,7 @@ const Badge = (props) => {
             case "outstanding":
                 setType("red");
                 break;
-            case "in partner":
+            case "IN_PARTNER":
                 setType("green");
                 break;
             case "completed":

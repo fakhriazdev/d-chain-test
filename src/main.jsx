@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "flowbite";
+
 import setupRouter from "./router/router";
 import { RouterProvider } from "react-router-dom";
 import ServiceFactory from "./services/ServiceFactory";

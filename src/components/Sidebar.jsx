@@ -196,7 +196,7 @@ const Sidebar = (props) => {
       </aside>
 
       <div className="p-4 sm:ml-64">
-        <div className="p-4 rounded-lg mt-14">{children}</div>
+        <div className="p-2 md:p-4 lg:p-4 rounded-lg mt-14">{children}</div>
       </div>
     </>
   );

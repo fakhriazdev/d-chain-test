@@ -31,6 +31,10 @@ import FormPartnership from "../pages/BackOffice/Partnership/components/FormPart
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
 import ListFinancing from "../pages/BackOffice/Financing/components/ListFinancing.jsx";
+import Financing from "../pages/BackOffice/Financing/index.jsx";
+import DetailFinancingPayable from "../pages/BackOffice/Financing/components/DetailFinancingPayable.jsx";
+import RequestFinancingPayable from "../pages/BackOffice/Financing/components/RequestFinancingPayable.jsx";
+import Dashbaord from "../pages/BackOffice/Dashboard/index.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -120,6 +124,10 @@ const setupRouter = () =>
           element: <LoginBackOffice />,
         },
         {
+          path: "backoffice/dashboard",
+          element: <Dashbaord />,
+        },
+        {
           path: "dashboard",
           element: <Dashboard />,
         },
@@ -163,10 +171,16 @@ const setupRouter = () =>
               index: true,
               element: <ListFinancing />,
             },
+            {
+              path: ":id/detail-payable",
+              element: <DetailFinancingPayable />,
+            },
+            {
+              path: "request-financing-payable",
+              element: <RequestFinancingPayable />,
+            },
           ],
         },
-
-
       ],
     },
   ]);

@@ -14,7 +14,6 @@ const ListCompany = () => {
 
 
   return (
-
     <>
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Manage Company </h1>

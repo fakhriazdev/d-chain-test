@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Badge from "../../../../components/Badge.jsx";
 import {ChevronLeftOutlined} from "@mui/icons-material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -7,30 +7,48 @@ import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 import Button from "../../../../components/Button.jsx";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined.js";
 import TabFilter from "../../../../components/TabFilter.jsx";
-const ListFinancing = () => {
+import {useFetchFinancing} from "../../../../features/financing/useFetchFinancing.js";
 
+const ListFinancing = () => {
+    const [selectedStatus, setSelectedStatus] = useState("pending");
+    const [currentPage, setCurrentPage] = useState(1); // State to track the current page
+    const size = 10; // Number of items per page
+    const [selectedType, setSelectedType] = useState("receivable");
+    const { data, isLoading, isError, error, refetch} = useFetchFinancing(selectedType, selectedStatus, currentPage, size);
+    const handleTypeClick = (type) => {
+        setSelectedType(type);
+        refetch();
+    };
+    const handleStatusClick = (e) => {
+        setSelectedStatus(e.target.value);
+        refetch();
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        refetch();
+    };
+    console.log(data)
     return (
         <>
             <div className="relative flex justify-between my-12 mx-4">
                 <h1 className="text-title my-auto">Financing</h1>
-                <TabFilter filter1={"Account Payable"} filter2={"Account Receivable"}/>
-
+                <TabFilter filter1={"receivable"} filter2={"payable"} onFilterClick={handleTypeClick}/>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <div className="relative flex justify-between mb-5 gap-4 mx-4">
-                    <form className="my-auto">
-                        <div className="flex">
-                            <div className="relative w-full">
-                                <input type="search" id="search-dropdown"
-                                       className="block p-2.5 w-full z-20 text-sm text-gray bg-orange/20 rounded-lg border border-transparent focus:outline-none"
-                                       placeholder="Search..." required/>
-                                <button type="submit"
-                                        className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-orange rounded-e-lg border border-orange hover:bg-white hover:text-orange focus:ring-none focus:outline-none focus:ring-orange">
-                                    <p>Search</p>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                <div className="relative flex justify-end mb-5 gap-4 mx-4">
+                    {/*<form className="my-auto">*/}
+                    {/*    <div className="flex">*/}
+                    {/*        <div className="relative w-full">*/}
+                    {/*            <input type="search" id="search-dropdown"*/}
+                    {/*                   className="block p-2.5 w-full z-20 text-sm text-gray bg-orange/20 rounded-lg border border-transparent focus:outline-none"*/}
+                    {/*                   placeholder="Search..." required/>*/}
+                    {/*            <button type="submit"*/}
+                    {/*                    className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-orange rounded-e-lg border border-orange hover:bg-white hover:text-orange focus:ring-none focus:outline-none focus:ring-orange">*/}
+                    {/*                <p>Search</p>*/}
+                    {/*            </button>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</form>*/}
                     <div className="flex gap-2">
                         <p className="my-auto font-gray text-[14px]">Filter By: </p>
                         <button
@@ -55,8 +73,9 @@ const ListFinancing = () => {
                             <li className="mb-16">
                                 <div className="flex items-center">
                                     <input
+                                        onClick={handleStatusClick}
                                         type="radio"
-                                        value="asc"
+                                        value=""
                                         name="default-radio"
                                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                                     />
@@ -71,8 +90,9 @@ const ListFinancing = () => {
                             <li className="mb-16">
                                 <div className="flex items-center">
                                     <input
+                                        onClick={handleStatusClick}
                                         type="radio"
-                                        value="asc"
+                                        value="pending"
                                         name="default-radio"
                                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                                     />
@@ -87,8 +107,9 @@ const ListFinancing = () => {
                             <li>
                                 <div className="flex items-center">
                                     <input
+                                        onClick={handleStatusClick}
                                         type="radio"
-                                        value="asc"
+                                        value="rejected"
                                         name="default-radio"
                                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                                     />
@@ -282,39 +303,50 @@ const ListFinancing = () => {
                     </table>
 
                 </div>
+
                 <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
-
-                    <p className="my-auto">Showing 1 to 10 of 50 entries</p>
-
+                    {isLoading === true ?
+                        <p
+                            className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">loading...</p>
+                        :
+                        <p className="my-auto">{`Showing ${currentPage} to ${size} of ${data.data.length} entries`}</p>
+                    }
                     <nav aria-label="Page navigation example">
                         <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
                             <li>
-
-                                <a
-                                    href="#"
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
                                     className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
+                                    aria-disabled={currentPage === 1}
                                 >
                                     <ChevronLeftOutlined/>
                                     <span className="sr-only">Previous</span>
-                                </a>
+                                </button>
                             </li>
+                            {[...Array(data?.totalPages || 0).keys()].map((page) => (
+                                <li key={page + 1}>
+                                    <button
+                                        onClick={() => handlePageChange(page + 1)}
+                                        className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 ${
+                                            currentPage === page + 1 ? 'bg-gray/20 text-orange font-bold active-page' : 'bg-gray/20 hover:bg-orange/20 hover:text-orange'
+                                        } rounded-md`}
+                                        aria-current={currentPage === page + 1 ? 'page' : null}
+                                    >
+                                        {page + 1}
+                                    </button>
+                                </li>
+                            ))}
                             <li>
-                                <a
-                                    href="#"
-                                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
-                                >
-                                    1
-                                </a>
-                            </li>
-
-                            <li>
-                                <a
-                                    href="#"
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === data?.totalPages || 0}
                                     className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                                    aria-disabled={currentPage === data?.totalPages || 0}
                                 >
                                     <ChevronRightOutlinedIcon/>
                                     <span className="sr-only">Next</span>
-                                </a>
+                                </button>
                             </li>
                         </ul>
                     </nav>

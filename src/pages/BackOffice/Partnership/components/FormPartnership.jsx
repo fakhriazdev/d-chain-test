@@ -13,12 +13,10 @@ import {useAddPartnership} from "../../../../features/partnership/useAddPartners
 import { useNavigate } from 'react-router-dom';
 import {useCreateCompany} from "../../../../features/company/useCreateCompany.js";
 import useFetchPartnership from "../../../../features/partnership/useFetchPartnership.js";
-const FormPartnership = () => {
+const FormPartnership = (props) => {
     const params = useParams();
-    console.log(params.id)
-    const navigate = useNavigate();
     const {datas} = useFetchNonPartnership(params.id)
-
+    const {refetch} = props
 
     const formik = useFormik({
         initialValues: {
@@ -35,8 +33,9 @@ const FormPartnership = () => {
 
     const { mutate, isPending } = useAddPartnership({
         onSuccess:() =>{
+            refetch()
             formik.resetForm();
-            navigate(`/backoffice/${params.id}/partnership`);
+
         },
         onFailure: (error) => {
             alert(error);
@@ -48,9 +47,6 @@ const FormPartnership = () => {
         const { name } = e.target;
         formik.setFieldValue(name, e.target.value);
     };
-
-    console.log(formik.values)
-
 
     return (
         <div className="relative p-4 w-full max-w-2xl max-h-full">
