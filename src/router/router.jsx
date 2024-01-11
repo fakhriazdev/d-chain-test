@@ -46,6 +46,7 @@ import UserList from "../pages/User/ManageUser/components/UserList.jsx";
 import User from "../pages/User/ManageUser/index.jsx";
 import UserListBackoffice from "../pages/BackOffice/ManageUser/components/UserListBackoffice.jsx";
 import UserBackoffice from "../pages/BackOffice/ManageUser/index.jsx";
+import FinancingDetailReceivableBo from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -206,7 +207,7 @@ const setupRouter = () =>
             },
             {
               path: "detail/receivable/:id",
-              element: <FinancingDetailReceivable />,
+              element: <FinancingDetailReceivableBo />,
             },
           ],
         },

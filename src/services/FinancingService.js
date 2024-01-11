@@ -1,19 +1,9 @@
 import axiosInstance from "../api/axiosInstance";
 
 const FinancingService = () => {
-  const fetchFinancingBoReceivable = async (queryParams) => {
+  const fetchFinancingBo = async (queryParams) => {
     const { data } = await axiosInstance.get(
-      `/api/backoffice/financing/receivable`,
-      {
-        params: queryParams,
-      }
-    );
-    return data;
-  };
-
-  const fetchFinancingBoPayable = async (queryParams) => {
-    const { data } = await axiosInstance.get(
-      `/api/backoffice/financing/payable`,
+      `/api/backoffice/financing`,
       {
         params: queryParams,
       }
@@ -56,8 +46,12 @@ const FinancingService = () => {
     return data;
   }
 
-  const updateStatusInvoice = async (payload) => {
-    const {data} = await axiosInstance.put('/api/invoice/update', payload)
+  const saveFinancingAccept = async (payload) => {
+    const {data} = await axiosInstance.post('/api/backoffice/financing/approve', payload)
+    return data;
+  }
+  const saveFinancingReject = async (payload) => {
+    const {data} = await axiosInstance.post('/api/backoffice/financing/reject', payload)
     return data;
   }
 
@@ -67,9 +61,9 @@ const FinancingService = () => {
     saveInvoice,
     fetchPartnership,
     getReceivableById,
-    updateStatusInvoice,
-    fetchFinancingBoPayable,
-    fetchFinancingBoReceivable
+    saveFinancingAccept,
+    saveFinancingReject,
+    fetchFinancingBo
   };
 };
 

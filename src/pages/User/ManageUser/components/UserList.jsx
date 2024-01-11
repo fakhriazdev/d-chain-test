@@ -6,9 +6,112 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined.js";
 import Badge from "../../../../components/Badge";
 import IconEdit from "../../../../assets/icons/Icon Edit.svg";
 import IconDelete from "../../../../assets/icons/Icon Delete.svg";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ServiceContext } from "../../../../context/ServiceContext";
+import { userAction } from "../../../../slices/userSlice";
+import { useFormik } from "formik";
+import { toTitleCase } from "../../../../utils/utility";
 const UserList = () => {
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.user);
+  const { userService } = useContext(ServiceContext);
+  const [paging, setPaging] = useState({});
+
+  const currentPage = parseInt(searchParam.get("page") || 1);
+  const currentSize = parseInt(searchParam.get("size") || 10);
+
+  const onNext = (page) => {
+    if (page === paging.totalPages) return;
+    searchParam.set("page", page + 1);
+    setSearchParam(searchParam);
+  };
+
+  const onPrevious = (page) => {
+    if (page === 1) return;
+    searchParam.set("page", page - 1);
+    setSearchParam(searchParam);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      access: null,
+    },
+    onSubmit: (values) => {
+      console.log(values);
+      dispatch(
+        userAction(async () => {
+          const result = await userService.fetchAll({
+            page: currentPage,
+            size: currentSize,
+            access: values.access,
+            name: null,
+          });
+          console.log(result, "--------");
+          if (result) {
+            setPaging(result.paging);
+            const data = result.data;
+            console.log(data);
+            return { data };
+          }
+        })
+      );
+    },
+  });
+
+  useEffect(() => {
+    const onGetInvoices = () => {
+      try {
+        dispatch(
+          userAction(async () => {
+            const result = await userService.fetchAll({
+              page: currentPage,
+              size: currentSize,
+              access: null,
+              name: null,
+            });
+            if (result) {
+              setPaging(result.paging);
+              const data = result.data;
+              console.log(data);
+              return { data };
+            }
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    onGetInvoices();
+  }, [dispatch, userService, currentPage, currentSize]);
+
+  useEffect(() => {
+    if (currentPage < 1 || currentPage > paging.totalPages) {
+      const newSearchParam = new URLSearchParams(searchParam);
+      newSearchParam.set("page", 1);
+      setSearchParam(newSearchParam.toString());
+    }
+  }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const data = users;
+  const filterUser = searchTerm
+    ? data.filter((item) =>
+        item.username.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data;
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
@@ -21,13 +124,14 @@ const UserList = () => {
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="relative flex justify-between mb-5 gap-4 mx-4">
-          <form>
+          <form onSubmit={handleSearchSubmit}>
             <div className="flex items-center py-2">
               <input
                 className="border-none bg-orange bg-opacity-10 rounded-l-lg w-72 h-11 placeholder:opacity-50 pl-12 "
                 id="email"
                 type="text"
                 placeholder="Search..."
+                onChange={handleSearch}
               />
               <img
                 src={IconSearch}
@@ -57,7 +161,7 @@ const UserList = () => {
             id="dropdownDefaultRadio"
             className={`divide-y hidden bg-white border border-orange divide-gray-100 rounded-lg shadow w-1/5 relative z-10`}
           >
-            <form>
+            <form onSubmit={formik.handleSubmit}>
               <div className="flex">
                 <div className="w-2/5">
                   <ul
@@ -69,8 +173,10 @@ const UserList = () => {
                       <div className="flex items-center mt-5">
                         <input
                           type="radio"
-                          value="Invoicing"
+                          value="INVOICE_STAFF"
                           name="access"
+                          checked={formik.values.access === "INVOICE_STAFF"}
+                          onChange={formik.handleChange}
                           className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                         />
                         <label
@@ -85,15 +191,17 @@ const UserList = () => {
                       <div className="flex items-center">
                         <input
                           type="radio"
-                          value="Financing"
+                          value="FINANCE_STAFF"
                           name="access"
+                          checked={formik.values.access === "FINANCE_STAFF"}
+                          onChange={formik.handleChange}
                           className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                         />
                         <label
                           htmlFor="default-radio-2"
                           className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                         >
-                          Financing
+                          Finance
                         </label>
                       </div>
                     </li>
@@ -101,8 +209,10 @@ const UserList = () => {
                       <div className="flex items-center">
                         <input
                           type="radio"
-                          value="Payment"
+                          value="PAYMENT_STAFF"
                           name="access"
+                          checked={formik.values.access === "PAYMENT_STAFF"}
+                          onChange={formik.handleChange}
                           className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                         />
                         <label
@@ -157,85 +267,112 @@ const UserList = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white">
-                <th
-                  scope="col-span-4"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  admin_a1
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  Jeremy
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
-                >
-                  jeremy01@gmail.com
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  <span
-                    className={`bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300`}
-                  >
-                    Invoicing
-                  </span>
-                  <span
-                    className={`bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300`}
-                  >
-                    Payment
-                  </span>
-                  <span
-                    className={`bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300`}
-                  >
-                    Financing
-                  </span>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
-                >
-                  <button>
-                    <img src={IconEdit} alt="Icon View" />
-                  </button>
-                  <button>
-                    <img src={IconDelete} alt="Icon Download" />
-                  </button>
-                </th>
-              </tr>
-              {/* <tr>
+              {filterUser && filterUser?.length !== 0 ? (
+                filterUser.map((i, idx) => {
+                  return (
+                    <tr key={idx} className="bg-white">
+                      <th
+                        scope="col-span-4"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.username}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.name}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
+                      >
+                        {i.email}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                      >
+                        {i.access && i.access?.length !== 0 ? (
+                          i.access.map((item, idx) => {
+                            return (
+                              <span
+                                key={idx}
+                                className={`bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300`}
+                              >
+                                {toTitleCase(item.split("_")[0])}
+                              </span>
+                            );
+                          })
+                        ) : (
+                          <tr>haha</tr>
+                        )}
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
+                      >
+                        <button>
+                          <img src={IconEdit} alt="Icon View" />
+                        </button>
+                        <button>
+                          <img src={IconDelete} alt="Icon Download" />
+                        </button>
+                      </th>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
                   <td colSpan="6" className="px-6 py-4 text-center">
-                  Payment Not Found...
+                    User Not Found...
                   </td>
-                </tr> */}
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
-          <p className="my-auto">Showing 1 to 1 of 1 entries</p>
+          <p className="my-auto">
+            Showing {paging.page} to {paging.size} of {paging.count} entries
+          </p>
 
           <nav aria-label="Page navigation example">
             <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
-              <li>
-                <button className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange">
+              <li className={`${currentPage == 1 && "disabled"}`}>
+                <button
+                  onClick={() => onPrevious(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
+                >
                   <ChevronLeftOutlined />
                   <span className="sr-only">Previous</span>
                 </button>
               </li>
-              <li>
-                <Link
-                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange page-link`}
+              {Array(paging.totalPages)
+                .fill(null)
+                .map((_, idx) => {
+                  const page = ++idx;
+                  return (
+                    <li key={page}>
+                      <Link
+                        className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange page-link ${
+                          currentPage == page &&
+                          "bg-gray/20 text-orange font-bold"
+                        }`}
+                        to={`/user/manageuser?page=${page}&size=${currentSize}`}
+                      >
+                        {page}
+                      </Link>
+                    </li>
+                  );
+                })}
+              <li
+                className={`${currentPage >= paging.totalPages && "disabled"}`}
+              >
+                <button
+                  onClick={() => onNext(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
                 >
-                  1
-                </Link>
-              </li>
-              <li>
-                <button className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange ">
                   <ChevronRightOutlinedIcon />
                   <span className="sr-only">Next</span>
                 </button>

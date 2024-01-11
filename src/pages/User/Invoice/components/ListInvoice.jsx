@@ -14,6 +14,7 @@ import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
+import { toTitleCase } from "../../../../utils/utility.js";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -457,7 +458,7 @@ const ListInvoice = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
                         <Badge variant={i.status.toLowerCase()}>
-                          {i.status.toLowerCase()}
+                          {toTitleCase(i.status)}
                         </Badge>
                       </th>
                       <th

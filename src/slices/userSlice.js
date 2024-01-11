@@ -19,13 +19,13 @@ const userSlice = createSlice({
 },
   extraReducers: (builder) => {
     builder.addCase(userAction.fulfilled, (state, { payload }) => {
-        if (payload) {
-        state.payments = payload.data;
+      if (payload) {
+        state.users = payload.data;
       }
     });
     builder.addCase(selectUserAction.fulfilled, (state, { payload }) => {
       if (payload) {
-        state.selectedPayment = payload;
+        state.selectedUser = payload;
       }
     });
   },

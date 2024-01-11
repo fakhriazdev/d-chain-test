@@ -39,7 +39,7 @@ const Badge = (props) => {
       case "Completed":
         setType("green");
         break;
-      case "On-Going":
+      case "Ongoing":
         setType("blue");
         break;
 

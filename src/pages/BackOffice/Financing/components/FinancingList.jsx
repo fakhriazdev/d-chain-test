@@ -1,4 +1,3 @@
-import IconDownload from "../../../../assets/icons/Icon Download.svg";
 import IconView from "../../../../assets/icons/Icon View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
@@ -11,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { useFormik } from "formik";
 import { financingAction } from "../../../../slices/financingSlice.js";
-import { formatDate } from "../../../../utils/utility.js";
+import { formatDate, toTitleCase } from "../../../../utils/utility.js";
 
 const FinancingList = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -20,7 +19,6 @@ const FinancingList = () => {
   const { financings } = useSelector((state) => state.financing);
   const { financingService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
-  const [isPayable, setIsPayable] = useState("fetchFinancingBoPayable");
 
   console.log(financings);
 
@@ -41,16 +39,18 @@ const FinancingList = () => {
 
   const formik = useFormik({
     initialValues: {
+      type: "payable",
       status: null,
     },
     onSubmit: (values) => {
       console.log(values);
       dispatch(
         financingAction(async () => {
-          const result = await financingService.fetchFinancingBoReceivable({
+          const result = await financingService.fetchFinancingBo({
             page: currentPage,
             size: currentSize,
             direction: "asc",
+            type: values.type,
             status: values.status,
           });
           console.log(result, "--------");
@@ -70,10 +70,11 @@ const FinancingList = () => {
       try {
         dispatch(
           financingAction(async () => {
-            const result = await financingService.fetchFinancingBoPayable({
+            const result = await financingService.fetchFinancingBo({
               page: currentPage,
               size: currentSize,
               direction: "asc",
+              type: "payable",
               status: null,
             });
             console.log(result);
@@ -121,42 +122,37 @@ const FinancingList = () => {
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
     console.log(isChecked);
+    let checked = "";
     if (!isChecked) {
-      console.log(isChecked, "receivable");
-      dispatch(
-        financingAction(async () => {
-          const result = await financingService.fetchFinancingBoReceivable({
-            page: currentPage,
-            size: currentSize,
-            direction: "asc",
-            status: null,
-          });
-          console.log(result, "receivable");
-          if (result) {
-            setPaging(result.paging);
-            const data = result.data;
-            return { data };
-          }
-        })
-      );
+      formik.setValues({
+        type: "receivable",
+      });
+      checked = "receivable";
     } else {
-      dispatch(
-        financingAction(async () => {
-          const result = await financingService.fetchFinancingBoPayable({
-            page: currentPage,
-            size: currentSize,
-            direction: "asc",
-            status: null,
-          });
-          console.log(result, "payable");
-          if (result) {
-            setPaging(result.paging);
-            const data = result.data;
-            return { data };
-          }
-        })
-      );
+      formik.setValues({
+        type: "payable",
+      });
+      checked = "payable";
     }
+    console.log(checked);
+
+    dispatch(
+      financingAction(async () => {
+        const result = await financingService.fetchFinancingBo({
+          page: currentPage,
+          size: currentSize,
+          direction: "asc",
+          type: checked,
+          status: null,
+        });
+        console.log(result);
+        if (result) {
+          setPaging(result.paging);
+          const data = result.data;
+          return { data };
+        }
+      })
+    );
   };
 
   return (
@@ -257,9 +253,9 @@ const FinancingList = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Pending"
+                        value="PENDING"
                         name="status"
-                        checked={formik.values.status === "Pending"}
+                        checked={formik.values.status === "PENDING"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -275,9 +271,9 @@ const FinancingList = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Rejected"
+                        value="REJECTED"
                         name="status"
-                        checked={formik.values.status === "Rejected"}
+                        checked={formik.values.status === "REJECTED"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -293,9 +289,9 @@ const FinancingList = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="On-Going"
+                        value="ONGOING"
                         name="status"
-                        checked={formik.values.status === "On-Going"}
+                        checked={formik.values.status === "ONGOING"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -311,9 +307,9 @@ const FinancingList = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Outstanding"
+                        value="OUTSTANDING"
                         name="status"
-                        checked={formik.values.status === "Outstanding"}
+                        checked={formik.values.status === "OUTSTANDING"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -329,9 +325,9 @@ const FinancingList = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Completed"
+                        value="COMPLETED"
                         name="status"
-                        checked={formik.values.status === "Completed"}
+                        checked={formik.values.status === "COMPLETED"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -419,15 +415,15 @@ const FinancingList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        <Badge variant="On-Going">
-                          {i.status.toLowerCase()}
+                        <Badge variant={toTitleCase(i.status)}>
+                          {toTitleCase(i.status)}
                         </Badge>
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link to={"/backoffice/financing/detail/:id"}>
+                        <Link to={`/backoffice/financing/detail/receivable/${i.financing_id}`}>
                           <button className="ml-4">
                             <img src={IconView} alt="Icon View" />
                           </button>

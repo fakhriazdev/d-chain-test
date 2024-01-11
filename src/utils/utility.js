@@ -1,5 +1,5 @@
 export function toTitleCase(str) {
-    return str
+    return str.toLowerCase()
         .replace(/([A-Z])/g, ' $1')
         .replace(/^./, (match) => match.toUpperCase())
         .trim();
