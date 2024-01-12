@@ -7,10 +7,18 @@ const UserService = () => {
     });
     return data;
   };
+  const fetchAllBackoffice = async (queryParams) => {
+    const { data } = await axiosInstance.get(`/api/backoffice/users`, {
+      params: queryParams,
+    });
+    console.log(data);
+    return data;
+  };
 
   return {
-    fetchAll
-  }
+    fetchAll,
+    fetchAllBackoffice,
+  };
 };
 
 export default UserService;

@@ -25,3 +25,16 @@ export function formatDate(timestamp) {
 
   return formattedDate;
 }
+
+export function toRoleAccess(str) {
+    if (str === "ADMIN") {
+        return toTitleCase(str);
+    } else {
+        let word = str.split("_");
+        let result = "";
+        for (let i = 0; i < word.length; i++) {
+          result += word[i].charAt(0);
+        }
+        return result.toUpperCase();
+    }
+}

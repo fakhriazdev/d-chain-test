@@ -63,7 +63,7 @@ const UserList = () => {
   });
 
   useEffect(() => {
-    const onGetInvoices = () => {
+    const onGetUsers = () => {
       try {
         dispatch(
           userAction(async () => {
@@ -85,7 +85,7 @@ const UserList = () => {
         console.log(error);
       }
     };
-    onGetInvoices();
+    onGetUsers();
   }, [dispatch, userService, currentPage, currentSize]);
 
   useEffect(() => {
@@ -117,9 +117,11 @@ const UserList = () => {
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Manage User</h1>
         <div>
-          <button className="my-auto text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center  ">
-            <AddOutlinedIcon /> Add New User
-          </button>
+          <Link to={`/user/manageuser/add`}>
+            <button className="my-auto text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center  ">
+              <AddOutlinedIcon /> Add New User
+            </button>
+          </Link>
         </div>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -298,7 +300,7 @@ const UserList = () => {
                             return (
                               <span
                                 key={idx}
-                                className={`bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300`}
+                                className="bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300"
                               >
                                 {toTitleCase(item.split("_")[0])}
                               </span>
@@ -312,9 +314,11 @@ const UserList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <button>
-                          <img src={IconEdit} alt="Icon View" />
-                        </button>
+                        <Link to={`/user/manageruser/edit/${i.userId}`}>
+                          <button>
+                            <img src={IconEdit} alt="Icon View" />
+                          </button>
+                        </Link>
                         <button>
                           <img src={IconDelete} alt="Icon Download" />
                         </button>

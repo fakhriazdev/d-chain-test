@@ -49,7 +49,7 @@ const Badge = (props) => {
       case "unpaid":
         setType("red");
         break;
-      case "late-unpaid":
+      case "Lateunpaid":
         setType("red");
         break;
       default:

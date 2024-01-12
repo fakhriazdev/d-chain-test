@@ -457,7 +457,7 @@ const ListInvoice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        <Badge variant={i.status.toLowerCase()}>
+                        <Badge variant={toTitleCase(i.status)}>
                           {toTitleCase(i.status)}
                         </Badge>
                       </th>
