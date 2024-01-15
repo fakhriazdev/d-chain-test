@@ -133,8 +133,9 @@ const ListInvoice = () => {
   };
 
   const [searchTerm, setSearchTerm] = useState("");
+  console.log(invoices);
   const filterInvoices = invoices.filter((item) =>
-    item.company.toLowerCase().includes(searchTerm.toLowerCase())
+    item.companyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSearch = (event) => {
@@ -403,13 +404,13 @@ const ListInvoice = () => {
                         scope="col-span-4"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.company}
+                        {i.companyName}
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.invoice_id}
+                        {i.invNumber}
                       </th>
                       <th
                         scope="col"

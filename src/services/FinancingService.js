@@ -1,6 +1,19 @@
 import axiosInstance from "../api/axiosInstance";
 
 const FinancingService = () => {
+  const getLimit = async () => {
+    const { data } = await axiosInstance.get("/api/financing/limit");
+    return data;
+  };
+
+  const requestFinancingReceivable = async (request) => {
+    const { data } = await axiosInstance.post(
+      "/api/financing/receivable",
+      request
+    );
+    return data;
+  };
+
   const fetchPaymentOngoing = async (queryParams) => {
     const { data } = await axiosInstance.get(`/api/payments/ongoing`, {
       params: queryParams,
@@ -15,15 +28,6 @@ const FinancingService = () => {
     return data;
   };
 
-  const saveInvoice = async (invoice) => {
-    try {
-      const { data } = await axiosInstance.post("/api/invoice", invoice);
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fetchPartnership = async (id, queryParams) => {
     const { data } = await axiosInstance.get(`/api/partnerships/${id}`, {
       params: queryParams,
@@ -32,22 +36,23 @@ const FinancingService = () => {
   };
 
   const getReceivableById = async (id) => {
-    const {data} = await axiosInstance.get(`/api/financing/receivable/${id}`);
+    const { data } = await axiosInstance.get(`/api/financing/receivable/${id}`);
     return data;
-  }
+  };
 
   const updateStatusInvoice = async (payload) => {
-    const {data} = await axiosInstance.put('/api/invoice/update', payload)
+    const { data } = await axiosInstance.put("/api/invoice/update", payload);
     return data;
-  }
+  };
 
   return {
     fetchPaymentOngoing,
     fetchPaymentHistory,
-    saveInvoice,
+    requestFinancingReceivable,
     fetchPartnership,
     getReceivableById,
-    updateStatusInvoice
+    updateStatusInvoice,
+    getLimit,
   };
 };
 

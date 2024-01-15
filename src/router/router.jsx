@@ -3,7 +3,7 @@ import App from "../App";
 import Login from "../pages/Auth/Login";
 import OtpPage from "../pages/Auth/OTP";
 import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
-import Dashboard from "../pages/Dashboard";
+import Dashboard from "../pages/User/Dashboard";
 
 import Company from "../pages/BackOffice/Company";
 import ListCompany from "../pages/BackOffice/Company/components/ListCompany.jsx";
@@ -37,6 +37,7 @@ import Payment from "../pages/User/Payment/index.jsx";
 import PaymentListOngoing from "../pages/User/Payment/components/PaymentListOngoing.jsx";
 import PaymentListHistory from "../pages/User/Payment/components/PaymentListHistory.jsx";
 import FinancingDetailReceivable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
+import Management from "../pages/User/Management/index.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -206,6 +207,16 @@ const setupRouter = () =>
             },
           ],
         },
+        {
+          path: "user/management/",
+          element: <Management/>,
+          children:[
+            {
+              path:":id",
+              element: <Management/>
+            }
+          ]
+        }
       ],
     },
   ]);

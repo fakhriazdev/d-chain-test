@@ -32,7 +32,7 @@ export default function FinancingDetailReceivable() {
     <>
       {selectedFinancing && (
         <div>
-          <h1 className="text-title">Financing Detail - Payable</h1>
+          <h1 className="text-title">Financing Detail - Receivable</h1>
 
           <div className="flex justify-center mt-5 flex-col items-center">
             <div className=" w-full rounded-2xl shadow-md min-h-fit p-10">

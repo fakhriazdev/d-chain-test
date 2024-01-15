@@ -15,8 +15,11 @@ const Status = (props) => {
       case "success":
         setType("green");
         break;
+        case "approve":
+        setType("blue");
+        break;
       default:
-        setType("amber-400");
+        // setType("amber-400");
     }
   }, []);
   return (

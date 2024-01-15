@@ -46,7 +46,7 @@ const PaymentListOngoing = () => {
       groupBy: "payable",
     },
     onSubmit: (values) => {
-      console.log(values);
+      // console.log(values, "1234567890");
       dispatch(
         paymentAction(async () => {
           const result = await paymentService.fetchPaymentOngoing({
@@ -385,7 +385,7 @@ const PaymentListOngoing = () => {
                         scope="col-span-4"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.transactionId}
+                        {i.payment_id}
                       </th>
                       <th
                         scope="col"
