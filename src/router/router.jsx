@@ -30,10 +30,10 @@ import InvoiceGeneration from "../pages/User/Invoice/components/InvoiceGeneratio
 import FormPartnership from "../pages/BackOffice/Partnership/components/FormPartnership.jsx";
 import PartnershipUser from "../pages/BackOffice/PartnershipUser/index.jsx";
 import ListPartnershipUser from "../pages/BackOffice/PartnershipUser/components/ListPartnershipUser.jsx";
-import ListFinancing from "../pages/BackOffice/Financing/components/ListFinancing.jsx";
-import Financing from "../pages/BackOffice/Financing/index.jsx";
-import DetailFinancingPayable from "../pages/BackOffice/Financing/components/DetailFinancingPayable.jsx";
-import RequestFinancingPayable from "../pages/BackOffice/Financing/components/RequestFinancingPayable.jsx";
+import ListFinancing from "../pages/User/Financing/components/ListFinancing.jsx";
+import Financing from "../pages/User/Financing/index.jsx";
+import DetailFinancingPayable from "../pages/User/Financing/components/DetailFinancingPayable.jsx";
+import RequestFinancingPayable from "../pages/User/Financing/components/RequestFinancingPayable.jsx";
 import Dashbaord from "../pages/BackOffice/Dashboard/index.jsx";
 
 const setupRouter = () =>
