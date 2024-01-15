@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar";
 
-const Financing = () => {
+const FinancingBackoffice = () => {
   return (
     <div>
       <Sidebar>
@@ -11,4 +11,4 @@ const Financing = () => {
   );
 };
 
-export default Financing;
+export default FinancingBackoffice;

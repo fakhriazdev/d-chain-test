@@ -47,6 +47,7 @@ import User from "../pages/User/ManageUser/index.jsx";
 import UserListBackoffice from "../pages/BackOffice/ManageUser/components/UserListBackoffice.jsx";
 import UserBackoffice from "../pages/BackOffice/ManageUser/index.jsx";
 import FinancingDetailReceivableBo from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
+import FinancingBackoffice from "../pages/BackOffice/Financing/index.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -195,7 +196,7 @@ const setupRouter = () =>
         },
         {
           path: "/backoffice/financing",
-          element: <Financing />,
+          element: <FinancingBackoffice />,
           children: [
             {
               index: true,
@@ -242,8 +243,8 @@ const setupRouter = () =>
             },
             {
               path: "detail/:id/success",
-              element: <PaymentSuccessfully/>
-            }
+              element: <PaymentSuccessfully />,
+            },
           ],
         },
 
@@ -256,9 +257,10 @@ const setupRouter = () =>
               element: <UserList />,
             },
           ],
-        },{
+        },
+        {
           path: "backoffice",
-          element: <UserBackoffice/>,
+          element: <UserBackoffice />,
           children: [
             {
               path: "manageuser",
@@ -266,7 +268,6 @@ const setupRouter = () =>
             },
           ],
         },
-
       ],
     },
   ]);
