@@ -1,6 +1,45 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {useFetchCompany} from "../../../../features/company/useFetchCompany.js";
+import {decodeJWT} from "../../../../utils/decodeJWT.js";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined.js";
+import {useAddPartnership} from "../../../../features/partnership/useAddPartnership.js";
+import {useFormik} from "formik";
 
-const RequestPartnership = () => {
+
+const RequestPartnership = (props) => {
+    const {refetch} = props;
+        const [temp, setTemp] = useState("")
+        const [searchTerm, setSearchTerm] = useState('');
+        const { company,isLoading,error } = useFetchCompany(searchTerm);
+        console.log(error?.data);
+    const decode = decodeJWT()
+
+        const handleSearchChange = (event) => {
+            setTemp(event.target.value);
+        };
+        const handleSearchSubmit = (event) => {
+            event.preventDefault();
+            setSearchTerm(temp)
+        };
+    console.log(company)
+
+    const addPartnershipMutation = useAddPartnership({
+        onSuccess: (data) => {
+            // handle success
+            refetch()
+            console.log("Success:", data);
+        },
+        onFailure: (error) => {
+            refetch()
+            console.error("Error:", error);
+        },
+    });
+
+    const handleAddPartnership = async () => {
+            await addPartnershipMutation.mutate({'partnerId':company.companyId,'companyId':decode?.company_id});
+    };
+
+
     return (
         <div>
             <div className="relative p-4 max-h-full">
@@ -21,31 +60,65 @@ const RequestPartnership = () => {
                     <div className="px-6 py-3">
                         <h1 className="text-[20px]">Request Partnership</h1>
                     </div>
-                    <div className="px-6">
-                        <form>
-                            <div className="">
-                                <form className="my-auto">
-                                    <div className="flex flex-col">
-                                        <label
-                                            className="block text-[14px] font-normal leading-6 text-darkgray mb-2">
-                                            Company ID
-                                        </label>
-                                        <div className="relative w-full">
-                                            <input type="search" id="search-dropdown"
-                                                   className="block p-2.5 w-full z-20 py-3 text-sm text-gray bg-white rounded-lg border border-lightgray focus:outline-none"
-                                                   placeholder="Search..." required/>
-                                            <button type="submit"
-                                                    className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-orange rounded-e-lg border border-orange hover:bg-white hover:text-orange focus:ring-none focus:outline-none focus:ring-orange">
-                                                <p>Search</p>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-
+                    <div className="px-6 mb-10">
+                        <form className="my-auto" onSubmit={handleSearchSubmit}>
+                            <div className="flex flex-col">
+                                <label
+                                    className="block text-[14px] font-normal leading-6 text-darkgray mb-2">
+                                    Company ID
+                                </label>
+                                <div className="relative w-full">
+                                    <input type="search" id="search-dropdown"
+                                           onChange={handleSearchChange}
+                                           className="block p-2.5 w-full z-20 py-3 text-sm text-gray bg-white rounded-lg border border-lightgray focus:outline-none"
+                                           placeholder="Search..." required/>
+                                    <button type="submit"
+                                            className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-orange rounded-e-lg border border-orange hover:bg-white hover:text-orange focus:ring-none focus:outline-none focus:ring-orange">
+                                        <p>Search</p>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
+                    <div className="px-6 py-3 text-center">
+                        {error ? (
+                            <h1>{error?.data}</h1>
+                        ) : (
+                            <>
+                                {company ? (
+                                    <>
+                                        <h1 className="text-[14px] font-medium">{company?.companyName}</h1>
+                                        <h2 className="text-[10px] ">{company?.emailUser}</h2>
+                                        <h2 className="text-[10px] ">{company?.address}</h2>
+                                        <h2 className="text-[10px] ">{company?.phoneNumber}</h2>
+                                    </>
+                                ) : (
+                                    <h1>No company data available</h1>
+                                )}
+                            </>
+                        )}
+                    </div>
+                    <div className="px-6 py-3 text-center">
+                        {error ? (
+                            <></>
+                        ) : (
+                            <>
+                                {company ? (
+                                    <>
+                                        <button
+                                            onClick={handleAddPartnership}
+                                            className="mt-2 text-white bg-orange border border-orange hover:bg-orange/80 focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center  ">
+                                            <AddOutlinedIcon/> Request Partnership
+                                        </button>
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
+                            </>
+                        )}
 
+
+                    </div>
                     <div className="flex items-center justify-end p-4 md:p-5 gap-3">
 
                     </div>

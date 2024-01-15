@@ -6,7 +6,6 @@ const Badge = (props) => {
 
   useEffect(() => {
     switch (variant) {
-      
       case "Pending":
         setType("red");
         break;
@@ -39,6 +38,9 @@ const Badge = (props) => {
         break;
       case "Ongoing":
         setType("blue");
+        break;
+      case "IN_PARTNER":
+        setType("green");
         break;
 
       case "invoicing":

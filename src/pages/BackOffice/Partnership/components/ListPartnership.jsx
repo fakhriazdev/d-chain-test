@@ -12,17 +12,17 @@ import { useFetchCompany } from "../../../../features/company/useFetchCompany.js
 const ListPartnership = () => {
   const params = useParams();
   const {
-    partnership,
+    datas,
     isLoading,
     currentPage,
     pageSize,
     totalPages,
     handlePageChange,
+    refetch
   } = useFetchPartnership(params.id);
-
-  console.log(currentPage, "currentPage");
-  console.log(pageSize, "pageSize");
-  console.log(totalPages, "totalPages");
+  const handleManualRefetch = () => {
+    refetch();
+  };
   return (
     <>
       <div className="relative flex justify-between mb-10 mx-4">
@@ -48,7 +48,7 @@ const ListPartnership = () => {
           aria-hidden="true"
           className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-darkgray/40"
         >
-          <FormPartnership />
+          <FormPartnership refetch={()=>handleManualRefetch()} />
         </div>
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -64,8 +64,9 @@ const ListPartnership = () => {
           </button>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40"
+            className="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-md w-80 p-6"
           >
+            <p className="border-0">Partnership Status</p>
             <ul
               className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
               aria-labelledby="dropdownRadioButton"
@@ -121,74 +122,80 @@ const ListPartnership = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white">
-                <th
-                  scope="col-span-4"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  FI-C-36974019-6.23
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  Cahaya Group
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
-                >
-                  <Badge variant="success">Success</Badge>
-                </th>
-              </tr>
+
+            {datas?.map((partnership)=>{
+              return (
+                  <tr className="bg-white" key={partnership?.partnershipId}>
+                    <th
+                        scope="col-span-4"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      {partnership?.partnershipId}
+                    </th>
+                    <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      {partnership?.partner?.companyName}
+                    </th>
+                    <th
+                        scope="col"
+                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
+                    >
+                      <Badge variant={`"${partnership?.partnerStatus}"`}>{partnership?.partnerStatus}</Badge>
+                    </th>
+                  </tr>
+              )
+            })}
+
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
           {isLoading === true ? (
-            <p className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-              loading...
-            </p>
+              <p className="my-auto text-xs font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+                loading...
+              </p>
           ) : (
-            <p className="my-auto">{`Showing ${currentPage} to ${pageSize} of ${partnership?.length} entries`}</p>
+              <p className="my-auto">{`Showing ${currentPage} to ${pageSize} of ${datas?.length} entries`}</p>
           )}
           <nav aria-label="Page navigation example">
             <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
               <li>
                 <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
                 >
-                  <ChevronLeftOutlined />
+                  <ChevronLeftOutlined/>
                   <span className="sr-only">Previous</span>
                 </button>
               </li>
               <li>
                 {[...Array(totalPages).keys()].map((page) => (
-                  <li key={page + 1}>
-                    <button
-                      onClick={() => handlePageChange(page + 1)}
-                      className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 ${
-                        currentPage === page + 1
-                          ? "bg-gray/20 text-orange font-bold"
-                          : "bg-gray/20 hover:bg-orange/20 hover:text-orange"
-                      } rounded-md`}
-                    >
-                      {page + 1}
-                    </button>
-                  </li>
+                    <li key={page + 1}>
+                      <button
+                          onClick={() => handlePageChange(page + 1)}
+                          className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 ${
+                              currentPage === page + 1
+                                  ? "bg-gray/20 text-orange font-bold"
+                                  : "bg-gray/20 hover:bg-orange/20 hover:text-orange"
+                          } rounded-md`}
+                      >
+                        {page + 1}
+                      </button>
+                    </li>
                 ))}
               </li>
-
               <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
                 >
-                  <ChevronRightOutlinedIcon />
+                  <ChevronRightOutlinedIcon/>
                   <span className="sr-only">Next</span>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>

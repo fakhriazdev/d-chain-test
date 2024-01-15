@@ -1,4 +1,4 @@
-import IconView from "../../../../assets/icons/Icon View.svg";
+import IconView from "../../../../assets/icons/View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined.js";
 import { ChevronLeftOutlined } from "@mui/icons-material";
@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { useFormik } from "formik";
 import { financingAction } from "../../../../slices/financingSlice.js";
-import { formatDate, toTitleCase } from "../../../../utils/utility.js";
+import { formatDate, formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
 
 const FinancingList = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -403,7 +403,7 @@ const FinancingList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
                       >
-                        {i.amount}
+                        {formatIDRCurrency(i.amount)}
                       </th>
                       <th
                         scope="col"
@@ -424,7 +424,7 @@ const FinancingList = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
                         <Link 
-                        to={formik.values.type ? `/backoffice/financing/detail/receivable/${i.financing_id}` : `/backoffice/financing/detail/${i.financing_id}`}
+                        to={formik.values.type === "payable" ? (`/backoffice/financing/detail/${i.financing_id}`) : (`/backoffice/financing/detail/receivable/${i.financing_id}`)}
                         // to={`/backoffice/financing/detail/receivable/${i.financing_id}`}
                         >
                           {console.log(formik.values.type)}

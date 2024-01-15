@@ -5,7 +5,7 @@ import Badge from "../../../../components/Badge.jsx";
 import InvoiceGenerationButton from "../../../../assets/icons/Icon Invoice Generation Button.svg";
 import IconUploadBlack from "../../../../assets/icons/Icon Upload Black.svg";
 import IconDownload from "../../../../assets/icons/Icon Download.svg";
-import IconView from "../../../../assets/icons/Icon View.svg";
+import IconView from "../../../../assets/icons/View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";

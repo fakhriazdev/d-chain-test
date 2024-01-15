@@ -2,12 +2,9 @@ import axiosInstance from "../api/axiosInstance";
 
 const FinancingService = () => {
   const fetchFinancingBo = async (queryParams) => {
-    const { data } = await axiosInstance.get(
-      `/api/backoffice/financing`,
-      {
-        params: queryParams,
-      }
-    );
+    const { data } = await axiosInstance.get(`/api/backoffice/financing`, {
+      params: queryParams,
+    });
     return data;
   };
 
@@ -42,18 +39,28 @@ const FinancingService = () => {
   };
 
   const getReceivableById = async (id) => {
-    const {data} = await axiosInstance.get(`/api/financing/receivable/${id}`);
+    const { data } = await axiosInstance.get(`/api/financing/receivable/${id}`);
     return data;
-  }
+  };
+  const getPayableById = async (id) => {
+    const { data } = await axiosInstance.get(`/api/financing/payable/${id}`);
+    return data;
+  };
 
   const saveFinancingAccept = async (payload) => {
-    const {data} = await axiosInstance.post('/api/backoffice/financing/approve', payload)
+    const { data } = await axiosInstance.post(
+      "/api/backoffice/financing/approve",
+      payload
+    );
     return data;
-  }
+  };
   const saveFinancingReject = async (payload) => {
-    const {data} = await axiosInstance.post('/api/backoffice/financing/reject', payload)
+    const { data } = await axiosInstance.post(
+      "/api/backoffice/financing/reject",
+      payload
+    );
     return data;
-  }
+  };
 
   return {
     fetchPaymentOngoing,
@@ -63,7 +70,8 @@ const FinancingService = () => {
     getReceivableById,
     saveFinancingAccept,
     saveFinancingReject,
-    fetchFinancingBo
+    fetchFinancingBo,
+    getPayableById
   };
 };
 

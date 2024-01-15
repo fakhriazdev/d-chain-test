@@ -1,13 +1,14 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import Sidebar from "../../../components/Sidebar";
+import React from 'react';
+import Sidebar from '../../../components/Sidebar.jsx'
+import { Outlet } from 'react-router-dom';
+const Financing = () => {
+    return (
+        <div>
+            <Sidebar>
+                <Outlet/>
+            </Sidebar>
+        </div>
+    );
+};
 
-export default function Financing() {
-  return (
-    <>
-      <Sidebar>
-        <Outlet />
-      </Sidebar>
-    </>
-  );
-}
+export default Financing;
