@@ -8,6 +8,7 @@ import Button from "../../../../components/Button.jsx";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined.js";
 import TabFilter from "../../../../components/TabFilter.jsx";
 import {useFetchFinancing} from "../../../../features/financing/useFetchFinancing.js";
+import {Link} from "react-router-dom";
 
 const ListFinancing = () => {
     const [selectedStatus, setSelectedStatus] = useState("pending");
@@ -199,106 +200,42 @@ const ListFinancing = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        <tr className="bg-white">
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                26-06-24
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                FI-C-36974019-6.23
-                            </th>
-                            <th scope="col" className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
-                                {`Rp. ${"80000000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                Goriorio Jaya
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <Badge variant="pending">Pending</Badge>
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <ArticleOutlinedIcon/>
-                            </th>
-                        </tr>
-                        <tr className="bg-white">
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                26-06-24
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                FI-C-36974019-6.23
-                            </th>
-                            <th scope="col" className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
-                                {`Rp. ${"80000000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                Goriorio Jaya
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <Badge variant="completed">Completed</Badge>
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <ArticleOutlinedIcon/>
-                            </th>
-                        </tr>
-                        <tr className="bg-white">
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                26-06-24
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                FI-C-36974019-6.23
-                            </th>
-                            <th scope="col" className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
-                                {`Rp. ${"80000000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                Goriorio Jaya
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <Badge variant="rejected">Rejected</Badge>
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <ArticleOutlinedIcon/>
-                            </th>
-                        </tr>
-                        <tr className="bg-white">
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                26-06-24
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                FI-C-36974019-6.23
-                            </th>
-                            <th scope="col" className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
-                                {`Rp. ${"80000000".replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                Goriorio Jaya
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <Badge variant="outstanding">Outstanding</Badge>
-                            </th>
-                            <th scope="col-span-4"
-                                className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                <ArticleOutlinedIcon/>
-                            </th>
-                        </tr>
+                        {data?.data.map((d)=>{
+                            return (
+
+                                    <tr className="bg-white">
+                                    <th scope="col-span-4"
+                                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
+                                        {d?.date}
+                                    </th>
+                                    <th scope="col-span-4"
+                                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
+                                        {d?.invoice_number}
+                                    </th>
+                                    <th scope="col"
+                                        className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]">
+                                        {`Rp. ${Number(d?.amount).toLocaleString("id-ID")}`}
+
+                                    </th>
+                                    <th scope="col-span-4"
+                                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
+                                        {d?.company_name}
+                                    </th>
+                                    <th scope="col-span-4"
+                                        className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
+                                        <Badge variant={d?.status}>{d?.status}</Badge>
+                                    </th>
+                                    <th scope="col-span-4" className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
+                                        <Link to={`/backoffice/financing/${d?.financing_id}/detail-payable`}
+                                              className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline">
+                                            <ArticleOutlinedIcon/>
+                                        </Link>
+                                    </th>
+                                    </tr>
+
+                        )
+                        })}
+
                         </tbody>
                     </table>
 
