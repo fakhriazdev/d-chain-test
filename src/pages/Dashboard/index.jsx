@@ -4,7 +4,7 @@ export default function Dashboard() {
   return (
     <div>
       <Sidebar>
-        <h1>INI DASHBOARD</h1>
+        <h1>Back Office Dashboard</h1>
       </Sidebar>
     </div>
   );

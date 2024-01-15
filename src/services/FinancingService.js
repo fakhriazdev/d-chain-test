@@ -14,6 +14,13 @@ const FinancingService = () => {
     return data;
   };
 
+  const fetchFinancingBo = async (queryParams) => {
+    const { data } = await axiosInstance.get(`/api/backoffice/financing`, {
+      params: queryParams,
+    });
+    return data;
+  };
+
   const fetchPaymentOngoing = async (queryParams) => {
     const { data } = await axiosInstance.get(`/api/payments/ongoing`, {
       params: queryParams,
@@ -45,6 +52,27 @@ const FinancingService = () => {
     return data;
   };
 
+  const getPayableById = async (id) => {
+    const { data } = await axiosInstance.get(`/api/financing/payable/${id}`);
+    return data;
+  };
+
+  const saveFinancingAccept = async (payload) => {
+    const { data } = await axiosInstance.post(
+      "/api/backoffice/financing/approve",
+      payload
+    );
+    return data;
+  };
+  
+  const saveFinancingReject = async (payload) => {
+    const { data } = await axiosInstance.post(
+      "/api/backoffice/financing/reject",
+      payload
+    );
+    return data;
+  };
+
   return {
     fetchPaymentOngoing,
     fetchPaymentHistory,
@@ -53,6 +81,10 @@ const FinancingService = () => {
     getReceivableById,
     updateStatusInvoice,
     getLimit,
+    saveFinancingAccept,
+    saveFinancingReject,
+    fetchFinancingBo,
+    getPayableById
   };
 };
 

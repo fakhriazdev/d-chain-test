@@ -7,6 +7,13 @@ const UserService = () => {
     });
     return data;
   };
+  
+  const fetchAll = async (queryParams) => {
+    const { data } = await axiosInstance.get(`/api/manage-users`, {
+      params: queryParams,
+    });
+    return data;
+  };
 
   const saveUser = async (payload) => {
     try {
@@ -39,6 +46,20 @@ const UserService = () => {
     return data;
   }
 
+  const fetchAllBackoffice = async (queryParams) => {
+    const { data } = await axiosInstance.get(`/api/backoffice/users`, {
+      params: queryParams,
+    });
+    console.log(data);
+    return data;
+  };
+
+  const removeUser = async (id) => {
+    const { data } = await axiosInstance.delete(`/api/manage-users/${id}`);
+    console.log(data);
+    return data;
+  };
+
 
   return {
     fetchInvoices,
@@ -46,7 +67,10 @@ const UserService = () => {
     fetchPartnership,
     getById,
     updateUser,
-    fetchUserById
+    fetchUserById,
+    fetchAll,
+    fetchAllBackoffice,
+    removeUser
   };
 };
 

@@ -11,6 +11,7 @@ const InvoiceService = () => {
   const saveInvoice = async (invoice) => {
     try {
       const { data } = await axiosInstance.post("/api/invoice", invoice);
+      console.log(data);
       return data;
     } catch (error) {
       console.log(error);

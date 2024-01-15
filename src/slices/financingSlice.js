@@ -2,11 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RequestHelper from "../services/RequestHelper";
 
 export const financingAction = createAsyncThunk(
-  "invoice/addInvoice",
+  "financing/addFinancing",
   RequestHelper
 );
+
 export const selectFinancingAction = createAsyncThunk(
-  "invoice/selectInvoice",
+  "financing/selectFinancing",
   RequestHelper
 );
 
@@ -18,6 +19,7 @@ const financingSlice = createSlice({
 },
   extraReducers: (builder) => {
     builder.addCase(financingAction.fulfilled, (state, { payload }) => {
+      console.log(payload);
         if (payload) {
         state.financings = payload.data;
       }

@@ -6,13 +6,40 @@ const Badge = (props) => {
 
   useEffect(() => {
     switch (variant) {
-      case "pending":
-        setType("yellow");
+      case "Pending":
+        setType("red");
         break;
       case "rejected":
         setType("red");
         break;
       case "success":
+        setType("green");
+        break;
+      case "Unpaid":
+        setType("yellow");
+        break;
+      case "Late":
+        setType("red");
+        break;
+      case "Disputed":
+        setType("red");
+        break;
+      case "Outstanding":
+        setType("red");
+        break;
+      case "Rejected":
+        setType("red");
+        break;
+      case "Paid":
+        setType("green");
+        break;
+      case "Completed":
+        setType("green");
+        break;
+      case "Ongoing":
+        setType("blue");
+        break;
+      case "IN_PARTNER":
         setType("green");
         break;
 
@@ -22,7 +49,7 @@ const Badge = (props) => {
       case "unpaid":
         setType("red");
         break;
-      case "late-unpaid":
+      case "Lateunpaid":
         setType("red");
         break;
       default:
@@ -31,7 +58,7 @@ const Badge = (props) => {
   }, []);
   return (
     <span
-      className={`bg-${type}/20 text-${type} text-xs font-medium me-2 px-2.5 py-0.5 rounded rounded-md border-[3px] border-${type}/40`}
+      className={`bg-${type} bg-opacity-20 text-${type} text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[1px]`}
     >
       {children}
     </span>

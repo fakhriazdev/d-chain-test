@@ -1,6 +1,6 @@
 import AuthLayout from "../../../components/AuthLayout";
 import { useFormik } from "formik";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { authAction } from "../../../slices/authSlice";
 import { ServiceContext } from "../../../context/ServiceContext";
@@ -40,9 +40,10 @@ export default function OtpPage() {
         authAction(async () => {
           const result = await authService.verifyOtp(data);
           console.log(result.data);
-          
+
           if (result.statusCode === 200) {
             sessionStorage.setItem("token", result.data.token);
+            sessionStorage.setItem("company_id", result.data.company_id);
             navigate("/dashboard");
           }
           const resultInfo = await authService.getUserInfo();

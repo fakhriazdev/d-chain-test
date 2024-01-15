@@ -13,18 +13,18 @@ export const selectUserAction = createAsyncThunk(
 const usersSlice = createSlice({
   name: "user",
   initialState: {
-    users: null,
-    selectedUsers: null,
+    users: [],
+    selectedUser: null,
 },
   extraReducers: (builder) => {
     builder.addCase(userAction.fulfilled, (state, { payload }) => {
-        if (payload) {
+      if (payload) {
         state.users = payload.data;
       }
     });
     builder.addCase(selectUserAction.fulfilled, (state, { payload }) => {
       if (payload) {
-        state.selectedUsers = payload;
+        state.selectedUser = payload;
       }
     });
   },

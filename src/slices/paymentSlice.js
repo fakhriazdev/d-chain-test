@@ -2,11 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import RequestHelper from "../services/RequestHelper";
 
 export const paymentAction = createAsyncThunk(
-  "invoice/addInvoice",
+  "payment/addPayment",
   RequestHelper
 );
+
 export const selectPaymentAction = createAsyncThunk(
-  "invoice/selectInvoice",
+  "payment/selectPayment",
   RequestHelper
 );
 
@@ -23,6 +24,7 @@ const paymentSlice = createSlice({
       }
     });
     builder.addCase(selectPaymentAction.fulfilled, (state, { payload }) => {
+      console.log(payload);
       if (payload) {
         state.selectedPayment = payload;
       }

@@ -1,7 +1,7 @@
-import Sidebar from "../../../components/Sidebar";
 import { Outlet } from "react-router-dom";
+import Sidebar from "../../../components/Sidebar";
 
-export default function Payment() {
+const Payment = () => {
   return (
     <div>
       <Sidebar>
@@ -9,4 +9,6 @@ export default function Payment() {
       </Sidebar>
     </div>
   );
-}
+};
+
+export default Payment;

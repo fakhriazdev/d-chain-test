@@ -1,8 +1,8 @@
 export function toTitleCase(str) {
-  return str
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (match) => match.toUpperCase())
-    .trim();
+    return str.toLowerCase()
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, (match) => match.toUpperCase())
+        .trim();
 }
 
 export function formatIDRCurrency(number) {
@@ -57,3 +57,16 @@ export const getFee = (dueDate, createdDate, amount) => {
 
   return amount * discount * (daysDif / 360);
 };
+
+export function toRoleAccess(str) {
+    if (str === "ADMIN") {
+        return toTitleCase(str);
+    } else {
+        let word = str.split("_");
+        let result = "";
+        for (let i = 0; i < word.length; i++) {
+          result += word[i].charAt(0);
+        }
+        return result.toUpperCase();
+    }
+}

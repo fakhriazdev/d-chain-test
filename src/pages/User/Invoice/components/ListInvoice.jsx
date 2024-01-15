@@ -6,15 +6,15 @@ import Badge from "../../../../components/Badge.jsx";
 import InvoiceGenerationButton from "../../../../assets/icons/Icon Invoice Generation Button.svg";
 import IconUploadBlack from "../../../../assets/icons/Icon Upload Black.svg";
 import IconDownload from "../../../../assets/icons/Icon Download.svg";
-import IconView from "../../../../assets/icons/Icon View.svg";
+import IconView from "../../../../assets/icons/View.svg";
 import IconSearch from "../../../../assets/icons/Icon Search.svg";
-import Status from "../../../../components/Status.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
+import { toTitleCase } from "../../../../utils/utility.js";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -24,8 +24,10 @@ const ListInvoice = () => {
   const { invoiceService } = useContext(ServiceContext);
   const [paging, setPaging] = useState({});
 
+  console.log(invoices);
+
   const currentPage = parseInt(searchParam.get("page") || 1);
-  const currentSize = parseInt(searchParam.get("size") || 1);
+  const currentSize = parseInt(searchParam.get("size") || 10);
 
   const onNext = (page) => {
     if (page === paging.totalPages) return;
@@ -42,26 +44,26 @@ const ListInvoice = () => {
   const formik = useFormik({
     initialValues: {
       status: "",
-      type: "Payable",
+      type: "payable",
     },
     onSubmit: (values) => {
       console.log(values);
       dispatch(
         invoiceAction(async () => {
           const result = await invoiceService.fetchInvoices({
-            page: 1,
-            size: 10,
+            page: currentPage,
+            size: currentSize,
             direction: "asc",
             type: values.type,
             status: values.status,
           });
           console.log(result);
-          return result;
-          // if (result) {
-          //   setPaging(result.paging);
-          //   const data = await Promise.all();
-          //   return { data };
-          // }
+          if (result) {
+            setPaging(result.paging);
+            const data = result.data;
+            console.log(data);
+            return { data };
+          }
         })
       );
     },
@@ -69,34 +71,39 @@ const ListInvoice = () => {
 
   useEffect(() => {
     const onGetInvoices = () => {
-      dispatch(
-        invoiceAction(async () => {
-          const result = await invoiceService.fetchInvoices({
-            page: 1,
-            size: 10,
-            direction: "asc",
-            type: "Payable",
-            status: null,
-          });
-          console.log(result);
-          return result;
-          // if (result) {
-          //   setPaging(result.paging);
-          //   const data = await Promise.all();
-          //   return { data };
-          // }
-        })
-      );
+      try {
+        dispatch(
+          invoiceAction(async () => {
+            const result = await invoiceService.fetchInvoices({
+              page: currentPage,
+              size: currentSize,
+              direction: "asc",
+              type: "payable",
+              status: null,
+            });
+            console.log(result.paging);
+            if (result) {
+              setPaging(result.paging);
+              const data = result.data;
+              console.log(data);
+              return { data };
+            }
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
     };
     onGetInvoices();
   }, [dispatch, invoiceService, currentPage, currentSize]);
 
   useEffect(() => {
     if (currentPage < 1 || currentPage > paging.totalPages) {
-      searchParam.set("page", 1);
-      setSearchParam(searchParam);
+      const newSearchParam = new URLSearchParams(searchParam);
+      newSearchParam.set("page", 1);
+      setSearchParam(newSearchParam.toString());
     }
-  });
+  }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -106,22 +113,22 @@ const ListInvoice = () => {
     let checked = "";
     if (!isChecked) {
       formik.setValues({
-        type: "Receivable",
+        type: "receivable",
       });
-      checked = "Receivable";
+      checked = "receivable";
     } else {
       formik.setValues({
-        type: "Payable",
+        type: "payable",
       });
-      checked = "Payable";
+      checked = "payable";
     }
     console.log(checked);
 
     dispatch(
       invoiceAction(async () => {
         const result = await invoiceService.fetchInvoices({
-          page: 1,
-          size: 10,
+          page: currentPage,
+          size: currentSize,
           direction: "asc",
           type: checked,
           status: null,
@@ -134,9 +141,12 @@ const ListInvoice = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   console.log(invoices);
-  const filterInvoices = invoices.filter((item) =>
-    item.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const data = invoices.data;
+  const filterInvoices = searchTerm
+    ? data.filter((item) =>
+        item.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : data;
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -144,6 +154,12 @@ const ListInvoice = () => {
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
+  };
+
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+    console.log(isDropdownOpen);
   };
 
   return (
@@ -206,6 +222,7 @@ const ListInvoice = () => {
               data-dropdown-toggle="dropdown"
               className="text-orange bg-white border border-orange hover:bg-orange hover:text-white font-medium rounded-lg text-sm px-3 py-1 text-center mt-3"
               type="button"
+              onClick={toggleDropdown}
             >
               Filter
               <ExpandMoreOutlinedIcon className="my-auto" />
@@ -227,7 +244,9 @@ const ListInvoice = () => {
           </div>
           <div
             id="dropdown"
-            className="z-20 hidden bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60"
+            className={`z-20 ${
+              isDropdownOpen ? "block" : "hidden"
+            } bg-white divide-y border border-orange divide-gray-100 rounded-lg shadow w-60`}
           >
             <form onSubmit={formik.handleSubmit}>
               <div className="">
@@ -236,6 +255,24 @@ const ListInvoice = () => {
                   aria-labelledby="dropdownRadioButton"
                 >
                   Status
+                  <li>
+                    <div className="flex items-center mt-3">
+                      <input
+                        type="radio"
+                        value="Pending"
+                        name="status"
+                        checked={formik.values.status === "Pending"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-1"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Pending
+                      </label>
+                    </div>
+                  </li>
                   <li>
                     <div className="flex items-center mt-3">
                       <input
@@ -276,9 +313,9 @@ const ListInvoice = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Late"
+                        value="Late-Unpaid"
                         name="status"
-                        checked={formik.values.status === "Late"}
+                        checked={formik.values.status === "Late-Unpaid"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -286,7 +323,25 @@ const ListInvoice = () => {
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Late
+                        Late-Unpaid
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        value="Late-Paid"
+                        name="status"
+                        checked={formik.values.status === "Late-Paid"}
+                        onChange={formik.handleChange}
+                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                      />
+                      <label
+                        htmlFor="default-radio-2"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >
+                        Late-Paid
                       </label>
                     </div>
                   </li>
@@ -308,39 +363,13 @@ const ListInvoice = () => {
                       </label>
                     </div>
                   </li>
-                </ul>
-              </div>
-              {/* <div className="">
-                <ul
-                  className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownRadioButton"
-                >
-                  Type
                   <li>
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        value="Payable"
-                        name="type"
-                        checked={formik.values.type === 'Payable'}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-1"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Payable
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="Receivable"
-                        name="type"
-                        checked={formik.values.type === 'Receivable'}
+                        value="Cancelled"
+                        name="status"
+                        checked={formik.values.status === "Cancelled"}
                         onChange={formik.handleChange}
                         className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
                       />
@@ -348,15 +377,16 @@ const ListInvoice = () => {
                         htmlFor="default-radio-2"
                         className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Receivable
+                        Cancelled
                       </label>
                     </div>
                   </li>
                 </ul>
-              </div> */}
+              </div>
               <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
                 <button
                   type="button"
+                  onClick={toggleDropdown}
                   className="bg-gray/20 hover:bg-gray/20 text-zinc-800 py-2 px-4 rounded"
                 >
                   Cancel
@@ -376,7 +406,7 @@ const ListInvoice = () => {
             <thead className="text-white text-[16px] font-[300] bg-orange ">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Supplier
+                  Company
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Inv. Number
@@ -396,7 +426,7 @@ const ListInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {filterInvoices?.length !== 0 &&
+              {filterInvoices && filterInvoices?.length !== 0 ? (
                 filterInvoices.map((i, idx) => {
                   return (
                     <tr key={idx} className="bg-white">
@@ -428,7 +458,9 @@ const ListInvoice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        <Status variant="success">{i.status}</Status>
+                        <Badge variant={toTitleCase(i.status)}>
+                          {toTitleCase(i.status)}
+                        </Badge>
                       </th>
                       <th
                         scope="col"
@@ -443,65 +475,64 @@ const ListInvoice = () => {
                       </th>
                     </tr>
                   );
-                })}
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center">
+                    Company Not Found...
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="relative flex justify-between px-6 mb-4 text-[12px] text-graylight/10">
-          <p className="my-auto">Showing 1 to 10 of 50 entries</p>
+          <p className="my-auto">
+            Showing {paging.page} to {paging.size} of {paging.count} entries
+          </p>
 
-          {invoices && invoices.length !== 0 && (
-            <nav aria-label="Page navigation example">
-              <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
-                {/* <li className={`page-item ${currentPage == 1 && "disabled"}`}>
-                  <a
-                    onClick={() => onPrevious(currentPage)}
-                    className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
-                  >
-                    <ChevronLeftOutlined />
-                    <span className="sr-only">Previous</span>
-                  </a>
-                </li> */}
-                {/* {Array(paging.totalPages)
-                  .fill(null)
-                  .map((_, idx) => {
-                    const page = ++idx;
-                    return (
-                      <li key={page}>
-                        <Link
-                          className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold page-link ${
-                            currentPage == page && "active"
-                          }`}
-                          to={`/user/:id/invoice?page=${page}&size=${currentSize}`}
-                        ></Link>
-                      </li>
-                    );
-                  })} */}
-                {/* <li>
-                  <a
-                    href="#"
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange font-bold"
-                  >
-                    1
-                  </a>
-                </li> */}
-
-                {/* <li
-                  className={`page-item ${
-                    currentPage >= paging.totalPages && "disabled"
-                  }`}
+          <nav aria-label="Page navigation example">
+            <ul className="flex items-center -space-x-px h-8 text-sm gap-4">
+              <li className={`${currentPage == 1 && "disabled"}`}>
+                <button
+                  onClick={() => onPrevious(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 ms-0 leading-tight text-gray-500 bg-gray/20 rounded-s-lg hover:bg-orange/20 hover:text-orange"
                 >
-                  <a
-                    onClick={() => onNext(currentPage)}
-                    className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
-                  >
-                    <ChevronRightOutlinedIcon />
-                    <span className="sr-only">Next</span>
-                  </a>
-                </li> */}
-              </ul>
-            </nav>
-          )}
+                  <ChevronLeftOutlined />
+                  <span className="sr-only">Previous</span>
+                </button>
+              </li>
+              {Array(paging.totalPages) 
+                .fill(null)
+                .map((_, idx) => {
+                  const page = ++idx;
+                  return (
+                    <li key={page}>
+                      <Link
+                        className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-200 bg-gray/20 rounded-md hover:bg-orange/20 hover:text-orange page-link ${
+                          currentPage == page &&
+                          "bg-gray/20 text-orange font-bold"
+                        }`}
+                        to={`/user/invoice?page=${page}&size=${currentSize}`}
+                      >
+                        {page}
+                      </Link>
+                    </li>
+                  );
+                })}
+              <li
+                className={`${currentPage >= paging.totalPages && "disabled"}`}
+              >
+                <button
+                  onClick={() => onNext(currentPage)}
+                  className="flex items-center justify-center px-1 h-8 leading-tight text-gray bg-gray/20 rounded-e-lg hover:bg-orange/20 hover:text-orange "
+                >
+                  <ChevronRightOutlinedIcon />
+                  <span className="sr-only">Next</span>
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>

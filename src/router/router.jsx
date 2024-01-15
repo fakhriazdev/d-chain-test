@@ -38,6 +38,21 @@ import PaymentListOngoing from "../pages/User/Payment/components/PaymentListOngo
 import PaymentListHistory from "../pages/User/Payment/components/PaymentListHistory.jsx";
 import FinancingDetailReceivable from "../pages/User/Financing/components/FinancingDetailReceivable.jsx";
 import Management from "../pages/User/Management/index.jsx";
+import FinancingList from "../pages/BackOffice/Financing/components/FinancingList.jsx";
+import FinancingDetail from "../pages/BackOffice/Financing/components/FinancingDetail.jsx";
+import PaymentDetailInvoice from "../pages/User/Payment/components/PaymetDetailInvoice.jsx";
+import PaymentDetailFinancing from "../pages/User/Payment/components/PaymentDetailFinancing.jsx";
+import PaymentSuccessfully from "../pages/User/Payment/components/PaymentSuccesfully.jsx";
+import UserList from "../pages/User/ManageUser/components/UserList.jsx";
+import User from "../pages/User/ManageUser/index.jsx";
+import UserListBackoffice from "../pages/BackOffice/ManageUser/components/UserListBackoffice.jsx";
+import UserBackoffice from "../pages/BackOffice/ManageUser/index.jsx";
+import FinancingDetailReceivableBo from "../pages/BackOffice/Financing/components/FinancingDetailReceivable.jsx";
+import FinancingBackoffice from "../pages/BackOffice/Financing/index.jsx";
+import ListFinancing from "../pages/User/Financing/components/ListFinancing.jsx";
+import DetailFinancingPayable from "../pages/User/Financing/components/DetailFinancingPayable.jsx";
+import RequestFinancingPayable from "../pages/User/Financing/components/RequestFinancingPayable.jsx";
+import Dashbaord from "../pages/BackOffice/Dashboard/index.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -127,6 +142,10 @@ const setupRouter = () =>
           element: <LoginBackOffice />,
         },
         {
+          path: "backoffice/dashboard",
+          element: <Dashbaord />,
+        },
+        {
           path: "dashboard",
           element: <Dashboard />,
         },
@@ -184,7 +203,42 @@ const setupRouter = () =>
             },
           ],
         },
-
+        {
+          path: "/backoffice/financing",
+          element: <FinancingBackoffice />,
+          children: [
+            {
+              index: true,
+              element: <FinancingList />,
+            },
+            {
+              path: "detail/:id",
+              element: <FinancingDetail />,
+            },
+            {
+              path: "detail/receivable/:id",
+              element: <FinancingDetailReceivableBo />,
+            },
+          ],
+        },
+        {
+          path: "/user/financing",
+          element: <PartnershipUser />,
+          children: [
+            {
+              index: true,
+              element: <ListFinancing />,
+            },
+            {
+              path: ":id/detail-payable",
+              element: <DetailFinancingPayable />,
+            },
+            {
+              path: "request-financing-payable",
+              element: <RequestFinancingPayable />,
+            },
+          ],
+        },
         {
           path: "payment",
           element: <Payment />,
@@ -204,6 +258,39 @@ const setupRouter = () =>
             {
               path: "rejected",
               element: <InvoiceRejected />,
+            },
+            {
+              path: "detail/:id",
+              element: <PaymentDetailInvoice />,
+            },
+            {
+              path: "detail/financing/:id",
+              element: <PaymentDetailFinancing />,
+            },
+            {
+              path: "detail/:id/success",
+              element: <PaymentSuccessfully />,
+            },
+          ],
+        },
+
+        {
+          path: "user",
+          element: <User />,
+          children: [
+            {
+              path: "manageuser",
+              element: <UserList />,
+            },
+          ],
+        },
+        {
+          path: "backoffice",
+          element: <UserBackoffice />,
+          children: [
+            {
+              path: "manageuser",
+              element: <UserListBackoffice />,
             },
           ],
         },

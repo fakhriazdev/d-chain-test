@@ -22,13 +22,13 @@ const InvoiceGeneration = () => {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
-  const companyId = "ff8081818ca91729018ca9185c930001";
+  const companyId = sessionStorage.getItem("company_id");
   const currentDate = new Date().toISOString().split("T")[0];
 
-  const [searchParam, setSearchParam] = useSearchParams();
+  // const [searchParam, setSearchParam] = useSearchParams();
 
-  const currentPage = parseInt(searchParam.get("page") || 1);
-  const currentSize = parseInt(searchParam.get("size") || 1);
+  // const currentPage = parseInt(searchParam.get("page") || 1);
+  // const currentSize = parseInt(searchParam.get("size") || 1);
 
   const {
     values: { recipientId, dueDate, invDate, amount, itemList, checkbox },
@@ -46,7 +46,6 @@ const InvoiceGeneration = () => {
       checkbox: false,
       recipientId: "",
       dueDate: "",
-      invDate: "",
       amount: 0,
       itemList: [
         {
@@ -57,6 +56,7 @@ const InvoiceGeneration = () => {
       ],
     },
     onSubmit: async (values) => {
+      console.log(values);
       const resultAmount = values.itemList.map((item, idx) => {
         return item.itemsQuantity * item.unitPrice;
       });
@@ -68,7 +68,6 @@ const InvoiceGeneration = () => {
       const dataInvoice = {
         recipientId: values.recipientId,
         dueDate: values.dueDate,
-        invDate: values.invDate,
         amount: totalAmount,
         itemList: stringifyData,
       };
@@ -82,16 +81,6 @@ const InvoiceGeneration = () => {
           return null;
         })
       );
-
-      // dispatch(
-      //   invoiceAction(async () => {
-      //     const result = await invoiceService.updateMenu(values);
-      //     if (result.statusCode === 200) {
-      //       navigate("/user/invoice");
-      //     }
-      //     return null;
-      //   })
-      // );
     },
     validationSchema: schema,
   });
@@ -124,8 +113,8 @@ const InvoiceGeneration = () => {
     const getPartnerships = async () => {
       try {
         const data = await invoiceService.fetchPartnership(companyId, {
-          page: currentPage,
-          size: currentSize,
+          page: 1,
+          size: 1000,
         });
         setPartnerships(data);
       } catch (error) {
@@ -134,26 +123,6 @@ const InvoiceGeneration = () => {
     };
     getPartnerships();
   }, []);
-
-  // useEffect(() => {
-  //   if (id) {
-  //     const onGetTableById = async () => {
-  //       const result = await dispatch(
-  //         selectTableAction(() => tableService.fetchTableById(id))
-  //       );
-
-  //       if (result.payload) {
-  //         const { tableId, tableName, status } = result.payload.data;
-  //         setValues({
-  //           id: tableId,
-  //           name: tableName,
-  //           status: status === 'AVAILABLE' ? true : false,
-  //         });
-  //       }
-  //     };
-  //     onGetTableById();
-  //   }
-  // }, [dispatch, setValues, id, tableService]);
 
   return (
     <>
@@ -168,7 +137,7 @@ const InvoiceGeneration = () => {
         >
           <h1 className="text-logo">Invoice Information</h1>
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label className="block mb-2 text-[18px] font-medium">
                 Invoice Number
               </label>
@@ -182,25 +151,7 @@ const InvoiceGeneration = () => {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
-              <label className="block mb-2 text-[18px] font-medium">
-                Invoice Date
-              </label>
-              <div className="mt-2 flex">
-                <input
-                  type="date"
-                  name="invDate"
-                  placeholder="Select Invoice Date"
-                  className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={invDate}
-                  min={currentDate}
-                />
-                {/* <img src={IconCalender} alt="" className="absolute" /> */}
-              </div>
-            </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label className="block mb-2 text-[18px] font-medium">
                 Due Date
               </label>
@@ -230,13 +181,10 @@ const InvoiceGeneration = () => {
                   <option selected>Choose Invoice Recipient</option>
                   {partnerships.data &&
                     partnerships.data.length &&
-                    partnerships.data.map((partnership) => {
+                    partnerships.data.map((partnership, idx) => {
                       return (
-                        <option
-                          key={partnership.companyId}
-                          value={partnership.partnerId}
-                        >
-                          {partnership.partnerId}
+                        <option key={idx} value={partnership.partner.companyId}>
+                          {partnership.partner.companyName}
                         </option>
                       );
                     })}
