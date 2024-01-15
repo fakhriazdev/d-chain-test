@@ -125,18 +125,18 @@ export default function RequestFinancingReceivable() {
     }));
   };
 
-  const handleSelectInvoice = (id, idx) => {
+  const handleSelectInvoice = (id, amount, dueDate, idx) => {
     handleToggleModal();
-    dispatch(
-      selectInvoiceAction(async () => {
-        const { data } = await invoiceService.getById(id);
-        console.log(data);
-        setFieldValue(`request[${idx}].invoice_number`, data.invoiceId);
-        setFieldValue(`request[${idx}].maxAmount`, data.amount);
-        setFieldValue(`request[${idx}].dueDate`, data.dueDate);
-        return null;
-      })
-    );
+    // dispatch(
+    //   selectInvoiceAction(async () => {
+    //     const { data } = await invoiceService.getById(id);
+    //     console.log(data);
+        setFieldValue(`request[${idx}].invoice_number`, id);
+        setFieldValue(`request[${idx}].maxAmount`, amount);
+        setFieldValue(`request[${idx}].dueDate`, dueDate);
+        // return null;
+    //   })
+    // );
   };
 
   const handleChangeDate = (e, idx) => {
@@ -272,6 +272,8 @@ export default function RequestFinancingReceivable() {
                                         onClick={() =>
                                           handleSelectInvoice(
                                             invoice.invNumber,
+                                            invoice.amount,
+                                            invoice.dueDate,
                                             idx
                                           )
                                         }

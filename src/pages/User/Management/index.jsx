@@ -3,11 +3,11 @@ import Sidebar from "../../../components/Sidebar";
 import IconSearch from "../../../assets/icons/Icon Search.svg";
 import { ChevronLeftOutlined } from "@mui/icons-material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { decodeJWT } from "../../../utils/utility";
-import { useFormik } from "formik";
+import { Formik, useFormik } from "formik";
 import { useEffect } from "react";
 import { ServiceContext } from "../../../context/ServiceContext";
 import { useContext } from "react";
@@ -64,13 +64,20 @@ export default function Management() {
     },
     onSubmit: async (values) => {
       console.log(values);
-      if (!id) {
+      if (id === undefined) {
         dispatch(
           userAction(async () => {
-            const result = await userService.saveUser(values);
-            if (result.statusCode === 201) {
-              // navigate('/backoffice/menus');
-              alert(result.message);
+            console.log(id === undefined);
+            const result = await userService.saveUser({
+              username,
+              name,
+              email,
+              access,
+              companyIds,
+            });
+            if (alert(result.message)) {
+              Navigate('/dashboard/user');
+              
             }
             // alert(result.message);
             return null;
@@ -81,6 +88,8 @@ export default function Management() {
 
       dispatch(
         userAction(async () => {
+          console.log("masuk updae");
+
           const result = await userService.updateUser(values);
           if (result.statusCode === 200) {
             alert(result.message);
@@ -93,7 +102,7 @@ export default function Management() {
   });
 
   useEffect(() => {
-    if (id) {
+    if (id !== undefined) {
       dispatch(
         userAction(async () => {
           const result = await userService.fetchUserById(id);
@@ -134,10 +143,26 @@ export default function Management() {
     }
   });
 
-  return (
-    <Sidebar>
-      {console.log(access)}
 
+  
+  const handeChangeAccess = (e) => {
+    setValues((prevValues) => {
+      const updatedAccess = prevValues.access.includes(e.target.value)
+        ? prevValues.access.filter((acc) => acc !== e.target.value)
+        : [...prevValues.access, e.target.value];
+
+      return {
+        ...prevValues,
+        access: updatedAccess,
+      };
+    });
+  };
+  
+
+  console.log(access);
+
+  return (
+    <>
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">{id ? "Edit User" : "Add User"}</h1>
       </div>
@@ -205,8 +230,9 @@ export default function Management() {
                   <input
                     type="checkbox"
                     name="access"
-                    onChange={handleChange}
+                    onChange={handeChangeAccess}
                     value={"INVOICE_STAFF"}
+                    checked={access.includes("INVOICE_STAFF")}
                     className="rounded-md checked:bg-orange w-6 h-6 border-2 border-orange checked:ring-orange"
                   />
                   <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -217,8 +243,9 @@ export default function Management() {
                   <input
                     type="checkbox"
                     name="access"
-                    onChange={handleChange}
+                    onChange={handeChangeAccess}
                     value={"FINANCE_STAFF"}
+                    checked={access.includes("FINANCE_STAFF")}
                     className="rounded-md checked:bg-orange w-6 h-6 border-2 border-orange checked:ring-orange"
                   />
                   <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -229,8 +256,9 @@ export default function Management() {
                   <input
                     type="checkbox"
                     name="access"
-                    onChange={handleChange}
+                    onChange={handeChangeAccess}
                     value={"PAYMENT_STAFF"}
+                    checked={access.includes("PAYMENT_STAFF")}
                     className="rounded-md checked:bg-orange w-6 h-6 border-2 border-orange checked:ring-orange"
                   />
                   <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -353,6 +381,6 @@ export default function Management() {
           </div>
         </form>
       </div>
-    </Sidebar>
+    </>
   );
 }

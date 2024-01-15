@@ -146,7 +146,7 @@ const UserList = () => {
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Manage User</h1>
         <div>
-          <Link to={`/user/manageuser/add`}>
+          <Link to={`management`}>
             <button className="my-auto text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center  ">
               <AddOutlinedIcon /> Add New User
             </button>
@@ -343,7 +343,7 @@ const UserList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link to={`/user/manageruser/edit/${i.userId}`}>
+                        <Link to={`management/${i.userId}`}>
                           <button>
                             <img src={IconEdit} alt="Icon View" />
                           </button>

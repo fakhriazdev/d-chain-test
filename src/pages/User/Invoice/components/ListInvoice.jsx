@@ -14,7 +14,7 @@ import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { toTitleCase } from "../../../../utils/utility.js";
+import { formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -228,7 +228,7 @@ const ListInvoice = () => {
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
             <div className="flex space-x-7">
-              <Link to={"/user/invoice/add"}>
+              <Link to={"/dashboard/invoice/add"}>
                 <button
                   type="button"
                   className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
@@ -446,7 +446,7 @@ const ListInvoice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-orange whitespace-nowrap text-[14px]"
                       >
-                        Rp. {i.amount}
+                        {formatIDRCurrency(i.amount)}
                       </th>
                       <th
                         scope="col"
@@ -466,9 +466,9 @@ const ListInvoice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <button>
+                        <Link to={`detail/${i.invNumber}`} >
                           <img src={IconView} alt="Icon View" />
-                        </button>
+                        </Link>
                         <button>
                           <img src={IconDownload} alt="Icon Download" />
                         </button>
@@ -513,7 +513,7 @@ const ListInvoice = () => {
                           currentPage == page &&
                           "bg-gray/20 text-orange font-bold"
                         }`}
-                        to={`/user/invoice?page=${page}&size=${currentSize}`}
+                        to={`/dashboard/invoice?page=${page}&size=${currentSize}`}
                       >
                         {page}
                       </Link>

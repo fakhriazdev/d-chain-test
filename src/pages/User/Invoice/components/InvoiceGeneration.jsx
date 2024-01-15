@@ -12,6 +12,9 @@ import { useFormik } from "formik";
 import { invoiceAction } from "../../../../slices/invoiceSlice";
 import * as Yup from "yup";
 
+import { ExportCurve } from 'iconsax-react';
+import { decodeJWT } from "../../../../utils/decodeJWT";
+
 const InvoiceGeneration = () => {
   const schema = Yup.object().shape({
     checkbox: Yup.boolean().oneOf([true]),
@@ -22,7 +25,7 @@ const InvoiceGeneration = () => {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
-  const companyId = sessionStorage.getItem("company_id");
+  const {company_id} = decodeJWT();
   const currentDate = new Date().toISOString().split("T")[0];
 
   // const [searchParam, setSearchParam] = useSearchParams();
@@ -76,7 +79,7 @@ const InvoiceGeneration = () => {
           const result = await invoiceService.saveInvoice(dataInvoice);
           console.log(result);
           if (result.statusCode === 201) {
-            navigate(`/user/invoice`);
+            navigate(`/dashboard/invoice`);
           }
           return null;
         })
@@ -112,7 +115,7 @@ const InvoiceGeneration = () => {
   useEffect(() => {
     const getPartnerships = async () => {
       try {
-        const data = await invoiceService.fetchPartnership(companyId, {
+        const data = await invoiceService.fetchPartnership(company_id, {
           page: 1,
           size: 1000,
         });
@@ -184,7 +187,10 @@ const InvoiceGeneration = () => {
                     partnerships.data.map((partnership, idx) => {
                       return (
                         <option key={idx} value={partnership.partner.companyId}>
-                          {partnership.partner.companyName}
+                          {company_id === partnership?.company?.companyId
+                        ? `${partnership.partner?.companyName}`
+                        : `${partnership.company?.companyName}`}
+                          {/* {partnership.partner.companyName} */}
                         </option>
                       );
                     })}
@@ -281,9 +287,10 @@ const InvoiceGeneration = () => {
             <button
               type="submit"
               disabled={!isValid || !dirty}
-              className="text-[18px] py-3 lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
+              className="text-[18px] py-3 group cursor-pointer lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
             >
-              <img src={IconUpload} alt="Icon Upload" />
+              {/* <img src={IconUpload} alt="Icon Upload" /> */}
+              <ExportCurve className="text-white group-hover:text-orange" variant="Outline"/>
               Create Invoice
             </button>
           </div>

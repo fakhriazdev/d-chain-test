@@ -224,7 +224,7 @@ const PaymentListOngoing = () => {
               <ExpandMoreOutlinedIcon className="my-auto" />
             </button>
             <div className="flex space-x-7">
-              <Link to={"/payment/payment-history"}>
+              <Link to={"history"}>
                 <button
                   type="button"
                   className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center flex space-x-2 items-center"
@@ -388,7 +388,7 @@ const PaymentListOngoing = () => {
                         scope="col-span-4"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.payment_id}
+                        {i.transactionId}
                       </th>
                       <th
                         scope="col"
@@ -429,8 +429,8 @@ const PaymentListOngoing = () => {
                         // to={`/payment/detail/${i.transactionId}`}
                           to={
                             i.type
-                              ? `/payment/detail/${i.transactionId}`
-                              : `/payment/detail/financing/${i.transactionId}`
+                              ? `/dashboard/payment/detail/${i.transactionId}`
+                              : `/dashboard/payment/detail/financing/${i.transactionId}`
                           }
                         >
                           {console.log(i.type)}

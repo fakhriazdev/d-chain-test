@@ -1,17 +1,16 @@
-import React from "react";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
-import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import ViewCarouselOutlinedIcon from "@mui/icons-material/ViewCarouselOutlined";
 import { Link } from "react-router-dom";
-import logo from "../assets/images/logo.png"
-import ManageCompanyLogo from '../assets/icons/ManageCompany.svg?react'
-import ManageUser from '../assets/icons/Manage User.svg?react'
-import DashboardLogo from '../assets/icons/Dashboard.svg?react'
-import InvoiceLogo from '../assets/icons/invoice.svg?react'
+import logo from "../assets/images/logo.png";
+import ManageCompanyLogo from "../assets/icons/ManageCompany.svg?react";
+import ManageUser from "../assets/icons/Manage User.svg?react";
+import DashboardLogo from "../assets/icons/Dashboard.svg?react";
+import InvoiceLogo from "../assets/icons/invoice.svg?react";
+import { decodeJWT } from "../utils/decodeJWT";
+import {People, Category2, Book, SliderHorizontal, Shapes} from "iconsax-react";
 
 const Sidebar = (props) => {
   const { children } = props;
+  const { company_id } = decodeJWT();
   return (
     <>
       <nav className="fixed top-0 z-50 w-full bg-white">
@@ -41,11 +40,7 @@ const Sidebar = (props) => {
                 </svg>
               </button>
               <a href="#" className="flex ms-2 md:me-24">
-                <img
-                  src={logo}
-                  className="h-6 me-3"
-                  alt="D Auto Change"
-                />
+                <img src={logo} className="h-6 me-3" alt="D Auto Change" />
               </a>
             </div>
             <div className="flex items-center">
@@ -74,7 +69,7 @@ const Sidebar = (props) => {
                       className="text-sm text-gray-900 dark:text-white"
                       role="none"
                     >
-                      Neil Sims
+                      {company_id}
                     </p>
                     <p
                       className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
@@ -135,60 +130,89 @@ const Sidebar = (props) => {
       >
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
           <ul className="space-y-4 font-medium">
+            <p className="text-darkgray">Menu</p>
             <li>
-              <a
-                  href="#"
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              <Link
+                to={"/dashboard"}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <DashboardLogo/>
+                <Category2 />
                 <span className="ms-3">Dashboard</span>
-              </a>
-            </li>
-            <li>
-              <a
-                  href="#"
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <InvoiceLogo/>
-                <span className="ms-3">Invoice</span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link
-                  to={`/backoffice/financing`}
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                to={"/dashboard/invoice"}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <InvoiceLogo/>
+                <Book />
+                <span className="ms-3">Invoice</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/dashboard/financing`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              >
+                <People/>
                 <span className="ms-3">Financing</span>
               </Link>
             </li>
             <li>
               <Link
-                  to={`/backoffice/company`}
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                to={`/dashboard/payment`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <ManageCompanyLogo />
-                <span className="ms-3">Manage Company</span>
+                <SliderHorizontal />
+                <span className="ms-3">Payment</span>
               </Link>
             </li>
+            <p className="text-darkgray">Others</p>
+
+           
             <li>
-              <a
-                  href="#"
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              <Link
+                to={`/dashboard/user`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <ManageUser/>
+                <Shapes />
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Manage User
                 </span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link
-                  to={`/profile/superuser/:id`}
-                  className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+                to={ `/dashboard/partnership`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
               >
-                <GroupsOutlinedIcon/>
+                <People />
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Partnership
+                </span>
+              </Link>
+            </li>
+
+
+            <p className="text-darkgray">Backoffice</p>
+
+
+            <li>
+              <Link
+                to={`/profile/superuser/:id`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              >
+                <GroupsOutlinedIcon />
                 <span className="ms-3">Profile</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={`/backoffice/company`}
+                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
+              >
+                <ManageCompanyLogo />
+                <span className="ms-3">Manage Company</span>
               </Link>
             </li>
           </ul>

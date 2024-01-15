@@ -3,7 +3,7 @@ import App from "../App";
 import Login from "../pages/Auth/Login";
 import OtpPage from "../pages/Auth/OTP";
 import LoginBackOffice from "../pages/Auth/Login/loginBackOffice";
-import Dashboard from "../pages/User/Dashboard";
+import DashboardUser from "../pages/User/Dashboard";
 
 import Company from "../pages/BackOffice/Company";
 import ListCompany from "../pages/BackOffice/Company/components/ListCompany.jsx";
@@ -62,9 +62,145 @@ const setupRouter = () =>
       errorElement: <>Error Cuyyy....</>,
       children: [
         {
-          path: "user",
+          path: "login",
           element: <Login />,
         },
+        {
+          path: "dashboard",
+          element: <DashboardUser/>,
+        },  
+        {
+          path: "/dashboard/partnership",
+          element: <PartnershipUser />,
+          children: [
+            {
+              index: true,
+              element: <ListPartnershipUser />,
+            },
+          ],
+        },
+        {
+          path: "/dashboard/invoice",
+          element: <Invoice />,
+          children: [
+            {
+              index: true,
+              element: <ListInvoice />,
+            },
+            {
+              path: "add",
+              element: <InvoiceGeneration />,
+            },
+            {
+              path: "detail/:id",
+              element: <InvoiceDetail />,
+            },
+            {
+              path: "processed",
+              element: <InvoiceProcessed />,
+            },
+            {
+              path: "reject",
+              element: <InvoiceReject />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
+            },
+
+          ],
+        },
+        {
+          path: "/dashboard/financing",
+          element: <PartnershipUser />,
+          children: [
+            {
+              index: true,
+              element: <ListFinancing />,
+            },
+            {
+              path: ":id/detail-payable",
+              element: <DetailFinancingPayable />,
+            },
+            {
+              path: "request-financing-payable",
+              element: <RequestFinancingPayable />,
+            },
+            {
+              path: "payable",
+              element: <FinancingDetailPayable />,
+            },
+            {
+              path: "request-financing-receivable",
+              element: <RequestFinancingReceivable />,
+            },
+            {
+              path: "receivable/:id",
+              element: <FinancingDetailReceivable />,
+            },
+            {
+              path: "rejected",
+              element: <InvoiceRejected />,
+            },
+          ],
+        },
+        {
+          path: "/dashboard/payment",
+          element: <Payment />,
+          children: [
+            {
+              index: true,
+              element: <PaymentListOngoing />,
+            },
+            {
+              path: "history",
+              element: <PaymentListHistory />,
+            },
+            {
+              path: "detail/:id",
+              element: <PaymentDetailInvoice />,
+            },
+            {
+              path: "detail/financing/:id",
+              element: <PaymentDetailFinancing />,
+            },
+            {
+              path: "detail/:id/success",
+              element: <PaymentSuccessfully />,
+            },
+          ],
+        },
+        {
+          path: "/dashboard/user",
+          element: <User />,
+          children: [
+            {
+              index: true,
+              element: <UserList />,
+            },
+            {
+              path: "management",
+              element: <Management/>,
+              children:[
+                {
+                  path:":id",
+                  element: <Management/>
+                }
+              ]
+            }
+          ],
+        },
+       
+        
+
+
+
+
+
+
+
+
+
         {
           path: "/backoffice/company",
           element: <Company />,
@@ -97,20 +233,7 @@ const setupRouter = () =>
             },
           ],
         },
-        {
-          path: "/user/invoice",
-          element: <Invoice />,
-          children: [
-            {
-              index: true,
-              element: <ListInvoice />,
-            },
-            {
-              path: "add",
-              element: <InvoiceGeneration />,
-            },
-          ],
-        },
+        
         {
           path: "verifyOtp",
           element: <OtpPage />,
@@ -145,54 +268,22 @@ const setupRouter = () =>
           path: "backoffice/dashboard",
           element: <Dashbaord />,
         },
-        {
-          path: "dashboard",
-          element: <Dashboard />,
-        },
-        {
-          path: "invoice",
-          element: <Invoice />,
-          children: [
-            {
-              path: "detail/:id",
-              element: <InvoiceDetail />,
-            },
-            {
-              path: "processed",
-              element: <InvoiceProcessed />,
-            },
-            {
-              path: "reject",
-              element: <InvoiceReject />,
-            },
-            {
-              path: "rejected",
-              element: <InvoiceRejected />,
-            },
-          ],
-        },
+        // {
+        //   path: "dashboard",
+        //   element: <Dashboard />,
+        // },
+        
         {
           path: "financing",
           element: <Financing />,
           children: [
-            {
-              path: "payable",
-              element: <FinancingDetailPayable />,
-            },
-            {
-              path: "request-receivable",
-              element: <RequestFinancingReceivable />,
-            },
-            {
-              path: "receivable/:id",
-              element: <FinancingDetailReceivable />,
-            },
-            {
-              path: "rejected",
-              element: <InvoiceRejected />,
-            },
+            
           ],
         },
+
+
+
+
         {
           path: "/backoffice/partnership",
           element: <PartnershipUser />,
@@ -221,69 +312,9 @@ const setupRouter = () =>
             },
           ],
         },
-        {
-          path: "/user/financing",
-          element: <PartnershipUser />,
-          children: [
-            {
-              index: true,
-              element: <ListFinancing />,
-            },
-            {
-              path: ":id/detail-payable",
-              element: <DetailFinancingPayable />,
-            },
-            {
-              path: "request-financing-payable",
-              element: <RequestFinancingPayable />,
-            },
-          ],
-        },
-        {
-          path: "payment",
-          element: <Payment />,
-          children: [
-            {
-              path: "payment-list",
-              element: <PaymentListOngoing />,
-            },
-            {
-              path: "payment-history",
-              element: <PaymentListHistory />,
-            },
-            {
-              path: "reject",
-              element: <InvoiceReject />,
-            },
-            {
-              path: "rejected",
-              element: <InvoiceRejected />,
-            },
-            {
-              path: "detail/:id",
-              element: <PaymentDetailInvoice />,
-            },
-            {
-              path: "detail/financing/:id",
-              element: <PaymentDetailFinancing />,
-            },
-            {
-              path: "detail/:id/success",
-              element: <PaymentSuccessfully />,
-            },
-          ],
-        },
 
-        {
-          path: "user",
-          element: <User />,
-          children: [
-            {
-              path: "manageuser",
-              element: <UserList />,
-            },
-          ],
-        },
+        
+       
         {
           path: "backoffice",
           element: <UserBackoffice />,
@@ -294,16 +325,7 @@ const setupRouter = () =>
             },
           ],
         },
-        {
-          path: "user/management/",
-          element: <Management/>,
-          children:[
-            {
-              path:":id",
-              element: <Management/>
-            }
-          ]
-        }
+        
       ],
     },
   ]);
