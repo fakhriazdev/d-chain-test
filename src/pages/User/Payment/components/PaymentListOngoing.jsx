@@ -14,7 +14,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { startCase } from "lodash";
 import { paymentAction } from "../../../../slices/paymentSlice.js";
-import { formatIDRCurrency, formatDate } from "../../../../utils/utility.js";
+import { formatIDRCurrency, formatDate, toTitleCase } from "../../../../utils/utility.js";
 
 const PaymentListOngoing = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -42,7 +42,7 @@ const PaymentListOngoing = () => {
   const formik = useFormik({
     initialValues: {
       status: "",
-      type:"",
+      type: "",
       groupBy: "payable",
     },
     onSubmit: (values) => {
@@ -374,6 +374,9 @@ const PaymentListOngoing = () => {
                 <th scope="col" className="px-6 py-3">
                   Status
                 </th>
+                <th scope="col" className="px-6 py-3">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -410,7 +413,7 @@ const PaymentListOngoing = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
                         <Badge variant={i.type.toString().toLowerCase()}>
-                          {i.type}
+                          {toTitleCase(i.type)}
                         </Badge>
                       </th>
                       <th
@@ -418,8 +421,23 @@ const PaymentListOngoing = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
                         <Badge variant={i.invoice.status.toLowerCase()}>
-                          {i.invoice.status.toLowerCase()}
+                          {toTitleCase(i.invoice.status)}
                         </Badge>
+                      </th>
+                      <th>
+                        <Link
+                        // to={`/payment/detail/${i.transactionId}`}
+                          to={
+                            i.type
+                              ? `/payment/detail/${i.transactionId}`
+                              : `/payment/detail/financing/${i.transactionId}`
+                          }
+                        >
+                          {console.log(i.type)}
+                          <button>
+                            <img src={IconView} alt="Icon View" />
+                          </button>
+                        </Link>
                       </th>
                     </tr>
                   );
@@ -427,7 +445,7 @@ const PaymentListOngoing = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="px-6 py-4 text-center">
-                  Payment Not Found...
+                    Payment Not Found...
                   </td>
                 </tr>
               )}

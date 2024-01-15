@@ -14,10 +14,16 @@ const UserService = () => {
     console.log(data);
     return data;
   };
+  const removeUser = async (id) => {
+    const { data } = await axiosInstance.delete(`/api/manage-users/${id}`);
+    console.log(data);
+    return data;
+  };
 
   return {
     fetchAll,
     fetchAllBackoffice,
+    removeUser
   };
 };
 

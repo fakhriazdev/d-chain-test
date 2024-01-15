@@ -38,7 +38,7 @@ const FinancingDetailReceivableBo = () => {
             financing_id: id,
             type: "receivable"
           });
-          alert(result.message);
+          // alert(result.message);
           navigate("/backoffice/financing");
         })
       )
@@ -52,7 +52,7 @@ const FinancingDetailReceivableBo = () => {
             financing_id: id,
             type: "receivable"
           });
-          alert(result.message);
+          // alert(result.message);
           navigate("/backoffice/financing");
         })
       )

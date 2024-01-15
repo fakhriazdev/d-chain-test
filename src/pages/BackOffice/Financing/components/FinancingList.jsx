@@ -423,7 +423,11 @@ const FinancingList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link to={`/backoffice/financing/detail/receivable/${i.financing_id}`}>
+                        <Link 
+                        to={formik.values.type ? `/backoffice/financing/detail/receivable/${i.financing_id}` : `/backoffice/financing/detail/${i.financing_id}`}
+                        // to={`/backoffice/financing/detail/receivable/${i.financing_id}`}
+                        >
+                          {console.log(formik.values.type)}
                           <button className="ml-4">
                             <img src={IconView} alt="Icon View" />
                           </button>
@@ -435,7 +439,7 @@ const FinancingList = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="px-6 py-4 text-center">
-                    Company Not Found...
+                    Financing Not Found...
                   </td>
                 </tr>
               )}

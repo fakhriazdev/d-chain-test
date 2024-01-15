@@ -88,6 +88,31 @@ const UserList = () => {
     onGetUsers();
   }, [dispatch, userService, currentPage, currentSize]);
 
+  const handleDelete = async (id) => {
+    try {
+      if (confirm("Apakah anda yakin ingin menghapus user ini?")) {
+        await userService.removeUser(id);
+        dispatch(
+          userAction(async () => {
+            const result = await userService.fetchAll({
+              page: currentPage,
+              size: currentSize,
+              access: null,
+              name: null,
+            });
+            if (result) {
+              setPaging(result.paging);
+              const data = result.data;
+              return { data };
+            }
+          })
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     if (currentPage < 1 || currentPage > paging.totalPages) {
       const newSearchParam = new URLSearchParams(searchParam);
@@ -111,6 +136,10 @@ const UserList = () => {
   const handleSearchSubmit = (event) => {
     event.preventDefault();
   };
+
+  // useEffect(() => {
+  //   onGetUsers()
+  // })
 
   return (
     <>
@@ -319,7 +348,7 @@ const UserList = () => {
                             <img src={IconEdit} alt="Icon View" />
                           </button>
                         </Link>
-                        <button>
+                        <button onClick={() => handleDelete(i.userId)}>
                           <img src={IconDelete} alt="Icon Download" />
                         </button>
                       </th>

@@ -87,13 +87,30 @@ const UserListBackoffice = () => {
     onGetUsers();
   }, [dispatch, userService, currentPage, currentSize]);
 
-  // useEffect(() => {
-  //   if (currentPage < 1 || currentPage > paging.totalPages) {
-  //     const newSearchParam = new URLSearchParams(searchParam);
-  //     newSearchParam.set("page", 1);
-  //     setSearchParam(newSearchParam.toString());
-  //   }
-  // }, [currentPage, paging.totalPages, searchParam, setSearchParam]);
+  const handleDelete = async (id) => {
+    try {
+      if (confirm("Apakah anda yakin ingin menghapus user ini?")) {
+        await userService.removeUser(id);
+        dispatch(
+          userAction(async () => {
+            const result = await userService.fetchAllBackoffice({
+              page: currentPage,
+              size: currentSize,
+              direction: "asc",
+              role: null,
+            });
+            if (result) {
+              setPaging(result.paging);
+              const data = result.data;
+              return { data };
+            }
+          })
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <>
@@ -250,9 +267,6 @@ const UserListBackoffice = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
                         <span className="bg-gray bg-opacity-20 text-xs font-medium me-2 px-2.5 py-0.5 rounded-md border-[2px] border-zinc-300">
-                          {console.log(
-                            i.roles.replace(/[^A-Z]/g, "").substring(0, 2)
-                          )}
                           {toRoleAccess(i.roles)}
                         </span>
                       </th>
@@ -265,7 +279,7 @@ const UserListBackoffice = () => {
                             <img src={IconEdit} alt="Icon View" />
                           </button>
                         </Link>
-                        <button>
+                        <button onClick={() => handleDelete(i.userId)}>
                           <img src={IconDelete} alt="Icon Download" />
                         </button>
                       </th>

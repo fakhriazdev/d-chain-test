@@ -6,11 +6,9 @@ const Badge = (props) => {
 
   useEffect(() => {
     switch (variant) {
-      case "pending":
-        setType("yellow");
-        break;
+      
       case "Pending":
-        setType("yellow");
+        setType("red");
         break;
       case "rejected":
         setType("red");
