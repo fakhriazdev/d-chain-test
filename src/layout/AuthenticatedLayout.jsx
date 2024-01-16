@@ -4,26 +4,30 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { ServiceContext } from '../context/ServiceContext.jsx';
 import { useContext, useEffect } from 'react';
 import { authAction } from '../slices/authSlice';
+import { decodeJWT } from '../utils/decodeJWT.js';
 
 function AuthenticatedLayout() {
   const { authService } = useContext(ServiceContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {company_id} = decodeJWT();
 
   useEffect(() => {
-    const onGetUserInfo = async () => {
-      try {
-        const userInfo = await authService.getUserInfo();
-        if (userInfo) {
-          dispatch(authAction(() => userInfo));
-        } else {
-          navigate('/login');
+    if (company_id) {
+      const onGetUserInfo = async () => {
+        try {
+          const userInfo = await authService.getUserInfo();
+          if (userInfo) {
+            dispatch(authAction(() => userInfo));
+          } else {
+            navigate('/');
+          }
+        } catch (error) {
+          navigate('/');
         }
-      } catch (error) {
-        navigate('/login');
-      }
-    };
-    onGetUserInfo();
+      };
+      onGetUserInfo();
+    }
   }, [authService, dispatch, navigate]);
 
   return (

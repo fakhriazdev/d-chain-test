@@ -52,7 +52,8 @@ import FinancingBackoffice from "../pages/BackOffice/Financing/index.jsx";
 import ListFinancing from "../pages/User/Financing/components/ListFinancing.jsx";
 import DetailFinancingPayable from "../pages/User/Financing/components/DetailFinancingPayable.jsx";
 import RequestFinancingPayable from "../pages/User/Financing/components/RequestFinancingPayable.jsx";
-import Dashbaord from "../pages/BackOffice/Dashboard/index.jsx";
+import DashboardBO from "../pages/BackOffice/Dashboard/index.jsx";
+import AuthenticatedLayout from "../layout/AuthenticatedLayout.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -62,178 +63,10 @@ const setupRouter = () =>
       errorElement: <>Error Cuyyy....</>,
       children: [
         {
-          path: "login",
+          index: true,
+          // path: "login",
           element: <Login />,
         },
-        {
-          path: "dashboard",
-          element: <DashboardUser/>,
-        },  
-        {
-          path: "/dashboard/partnership",
-          element: <PartnershipUser />,
-          children: [
-            {
-              index: true,
-              element: <ListPartnershipUser />,
-            },
-          ],
-        },
-        {
-          path: "/dashboard/invoice",
-          element: <Invoice />,
-          children: [
-            {
-              index: true,
-              element: <ListInvoice />,
-            },
-            {
-              path: "add",
-              element: <InvoiceGeneration />,
-            },
-            {
-              path: "detail/:id",
-              element: <InvoiceDetail />,
-            },
-            {
-              path: "processed",
-              element: <InvoiceProcessed />,
-            },
-            {
-              path: "reject",
-              element: <InvoiceReject />,
-            },
-            {
-              path: "rejected",
-              element: <InvoiceRejected />,
-            },
-
-          ],
-        },
-        {
-          path: "/dashboard/financing",
-          element: <PartnershipUser />,
-          children: [
-            {
-              index: true,
-              element: <ListFinancing />,
-            },
-            {
-              path: ":id/detail-payable",
-              element: <DetailFinancingPayable />,
-            },
-            {
-              path: "request-financing-payable",
-              element: <RequestFinancingPayable />,
-            },
-            {
-              path: "payable",
-              element: <FinancingDetailPayable />,
-            },
-            {
-              path: "request-financing-receivable",
-              element: <RequestFinancingReceivable />,
-            },
-            {
-              path: "receivable/:id",
-              element: <FinancingDetailReceivable />,
-            },
-            {
-              path: "rejected",
-              element: <InvoiceRejected />,
-            },
-          ],
-        },
-        {
-          path: "/dashboard/payment",
-          element: <Payment />,
-          children: [
-            {
-              index: true,
-              element: <PaymentListOngoing />,
-            },
-            {
-              path: "history",
-              element: <PaymentListHistory />,
-            },
-            {
-              path: "detail/:id",
-              element: <PaymentDetailInvoice />,
-            },
-            {
-              path: "detail/financing/:id",
-              element: <PaymentDetailFinancing />,
-            },
-            {
-              path: "detail/:id/success",
-              element: <PaymentSuccessfully />,
-            },
-          ],
-        },
-        {
-          path: "/dashboard/user",
-          element: <User />,
-          children: [
-            {
-              index: true,
-              element: <UserList />,
-            },
-            {
-              path: "management",
-              element: <Management/>,
-              children:[
-                {
-                  path:":id",
-                  element: <Management/>
-                }
-              ]
-            }
-          ],
-        },
-       
-        
-
-
-
-
-
-
-
-
-
-        {
-          path: "/backoffice/company",
-          element: <Company />,
-          children: [
-            {
-              index: true,
-              element: <ListCompany />,
-            },
-            {
-              path: "add",
-              element: <FormCompany />,
-            },
-            {
-              path: ":id/edit",
-              element: <EditCompany />,
-            },
-          ],
-        },
-        {
-          path: "/backoffice/:id/partnership",
-          element: <Partnership />,
-          children: [
-            {
-              index: true,
-              element: <ListPartnership />,
-            },
-            {
-              path: "add",
-              element: <FormPartnership />,
-            },
-          ],
-        },
-        
         {
           path: "verifyOtp",
           element: <OtpPage />,
@@ -251,6 +84,244 @@ const setupRouter = () =>
           element: <NewPassword />,
         },
         {
+          path: "dashboard",
+          element: <AuthenticatedLayout />,
+          children: [
+            {
+              index: true,
+              element: <DashboardUser />,
+            },
+            {
+              path: "partnership",
+              element: <PartnershipUser />,
+              children: [
+                {
+                  index: true,
+                  element: <ListPartnershipUser />,
+                },
+              ],
+            },
+            {
+              path: "invoice",
+              element: <Invoice />,
+              children: [
+                {
+                  index: true,
+                  element: <ListInvoice />,
+                },
+                {
+                  path: "add",
+                  element: <InvoiceGeneration />,
+                },
+                {
+                  path: "detail/:id",
+                  element: <InvoiceDetail />,
+                },
+                {
+                  path: "processed",
+                  element: <InvoiceProcessed />,
+                },
+                {
+                  path: "reject",
+                  element: <InvoiceReject />,
+                },
+                {
+                  path: "rejected",
+                  element: <InvoiceRejected />,
+                },
+              ],
+            },
+            {
+              path: "financing",
+              element: <PartnershipUser />,
+              children: [
+                {
+                  index: true,
+                  element: <ListFinancing />,
+                },
+                {
+                  path: ":id/detail-payable",
+                  element: <DetailFinancingPayable />,
+                },
+                {
+                  path: "request-financing-payable",
+                  element: <RequestFinancingPayable />,
+                },
+                {
+                  path: "payable",
+                  element: <FinancingDetailPayable />,
+                },
+                {
+                  path: "request-financing-receivable",
+                  element: <RequestFinancingReceivable />,
+                },
+                {
+                  path: "receivable/:id",
+                  element: <FinancingDetailReceivable />,
+                },
+                {
+                  path: "rejected",
+                  element: <InvoiceRejected />,
+                },
+              ],
+            },
+            {
+              path: "payment",
+              element: <Payment />,
+              children: [
+                {
+                  index: true,
+                  element: <PaymentListOngoing />,
+                },
+                {
+                  path: "history",
+                  element: <PaymentListHistory />,
+                },
+                {
+                  path: "detail/:id",
+                  element: <PaymentDetailInvoice />,
+                },
+                {
+                  path: "detail/financing/:id",
+                  element: <PaymentDetailFinancing />,
+                },
+                {
+                  path: "detail/:id/success",
+                  element: <PaymentSuccessfully />,
+                },
+              ],
+            },
+            {
+              path: "user",
+              element: <User />,
+              children: [
+                {
+                  index: true,
+                  element: <UserList />,
+                },
+                {
+                  path: "management",
+                  element: <Management />,
+                  children: [
+                    {
+                      path: ":id",
+                      element: <Management />,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: "backoffice/login",
+          element: <LoginBackOffice />,
+        },
+        {
+          path: "backoffice",
+          element: <AuthenticatedLayout />,
+          children: [
+            {
+              index: true,
+              element: <DashboardBO />,
+            },
+            {
+              path: "financing",
+              element: <FinancingBackoffice />,
+              children: [
+                {
+                  index: true,
+                  element: <FinancingList />,
+                },
+                {
+                  path: "detail/:id",
+                  element: <FinancingDetail />,
+                },
+                {
+                  path: "detail/receivable/:id",
+                  element: <FinancingDetailReceivableBo />,
+                },
+              ],
+            },
+            {
+              path: "company",
+              element: <Company />,
+              children: [
+                {
+                  index: true,
+                  element: <ListCompany />,
+                },
+                {
+                  path: "add",
+                  element: <FormCompany />,
+                },
+                {
+                  path: ":id/edit",
+                  element: <EditCompany />,
+                },
+                {
+                  path: ":id/partnership",
+                  element: <Partnership />,
+                  children: [
+                    {
+                      index: true,
+                      element: <ListPartnership />,
+                    },
+                    {
+                      path: "add",
+                      element: <FormPartnership />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "user",
+              element: <UserBackoffice />,
+              children: [
+                {
+                  index: true,
+                  element: <UserListBackoffice />,
+                },
+              ],
+            },
+          ],
+        },
+
+        // {
+        //   path: "/backoffice/company",
+        //   element: <Company />,
+        //   children: [
+        //     {
+        //       index: true,
+        //       element: <ListCompany />,
+        //     },
+        //     {
+        //       path: "add",
+        //       element: <FormCompany />,
+        //     },
+        //     {
+        //       path: ":id/edit",
+        //       element: <EditCompany />,
+        //     },
+        //   ],
+        // },
+        // {
+        //   path: "/backoffice/:id/partnership",
+        //   element: <Partnership />,
+        //   children: [
+        //     {
+        //       index: true,
+        //       element: <ListPartnership />,
+        //     },
+        //     {
+        //       path: "add",
+        //       element: <FormPartnership />,
+        //     },
+        //   ],
+        // },
+
+        {
           path: "profile",
           element: <Profile />,
           children: [
@@ -260,29 +331,25 @@ const setupRouter = () =>
             },
           ],
         },
-        {
-          path: "backoffice",
-          element: <LoginBackOffice />,
-        },
-        {
-          path: "backoffice/dashboard",
-          element: <Dashbaord />,
-        },
+
+        // {
+        //   path: "backoffice",
+        //   element: <LoginBackOffice />,
+        // },
+        // {
+        //   path: "backoffice/dashboard",
+        //   element: <DashboardBO />,
+        // },
         // {
         //   path: "dashboard",
         //   element: <Dashboard />,
         // },
-        
+
         {
           path: "financing",
           element: <Financing />,
-          children: [
-            
-          ],
+          children: [],
         },
-
-
-
 
         {
           path: "/backoffice/partnership",
@@ -312,20 +379,6 @@ const setupRouter = () =>
             },
           ],
         },
-
-        
-       
-        {
-          path: "backoffice",
-          element: <UserBackoffice />,
-          children: [
-            {
-              path: "manageuser",
-              element: <UserListBackoffice />,
-            },
-          ],
-        },
-        
       ],
     },
   ]);

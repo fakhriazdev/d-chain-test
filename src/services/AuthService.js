@@ -8,6 +8,11 @@ const AuthService = () => {
     return data;
   };
 
+  const shortcutLogin = async (user) => {
+    const { data } = await axiosInstance.post("/api/auth/shortcut-login", user);
+    return data;
+  };
+
   const verifyOtp = async (payload) => {
     const { data } = await axiosInstance.post("/api/auth/verifyOtp", payload);
     console.log(data);
@@ -53,6 +58,7 @@ const AuthService = () => {
 
   return {
     login,
+    shortcutLogin,
     logout,
     getUserInfo,
     getTokenFromStorage,

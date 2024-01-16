@@ -169,7 +169,7 @@ const ListCompany = () => {
                             <EditNoteOutlinedIcon />
                           </Link>
                           <Link
-                            to={`/backoffice/${company.companyId}/partnership`}
+                            to={`${company.companyId}/partnership`}
                             className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline"
                           >
                             <ArticleOutlinedIcon />

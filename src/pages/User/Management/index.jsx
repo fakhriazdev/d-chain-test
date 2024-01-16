@@ -3,7 +3,7 @@ import Sidebar from "../../../components/Sidebar";
 import IconSearch from "../../../assets/icons/Icon Search.svg";
 import { ChevronLeftOutlined } from "@mui/icons-material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined.js";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { decodeJWT } from "../../../utils/utility";
@@ -16,6 +16,8 @@ import { userAction } from "../../../slices/userSlice";
 
 export default function Management() {
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const [searchParam, setSearchParam] = useSearchParams();
   const { invoiceService, userService } = useContext(ServiceContext);
@@ -75,10 +77,8 @@ export default function Management() {
               access,
               companyIds,
             });
-            if (alert(result.message)) {
-              Navigate('/dashboard/user');
-              
-            }
+            navigate("/dashboard/user");
+            alert(result.message);
             // alert(result.message);
             return null;
           })
@@ -91,10 +91,9 @@ export default function Management() {
           console.log("masuk updae");
 
           const result = await userService.updateUser(values);
-          if (result.statusCode === 200) {
-            alert(result.message);
-            // navigate("/backoffice/menus");
-          }
+          navigate("/dashboard/user");
+          alert(result.message);
+
           return null;
         })
       );
@@ -143,8 +142,6 @@ export default function Management() {
     }
   });
 
-
-  
   const handeChangeAccess = (e) => {
     setValues((prevValues) => {
       const updatedAccess = prevValues.access.includes(e.target.value)
@@ -157,7 +154,6 @@ export default function Management() {
       };
     });
   };
-  
 
   console.log(access);
 

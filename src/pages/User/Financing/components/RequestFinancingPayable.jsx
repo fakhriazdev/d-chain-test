@@ -31,6 +31,8 @@ const RequestFinancingPayable = () => {
     ),
   });
 
+  console.log(payments);
+
   const formik = useFormik({
     initialValues: [
       {

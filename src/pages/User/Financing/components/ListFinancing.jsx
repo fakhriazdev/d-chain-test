@@ -226,11 +226,11 @@ const ListFinancing = () => {
                                         <Badge variant={d?.status}>{d?.status}</Badge>
                                     </th>
                                     <th scope="col-span-4" className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]">
-                                        <Link to={`/backoffice/financing/${d?.financing_id}/detail-payable`}
+                                        <Link to={`${d?.financing_id}/detail-payable`}
                                               className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline">
                                             <ArticleOutlinedIcon/>
                                         </Link>
-                                    </th>
+                                    </th>   
                                     </tr>
 
                         )

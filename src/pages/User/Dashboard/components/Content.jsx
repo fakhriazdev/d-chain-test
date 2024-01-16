@@ -87,7 +87,7 @@ export default function Content() {
 
             <div className="w-full mt-3 bg-lightgray/50 rounded-full h-2.5 dark:bg-gray">
               <div
-                className={`bg-orange h-2.5 rounded-full w-[${percentage ? percentage : "0"}%]`}
+                className={`bg-orange h-2.5 rounded-full w-[0%]`}
               ></div>
             </div>
           </div>

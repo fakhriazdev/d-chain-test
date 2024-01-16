@@ -41,27 +41,29 @@ export default function LoginBackOffice() {
     onSubmit: async () => {
       dispatch(
         authAction(async () => {
-          const result = await authService.login({email, password});
+          const result = await authService.shortcutLogin({ email, password });
           if (result.statusCode === 200) {
-            alert(result.data);
+            alert(result.data.message)
+            sessionStorage.setItem("token", result.data.token);
+            navigate("/backoffice");
           }
-          const resultInfo = await authService.getUserInfo();
-          return resultInfo;
+          // const resultInfo = await authService.getUserInfo();
+          return null;
         })
       );
     },
     validationSchema: schema,
   });
 
-  useEffect(() => {
-    const onGetUserInfo = async () => {
-      const result = await authService.getUserInfo();
-      if (result.statusCode === 200) {
-        navigate("/backoffice");
-      }
-    };
-    onGetUserInfo();
-  }, [authService, navigate]);
+  // useEffect(() => {
+  //   const onGetUserInfo = async () => {
+  //     const result = await authService.getUserInfo();
+  //     if (result.statusCode === 200) {
+  //       navigate("/backoffice");
+  //     }
+  //   };
+  //   onGetUserInfo();
+  // }, [authService, navigate]);
 
   return (
     <div className="flex h-screen bg-gradient-to-l from-white to-orange justify-end">

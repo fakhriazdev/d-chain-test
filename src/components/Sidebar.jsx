@@ -6,11 +6,19 @@ import ManageUser from "../assets/icons/Manage User.svg?react";
 import DashboardLogo from "../assets/icons/Dashboard.svg?react";
 import InvoiceLogo from "../assets/icons/invoice.svg?react";
 import { decodeJWT } from "../utils/decodeJWT";
-import {People, Category2, Book, SliderHorizontal, Shapes} from "iconsax-react";
+import {
+  People,
+  Category2,
+  Book,
+  SliderHorizontal,
+  Shapes,
+} from "iconsax-react";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = (props) => {
   const { children } = props;
-  const { company_id } = decodeJWT();
+  const { company_id, actor } = decodeJWT();
+
   return (
     <>
       <nav className="fixed top-0 z-50 w-full bg-white">
@@ -123,104 +131,202 @@ const Sidebar = (props) => {
         </div>
       </nav>
 
-      <aside
-        id="logo-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray/10 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
-        aria-label="Sidebar"
-      >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-          <ul className="space-y-4 font-medium">
-            <p className="text-darkgray">Menu</p>
-            <li>
-              <Link
-                to={"/dashboard"}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <Category2 />
-                <span className="ms-3">Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={"/dashboard/invoice"}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <Book />
-                <span className="ms-3">Invoice</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={`/dashboard/financing`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <People/>
-                <span className="ms-3">Financing</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={`/dashboard/payment`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <SliderHorizontal />
-                <span className="ms-3">Payment</span>
-              </Link>
-            </li>
-            <p className="text-darkgray">Others</p>
+      {actor === "USER" ? (
+        <aside
+          id="logo-sidebar"
+          className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray/10 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+          aria-label="Sidebar"
+        >
+          <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            <ul className="space-y-4 font-medium">
+              <p className="text-darkgray">Menu</p>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                  to={"/dashboard"}
+                  end
+                >
+                  <Category2 />
+                  <span className="ms-3">Dashboard</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={"/dashboard/invoice"}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <Book />
+                  <span className="ms-3">Invoice</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/dashboard/financing`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <People />
+                  <span className="ms-3">Financing</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/dashboard/payment`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <SliderHorizontal />
+                  <span className="ms-3">Payment</span>
+                </NavLink>
+              </li>
+              <p className="text-darkgray">Others</p>
 
-           
-            <li>
-              <Link
-                to={`/dashboard/user`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <Shapes />
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Manage User
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={ `/dashboard/partnership`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <People />
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Partnership
-                </span>
-              </Link>
-            </li>
+              <li>
+                <NavLink
+                  to={`/dashboard/user`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <Shapes />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Manage User
+                  </span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/dashboard/partnership`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <People />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Partnership
+                  </span>
+                </NavLink>
+              </li>
 
+              <p className="text-darkgray">Backoffice</p>
 
-            <p className="text-darkgray">Backoffice</p>
-
-
-            <li>
-              <Link
-                to={`/profile/superuser/:id`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <GroupsOutlinedIcon />
-                <span className="ms-3">Profile</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={`/backoffice/company`}
-                className="flex items-center p-3 text-darkgray rounded-lg hover:bg-orange/20 hover:text-orange group"
-              >
-                <ManageCompanyLogo />
-                <span className="ms-3">Manage Company</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </aside>
+              <li>
+                <NavLink
+                  to={`/profile/superuser/:id`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <GroupsOutlinedIcon />
+                  <span className="ms-3">Profile</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/backoffice/company`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <ManageCompanyLogo />
+                  <span className="ms-3">Manage Company</span>
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      ) : (
+        //BACKOFFICE
+        <aside
+          id="logo-sidebar"
+          className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray/10 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+          aria-label="Sidebar"
+        >
+          <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            <ul className="space-y-4 font-medium">
+              <p className="text-darkgray">Menu</p>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                  to={"/backoffice"}
+                  end
+                >
+                  <Category2 />
+                  <span className="ms-3">Dashboard</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={"/backoffice/financing"}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <Book />
+                  <span className="ms-3">Financing</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/backoffice/company`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <People />
+                  <span className="ms-3">Manage Company</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={`/backoffice/user`}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                    }`
+                  }
+                >
+                  <SliderHorizontal />
+                  <span className="ms-3">Manage BO User</span>
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      )}
 
       <div className="p-4 sm:ml-64">
-        <div className="p-2 md:p-4 lg:p-4 rounded-lg mt-14">{children}</div>
+        <div className="p-2 md:p-4 lg:p-4 rounded-lg">{children}</div>
       </div>
     </>
   );

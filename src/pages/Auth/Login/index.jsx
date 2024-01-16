@@ -43,9 +43,11 @@ export default function Login() {
     onSubmit: async () => {
       dispatch(
         authAction(async () => {
-          const result = await authService.login({ email, password });
+          const result = await authService.shortcutLogin({ email, password });
           if (result.statusCode === 200) {
-            alert(result.data)
+            alert(result.data.message)
+            sessionStorage.setItem("token", result.data.token);
+            navigate("/dashboard");
           }
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
