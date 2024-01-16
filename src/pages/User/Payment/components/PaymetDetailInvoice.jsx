@@ -176,6 +176,7 @@ const PaymentDetailInvoice = () => {
                 </div>
               </div>
             </div>
+
             <div className="w-full mt-7 mb-2">
               <button
                 onClick={handleClick}

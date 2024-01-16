@@ -43,7 +43,6 @@ export default function OtpPage() {
 
           if (result.statusCode === 200) {
             sessionStorage.setItem("token", result.data.token);
-            sessionStorage.setItem("company_id", result.data.company_id);
             navigate("/dashboard");
           }
           const resultInfo = await authService.getUserInfo();

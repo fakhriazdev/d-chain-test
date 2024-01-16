@@ -270,6 +270,10 @@ const setupRouter = () =>
               path: "detail/:id/success",
               element: <PaymentSuccessfully />,
             },
+            {
+              path: "detail/financing/:id/success",
+              element: <PaymentSuccessfully />,
+            },
           ],
         },
 

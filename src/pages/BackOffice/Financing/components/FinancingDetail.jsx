@@ -1,7 +1,7 @@
 import IconReject from "../../../../assets/icons/Icon Reject.svg";
 import IconProceedPayment from "../../../../assets/icons/Icon Proceed Payment.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ServiceContext } from "../../../../context/ServiceContext";
 import { selectFinancingAction } from "../../../../slices/financingSlice";
@@ -13,8 +13,6 @@ const FinancingDetail = () => {
   const { financingService } = useContext(ServiceContext);
   const { id } = useParams();
   const navigate = useNavigate();
-
-  console.log(selectedFinancing);
 
   useEffect(() => {
     const getFinancing = () => {
@@ -35,28 +33,28 @@ const FinancingDetail = () => {
         selectFinancingAction(async () => {
           const result = await financingService.saveFinancingAccept({
             financing_id: id,
-            type: "payable"
+            type: "payable",
           });
           // alert(result.message);
           navigate("/backoffice/financing");
         })
-      )
+      );
     }
-  }
+  };
   const rejectFinancing = () => {
     if (confirm("Apakah anda yakin ingin reject?")) {
       dispatch(
         selectFinancingAction(async () => {
           const result = await financingService.saveFinancingReject({
             financing_id: id,
-            type: "payable"
+            type: "payable",
           });
           // alert(result.message);
           navigate("/backoffice/financing");
         })
-      )
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -83,50 +81,78 @@ const FinancingDetail = () => {
                   <h4 className="w-1/2">From</h4>
                 </div>
                 <div className="flex">
-                  <h4 className="w-1/2">{selectedFinancing.recipient.company_name}</h4>
-                  <h4 className="w-1/2">{selectedFinancing.sender.company_name}</h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.recipient.company_name}
+                  </h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.sender.company_name}
+                  </h4>
                 </div>{" "}
                 <div className="flex">
                   <h4 className="w-1/2">{selectedFinancing.recipient.email}</h4>
                   <h4 className="w-1/2">{selectedFinancing.sender.email}</h4>
                 </div>{" "}
                 <div className="flex">
-                  <h4 className="w-1/2">{selectedFinancing.recipient.city}, {selectedFinancing.recipient.province}</h4>
-                  <h4 className="w-1/2">{selectedFinancing.sender.city}, {selectedFinancing.sender.province}</h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.recipient.city},{" "}
+                    {selectedFinancing.recipient.province}
+                  </h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.sender.city},{" "}
+                    {selectedFinancing.sender.province}
+                  </h4>
                 </div>{" "}
                 <div className="flex">
-                  <h4 className="w-1/2">{selectedFinancing.recipient.phone_number}</h4>
-                  <h4 className="w-1/2">{selectedFinancing.sender.phone_number}</h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.recipient.phone_number}
+                  </h4>
+                  <h4 className="w-1/2">
+                    {selectedFinancing.sender.phone_number}
+                  </h4>
                 </div>
                 <div className="flex justify-end mt-3 mb-10">
                   <h4 className="font-bold w-1/4">Total</h4>
-                  <h4 className="font-bold">{formatIDRCurrency(selectedFinancing.total_amount)}</h4>
+                  <h4 className="font-bold">
+                    {formatIDRCurrency(selectedFinancing.total_amount)}
+                  </h4>
                 </div>
                 <div className="flex">
                   <h4 className="w-1/2">Tenuer</h4>
                 </div>
                 <div className="flex">
-                  <h4 className="w-1/2 text-subtitle">{selectedFinancing.tenure === 12 ? ("1 Year") : (selectedFinancing.tenure + " Month")}</h4>
+                  <h4 className="w-1/2 text-subtitle">
+                    {selectedFinancing.tenure === 12
+                      ? "1 Year"
+                      : selectedFinancing.tenure + " Month"}
+                  </h4>
                 </div>
               </div>
 
-              <div className="flex flex-wrap w-full mt-7">
-                <div className="w-full md:w-1/2 md:pr-2 px-0">
-                  <button onClick={rejectFinancing}
-                    type="button"
-                    className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:opacity-80 hover:text-white"
-                  >
-                    <img src={IconReject} alt="" className="" />
-                    <p>Reject Financing</p>
-                  </button>
+              {selectedFinancing.status === "PENDING" ? (
+                <div className="flex flex-wrap w-full mt-7">
+                  <div className="w-full md:w-1/2 md:pr-2 px-0">
+                    <button
+                      onClick={rejectFinancing}
+                      type="button"
+                      className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:opacity-80 hover:text-white"
+                    >
+                      <img src={IconReject} alt="" className="" />
+                      <p>Reject Financing</p>
+                    </button>
+                  </div>
+                  <div className="w-full md:w-1/2 md:pl-2 pl-0">
+                    <button
+                      onClick={approveFinancing}
+                      className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:opacity-80 hover:text-white"
+                    >
+                      <img src={IconProceedPayment} alt="" className="" />
+                      <p>Accept Financing</p>
+                    </button>
+                  </div>
                 </div>
-                <div className="w-full md:w-1/2 md:pl-2 pl-0">
-                  <button onClick={approveFinancing} className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:opacity-80 hover:text-white">
-                    <img src={IconProceedPayment} alt="" className="" />
-                    <p>Accept Financing</p>
-                  </button>
-                </div>
-              </div>
+              ) : (
+                <div className="w-full md:w-1/2 md:pr-2 px-0"> </div>
+              )}
             </div>
           </div>
         </div>

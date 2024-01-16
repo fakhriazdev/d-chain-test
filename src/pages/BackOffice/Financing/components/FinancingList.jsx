@@ -10,7 +10,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { useFormik } from "formik";
 import { financingAction } from "../../../../slices/financingSlice.js";
-import { formatDate, formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
+import {
+  formatDate,
+  formatIDRCurrency,
+  toTitleCase,
+} from "../../../../utils/utility.js";
 
 const FinancingList = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -24,6 +28,14 @@ const FinancingList = () => {
 
   const currentPage = parseInt(searchParam.get("page") || 1);
   const currentSize = parseInt(searchParam.get("size") || 10);
+
+  const statusOptions = [
+    "PENDING",
+    "REJECTED",
+    "ONGOING",
+    "OUTSTANDING",
+    "COMPLETED",
+  ];
 
   const onNext = (page) => {
     if (page === paging.totalPages) return;
@@ -249,96 +261,26 @@ const FinancingList = () => {
                       </label>
                     </div>
                   </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="PENDING"
-                        name="status"
-                        checked={formik.values.status === "PENDING"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Pending
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="REJECTED"
-                        name="status"
-                        checked={formik.values.status === "REJECTED"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Rejected
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="ONGOING"
-                        name="status"
-                        checked={formik.values.status === "ONGOING"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        On-Going
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="OUTSTANDING"
-                        name="status"
-                        checked={formik.values.status === "OUTSTANDING"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Outstanding
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        value="COMPLETED"
-                        name="status"
-                        checked={formik.values.status === "COMPLETED"}
-                        onChange={formik.handleChange}
-                        className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                      />
-                      <label
-                        htmlFor="default-radio-2"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Completed
-                      </label>
-                    </div>
-                  </li>
+                  {statusOptions.map((status) => (
+                    <li key={status}>
+                      <div className="flex items-center mt-3">
+                        <input
+                          type="radio"
+                          value={status}
+                          name="status"
+                          checked={formik.values.status === status}
+                          onChange={formik.handleChange}
+                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                        />
+                        <label
+                          htmlFor={`radio-${status}`}
+                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                          {toTitleCase(status)}
+                        </label>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="flex space-x-5 justify-end mr-4 mb-4 mt-4">
@@ -423,11 +365,14 @@ const FinancingList = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link 
-                        to={formik.values.type === "payable" ? (`/backoffice/financing/detail/${i.financing_id}`) : (`/backoffice/financing/detail/receivable/${i.financing_id}`)}
-                        // to={`/backoffice/financing/detail/receivable/${i.financing_id}`}
+                        <Link
+                          to={
+                            formik.values.type === "payable"
+                              ? `/backoffice/financing/detail/${i.financing_id}`
+                              : `/backoffice/financing/detail/receivable/${i.financing_id}`
+                          }
                         >
-                          {console.log(formik.values.type)}
+                          {console.log(formik.values.status)}
                           <button className="ml-4">
                             <img src={IconView} alt="Icon View" />
                           </button>

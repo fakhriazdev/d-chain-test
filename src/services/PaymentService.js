@@ -1,9 +1,14 @@
 import axiosInstance from "../api/axiosInstance";
 
 const PaymentService = () => {
-
   const fetchById = async (id) => {
     const { data } = await axiosInstance.get(`/api/payments/${id}`);
+    console.log(data);
+    return data;
+  };
+
+  const updateMethod = async (payload) => {
+    const { data } = await axiosInstance.put(`/api/payments/method`, payload);
     console.log(data);
     return data;
   };
@@ -39,14 +44,14 @@ const PaymentService = () => {
   };
 
   const getById = async (id) => {
-    const {data} = await axiosInstance.get(`/api/invoice/${id}`);
+    const { data } = await axiosInstance.get(`/api/invoice/${id}`);
     return data;
-  }
+  };
 
   const updateStatusInvoice = async (payload) => {
-    const {data} = await axiosInstance.put('/api/invoice/update', payload)
+    const { data } = await axiosInstance.put("/api/invoice/update", payload);
     return data;
-  }
+  };
 
   return {
     fetchPaymentOngoing,
@@ -55,7 +60,8 @@ const PaymentService = () => {
     fetchPartnership,
     getById,
     updateStatusInvoice,
-    fetchById
+    fetchById,
+    updateMethod,
   };
 };
 
