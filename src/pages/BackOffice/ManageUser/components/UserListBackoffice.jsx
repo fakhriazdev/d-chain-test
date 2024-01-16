@@ -11,7 +11,8 @@ import { useContext, useEffect, useState } from "react";
 import { ServiceContext } from "../../../../context/ServiceContext";
 import { userAction } from "../../../../slices/userSlice";
 import { useFormik } from "formik";
-import { toRoleAccess, toTitleCase } from "../../../../utils/utility";
+import { toRoleAccess } from "../../../../utils/utility";
+// import { toRoleAccess, toTitleCase } from "../../../../utils/utility";
 const UserListBackoffice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
 
@@ -24,6 +25,8 @@ const UserListBackoffice = () => {
 
   const currentPage = parseInt(searchParam.get("page") || 1);
   const currentSize = parseInt(searchParam.get("size") || 10);
+
+  const statusOptions = ["RELATIONSHIP_MANAGER", "ADMIN", "CREDIT_ANALYST"];
 
   const onNext = (page) => {
     if (page === paging.totalPages) return;
@@ -90,7 +93,7 @@ const UserListBackoffice = () => {
   const handleDelete = async (id) => {
     try {
       if (confirm("Apakah anda yakin ingin menghapus user ini?")) {
-        await userService.removeUser(id);
+        await userService.removeUserBackoffice(id);
         dispatch(
           userAction(async () => {
             const result = await userService.fetchAllBackoffice({
@@ -149,62 +152,26 @@ const UserListBackoffice = () => {
                     aria-labelledby="dropdownRadioButton"
                   >
                     Role
-                    <li>
-                      <div className="flex items-center mt-5">
-                        <input
-                          type="radio"
-                          value="RELATIONSHIP_MANAGER"
-                          name="role"
-                          checked={
-                            formik.values.access === "RELATIONSHIP_MANAGER"
-                          }
-                          onChange={formik.handleChange}
-                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                        />
-                        <label
-                          htmlFor="default-radio-2"
-                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Relationship Manager
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          value="ADMIN"
-                          name="role"
-                          checked={formik.values.access === "ADMIN"}
-                          onChange={formik.handleChange}
-                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                        />
-                        <label
-                          htmlFor="default-radio-2"
-                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Admin
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          value="CREDIT_ANALYST"
-                          name="role"
-                          checked={formik.values.access === "CREDIT_ANALYST"}
-                          onChange={formik.handleChange}
-                          className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
-                        />
-                        <label
-                          htmlFor="default-radio-2"
-                          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          Credit Analyst
-                        </label>
-                      </div>
-                    </li>
+                    {statusOptions.map((status) => (
+                      <li key={status}>
+                        <div className="flex items-center mt-3">
+                          <input
+                            type="radio"
+                            value={status}
+                            name="role"
+                            checked={formik.values.status === status}
+                            onChange={formik.handleChange}
+                            className="w-4 h-4 text-orange bg-gray-100 border-gray-300 focus:ring-orange"
+                          />
+                          <label
+                            htmlFor={`radio-${status}`}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            {toRoleAccess(status)}
+                          </label>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -274,12 +241,12 @@ const UserListBackoffice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link to={`/backoffice/manageruser/edit/${i.userId}`}>
+                        <Link to={`/backoffice/manageruser/edit/${i.id}`}>
                           <button>
                             <img src={IconEdit} alt="Icon View" />
                           </button>
                         </Link>
-                        <button onClick={() => handleDelete(i.userId)}>
+                        <button onClick={() => handleDelete(i.id)}>
                           <img src={IconDelete} alt="Icon Download" />
                         </button>
                       </th>

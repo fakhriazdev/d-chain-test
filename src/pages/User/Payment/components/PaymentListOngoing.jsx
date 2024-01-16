@@ -426,11 +426,10 @@ const PaymentListOngoing = () => {
                       </th>
                       <th>
                         <Link
-                        // to={`/payment/detail/${i.transactionId}`}
                           to={
-                            i.type
-                              ? `/dashboard/payment/detail/${i.transactionId}`
-                              : `/dashboard/payment/detail/financing/${i.transactionId}`
+                            i.type == "INVOICING"
+                              ? `/payment/detail/${i.transactionId}`
+                              : `/payment/detail/financing/${i.transactionId}`
                           }
                         >
                           {console.log(i.type)}

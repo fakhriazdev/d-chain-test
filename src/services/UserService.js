@@ -59,6 +59,13 @@ const UserService = () => {
     console.log(data);
     return data;
   };
+  const removeUserBackoffice = async (id) => {
+    const { data } = await axiosInstance.delete(
+      `/api/backoffice/users/delete/${id}`
+    );
+    console.log(data);
+    return data;
+  };
 
 
   return {
@@ -70,7 +77,8 @@ const UserService = () => {
     fetchUserById,
     fetchAll,
     fetchAllBackoffice,
-    removeUser
+    removeUser,
+    removeUserBackoffice,
   };
 };
 

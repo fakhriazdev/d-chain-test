@@ -36,28 +36,28 @@ const FinancingDetailReceivableBo = () => {
         selectFinancingAction(async () => {
           const result = await financingService.saveFinancingAccept({
             financing_id: id,
-            type: "receivable"
+            type: "receivable",
           });
           // alert(result.message);
           navigate("/backoffice/financing");
         })
-      )
+      );
     }
-  }
+  };
   const rejectFinancing = () => {
     if (confirm("Apakah anda yakin ingin reject?")) {
       dispatch(
         selectFinancingAction(async () => {
           const result = await financingService.saveFinancingReject({
             financing_id: id,
-            type: "receivable"
+            type: "receivable",
           });
           // alert(result.message);
           navigate("/backoffice/financing");
         })
-      )
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -118,11 +118,15 @@ const FinancingDetailReceivableBo = () => {
                 </div>
                 <div className="flex justify-between">
                   <h4>Request Amount</h4>
-                  <h4 className="font-bold">{formatIDRCurrency(selectedFinancing.amount)}</h4>
+                  <h4 className="font-bold">
+                    {formatIDRCurrency(selectedFinancing.amount)}
+                  </h4>
                 </div>
                 <div className="flex justify-between">
                   <h4>Fee</h4>
-                  <h4 className="font-bold">{formatIDRCurrency(selectedFinancing.fee)}</h4>
+                  <h4 className="font-bold">
+                    {formatIDRCurrency(selectedFinancing.fee)}
+                  </h4>
                 </div>
                 <div>
                   <hr className="opacity-20" />
@@ -135,22 +139,30 @@ const FinancingDetailReceivableBo = () => {
                 </div>
               </div>
 
-              <div className="flex flex-wrap w-full mt-10">
-                <div className="w-full md:w-1/2 md:pr-2 px-0">
-                  <button onClick={rejectFinancing}
-                    className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:opacity-80 hover:text-white"
-                  >
-                    <img src={IconReject} alt="" className="" />
-                    <p>Reject Financing</p>
-                  </button>
+              {selectedFinancing.status === "PENDING" ? (
+                <div className="flex flex-wrap w-full mt-10">
+                  <div className="w-full md:w-1/2 md:pr-2 px-0">
+                    <button
+                      onClick={rejectFinancing}
+                      className="flex justify-center items-center gap-2 text-white font-bold w-full h-12 rounded-lg border-2 bg-red border-red  hover:opacity-80 hover:text-white"
+                    >
+                      <img src={IconReject} alt="" className="" />
+                      <p>Reject Financing</p>
+                    </button>
+                  </div>
+                  <div className="w-full md:w-1/2 md:pl-2 pl-0">
+                    <button
+                      onClick={approveFinancing}
+                      className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:opacity-80 hover:text-white"
+                    >
+                      <img src={IconProceedPayment} alt="" className="" />
+                      <p>Accept Financing</p>
+                    </button>
+                  </div>
                 </div>
-                <div className="w-full md:w-1/2 md:pl-2 pl-0">
-                  <button onClick={approveFinancing} className="flex justify-center items-center gap-2 text-white bg-green font-bold w-full h-12 rounded-lg border-2 border-green hover:opacity-80 hover:text-white">
-                    <img src={IconProceedPayment} alt="" className="" />
-                    <p>Accept Financing</p>
-                  </button>
-                </div>
-              </div>
+              ) : (
+                <div className="flex flex-wrap w-full mt-10"> </div>
+              )}
             </div>
           </div>
         </div>

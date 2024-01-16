@@ -11,9 +11,9 @@ import { ServiceContext } from "../../../../context/ServiceContext";
 import { useFormik } from "formik";
 import { invoiceAction } from "../../../../slices/invoiceSlice";
 import * as Yup from "yup";
+import { decodeJWT } from "../../../../utils/decodeJWT.js";
 
 import { ExportCurve } from 'iconsax-react';
-import { decodeJWT } from "../../../../utils/decodeJWT";
 
 const InvoiceGeneration = () => {
   const schema = Yup.object().shape({
@@ -23,27 +23,20 @@ const InvoiceGeneration = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { invoiceService } = useContext(ServiceContext);
-  const { id } = useParams();
   const [partnerships, setPartnerships] = useState([]);
   const {company_id} = decodeJWT();
   const currentDate = new Date().toISOString().split("T")[0];
-
-  // const [searchParam, setSearchParam] = useSearchParams();
-
-  // const currentPage = parseInt(searchParam.get("page") || 1);
-  // const currentSize = parseInt(searchParam.get("size") || 1);
+  const decode = decodeJWT();
+  console.log(decode, "--------------------");
 
   const {
-    values: { recipientId, dueDate, invDate, amount, itemList, checkbox },
-    errors,
+    values: { dueDate, itemList, checkbox },
     dirty,
     isValid,
-    touched,
     handleBlur,
     handleChange,
     handleSubmit,
     setValues,
-    setFieldValue,
   } = useFormik({
     initialValues: {
       checkbox: false,
@@ -60,13 +53,9 @@ const InvoiceGeneration = () => {
     },
     onSubmit: async (values) => {
       console.log(values);
-      const resultAmount = values.itemList.map((item, idx) => {
-        return item.itemsQuantity * item.unitPrice;
-      });
-      const totalAmount = resultAmount.reduce(
-        (acc, currentValue) => acc + currentValue,
-        0
-      );
+      const totalAmount = values.itemList.reduce((acc, item) => {
+        return acc + item.itemsQuantity * item.unitPrice;
+      }, 0);
       const stringifyData = JSON.stringify(values.itemList);
       const dataInvoice = {
         recipientId: values.recipientId,
@@ -125,7 +114,7 @@ const InvoiceGeneration = () => {
       }
     };
     getPartnerships();
-  }, []);
+  }, [company_id, invoiceService]);
 
   return (
     <>
