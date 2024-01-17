@@ -9,6 +9,7 @@ import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined.js";
 import { Link } from "react-router-dom";
 import { useFetchCompany } from "../../../../features/company/useFetchCompany.js";
+import { decodeJWT } from "../../../../utils/utility.js";
 const ListCompany = () => {
   const {
     data: companies,
@@ -20,20 +21,28 @@ const ListCompany = () => {
     pageSize,
     handlePageChange,
   } = useCompanies();
+
+  const { role } = decodeJWT();
+
   console.log(currentPage);
   console.log(totalPages);
   console.log(pageSize);
+  console.log(role.some((item) => item === "CREDIT_ANALYST"));
 
   return (
     <>
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Manage Company </h1>
-        <Link
-          to={`/backoffice/company/add`}
-          className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center  "
-        >
-          <AddOutlinedIcon /> Add New Company
-        </Link>
+        {role.some((item) => item === "CREDIT_ANALYST") ? (
+          console.log("tidak ada akses add company")
+        ) : (
+          <Link
+            to={`/backoffice/company/add`}
+            className="mt-2 text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center  "
+          >
+            <AddOutlinedIcon /> Add New Company
+          </Link>
+        )}
       </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="relative flex justify-end mb-5 gap-4 mx-4">
@@ -162,12 +171,16 @@ const ListCompany = () => {
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
                         <div className="flex gap-2 my-auto">
-                          <Link
-                            to={`/backoffice/company/${company.companyId}/edit`}
-                            className="font-medium text-green hover:text-green/60 dark:text-blue-500 hover:underline"
-                          >
-                            <EditNoteOutlinedIcon />
-                          </Link>
+                          {role.some((item) => item === "CREDIT_ANALYST") ? (
+                            console.log("tidak ada akses edit")
+                          ) : (
+                            <Link
+                              to={`/backoffice/company/${company.companyId}/edit`}
+                              className="font-medium text-green hover:text-green/60 dark:text-blue-500 hover:underline"
+                            >
+                              <EditNoteOutlinedIcon />
+                            </Link>
+                          )}
                           <Link
                             to={`${company.companyId}/partnership`}
                             className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline"

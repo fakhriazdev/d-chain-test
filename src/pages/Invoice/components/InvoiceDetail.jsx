@@ -9,7 +9,7 @@ import {
 } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ServiceContext } from "../../../context/ServiceContext";
@@ -26,6 +26,7 @@ export default function InvoiceDetail() {
   const { invoiceService } = useContext(ServiceContext);
   const { id } = useParams();
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
   const schema = Yup.object({
     // email: Yup.string().email("Invalid Email").required("Email is required"),
   });
@@ -93,6 +94,7 @@ export default function InvoiceDetail() {
         selectInvoiceAction(async () => {
           const result = await invoiceService.approveInvoice(id);
           alert(result.message);
+          navigate('/dashboard/invoice')
           return result.data;
         })
       );

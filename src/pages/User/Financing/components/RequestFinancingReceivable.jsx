@@ -15,10 +15,12 @@ import { ServiceContext } from "../../../../context/ServiceContext";
 
 import { selectInvoiceAction } from "../../../../slices/invoiceSlice";
 import { financingAction } from "../../../../slices/financingSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function RequestFinancingReceivable() {
   const { invoiceService, financingService } = useContext(ServiceContext);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [invoices, setInvoices] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -70,6 +72,7 @@ export default function RequestFinancingReceivable() {
           disbursment_date,
         })
       );
+      console.log(requests);
 
       dispatch(
         financingAction(async () => {
@@ -78,8 +81,8 @@ export default function RequestFinancingReceivable() {
           );
           console.log(result);
           if (result.statusCode === 200) {
-            // navigate(`/user/invoice`);
             alert("berhasil wlek");
+            navigate(`/dashboard/financing`);
           }
           return null;
         })
@@ -335,6 +338,7 @@ export default function RequestFinancingReceivable() {
                       Amount
                     </label>
                     <input
+                      disabled
                       required={true}
                       type="number"
                       name={`request[${idx}].amount`}
@@ -428,10 +432,10 @@ export default function RequestFinancingReceivable() {
                 <p>Remaining Limit</p>
                 <p
                   className={`font-semibold text-[24px] ${
-                    limit - totalAmount < 0 ? "text-red" : "text-black"
+                    totalAmount - limit  < 0 ? "text-red" : "text-black"
                   }`}
                 >
-                  {formatIDRCurrency(limit - totalAmount)}
+                  {formatIDRCurrency(totalAmount - limit)}
                 </p>
               </div>
             </div>

@@ -9,6 +9,7 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined.js";
 import TabFilter from "../../../../components/TabFilter.jsx";
 import { useFetchFinancing } from "../../../../features/financing/useFetchFinancing.js";
 import { Link } from "react-router-dom";
+import { toTitleCase } from "../../../../utils/utility.js";
 
 const ListFinancing = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -303,14 +304,14 @@ const ListFinancing = () => {
                       scope="col-span-4"
                       className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                     >
-                      <Badge variant={d?.status}>{d?.status}</Badge>
+                      <Badge variant={d?.status}>{toTitleCase(d?.status)}</Badge>
                     </th>
                     <th
                       scope="col-span-4"
                       className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                     >
                       <Link
-                        to={`${d?.financing_id}/detail-payable`}
+                        to={selectedType === "payable" ? (`${d?.financing_id}/detail-payable`) : (`receivable/${d?.financing_id}`)}
                         className="font-medium text-darkgray hover:text-lightgray dark:text-blue-500 hover:underline"
                       >
                         <ArticleOutlinedIcon />

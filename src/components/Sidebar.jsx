@@ -17,7 +17,7 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = (props) => {
   const { children } = props;
-  const { company_id, actor } = decodeJWT();
+  const { company_id, actor, role } = decodeJWT();
 
   return (
     <>
@@ -154,79 +154,107 @@ const Sidebar = (props) => {
                   <span className="ms-3">Dashboard</span>
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to={"/dashboard/invoice"}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <Book />
-                  <span className="ms-3">Invoice</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/dashboard/financing`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <People />
-                  <span className="ms-3">Financing</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/dashboard/payment`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <SliderHorizontal />
-                  <span className="ms-3">Payment</span>
-                </NavLink>
-              </li>
-              <p className="text-darkgray">Others</p>
+              {role.some(
+                (item) => item === "INVOICE_STAFF" || item === "SUPER_USER"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={"/dashboard/invoice"}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <Book />
+                    <span className="ms-3">Invoice</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses invoice")
+              )}
 
-              <li>
-                <NavLink
-                  to={`/dashboard/user`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <Shapes />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Manage User
-                  </span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/dashboard/partnership`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <People />
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Partnership
-                  </span>
-                </NavLink>
-              </li>
+              {role.some(
+                (item) => item === "FINANCE_STAFF" || item === "SUPER_USER"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={`/dashboard/financing`}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <People />
+                    <span className="ms-3">Financing</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses finance")
+              )}
 
-              
+              {role.some(
+                (item) => item === "PAYMENT_STAFF" || item === "SUPER_USER"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={`/dashboard/payment`}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <SliderHorizontal />
+                    <span className="ms-3">Payment</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses payment")
+              )}
+
+              {role.some((item) => item === "SUPER_USER") ? (
+                <>
+                  <p className="text-darkgray">Others</p>
+                  <li>
+                    <NavLink
+                      to={`/dashboard/user`}
+                      className={({ isActive }) =>
+                        `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                          isActive
+                            ? "bg-orange/20 text-orange"
+                            : "text-darkgray"
+                        }`
+                      }
+                    >
+                      <Shapes />
+                      <span className="flex-1 ms-3 whitespace-nowrap">
+                        Manage User
+                      </span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to={`/dashboard/partnership`}
+                      className={({ isActive }) =>
+                        `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                          isActive
+                            ? "bg-orange/20 text-orange"
+                            : "text-darkgray"
+                        }`
+                      }
+                    >
+                      <People />
+                      <span className="flex-1 ms-3 whitespace-nowrap">
+                        Partnership
+                      </span>
+                    </NavLink>
+                  </li>
+                </>
+              ) : (
+                console.log("tidak ada akses others")
+              )}
             </ul>
           </div>
         </aside>
@@ -254,45 +282,69 @@ const Sidebar = (props) => {
                   <span className="ms-3">Dashboard</span>
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to={"/backoffice/financing"}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <Book />
-                  <span className="ms-3">Financing</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/backoffice/company`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <People />
-                  <span className="ms-3">Manage Company</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/backoffice/user`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <SliderHorizontal />
-                  <span className="ms-3">Manage BO User</span>
-                </NavLink>
-              </li>
+              {role.some(
+                (item) => item === "CREDIT_ANALYST" || item === "SUPER_ADMIN"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={"/backoffice/financing"}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <Book />
+                    <span className="ms-3">Financing</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses financing")
+              )}
+
+              {role.some(
+                (item) =>
+                  item === "RELATIONSHIP_MANAGER" ||
+                  item === "ADMIN" ||
+                  item === "CREDIT_ANALYST" ||
+                  item === "SUPER_ADMIN"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={`/backoffice/company`}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <People />
+                    <span className="ms-3">Manage Company</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses manage company")
+              )}
+
+              {role.some(
+                (item) => item === "ADMIN" || item === "SUPER_ADMIN"
+              ) ? (
+                <li>
+                  <NavLink
+                    to={`/backoffice/user`}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
+                        isActive ? "bg-orange/20 text-orange" : "text-darkgray"
+                      }`
+                    }
+                  >
+                    <SliderHorizontal />
+                    <span className="ms-3">Manage BO User</span>
+                  </NavLink>
+                </li>
+              ) : (
+                console.log("tidak ada akses manage bo user")
+              )}
             </ul>
           </div>
         </aside>

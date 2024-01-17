@@ -109,7 +109,6 @@ export default function FinancingDetailReceivable() {
                 </div>
               </div>
             </div>
-            <div className=" w-full rounded-2xl shadow-md min-h-fit mt-10 p-10"></div>
           </div>
         </div>
       )}

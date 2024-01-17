@@ -366,7 +366,7 @@ const PaymentListOngoing = () => {
                   Amount
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Recipent
+                  Recipient
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Type

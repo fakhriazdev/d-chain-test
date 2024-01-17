@@ -94,13 +94,20 @@ const PaymentDetailFinancing = () => {
                   <WarningIcon className="" />
                   This Payment is currently set to auto-debit, to change payment
                   method
-                  <span
+                  {/* <span
                     className="text-red cursor-pointer"
                     data-modal-target="modal-change"
                     data-modal-toggle="modal-change"
                   >
                     click here
-                  </span>
+                  </span> */}
+                  <button type="button"
+                    className="text-red cursor-pointer"
+                    data-modal-target="modal-change"
+                    data-modal-toggle="modal-change"
+                  >
+                    click here
+                  </button>
                 </div>
               </div>
               <ModalChange />

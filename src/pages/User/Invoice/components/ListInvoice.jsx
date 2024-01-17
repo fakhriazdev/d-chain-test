@@ -12,7 +12,7 @@ import { ServiceContext } from "../../../../context/ServiceContext.jsx";
 import { invoiceAction } from "../../../../slices/invoiceSlice.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
+import { formatDate, formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
 
 const ListInvoice = () => {
   const [searchParam, setSearchParam] = useSearchParams();
@@ -354,7 +354,7 @@ const ListInvoice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                       >
-                        {i.dueDate}
+                        {formatDate(i.dueDate)}
                       </th>
                       <th
                         scope="col"
@@ -381,7 +381,7 @@ const ListInvoice = () => {
               ) : (
                 <tr>
                   <td colSpan="6" className="px-6 py-4 text-center">
-                    Company Not Found...
+                    Invoice Not Found...
                   </td>
                 </tr>
               )}
