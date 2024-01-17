@@ -11,6 +11,7 @@ const DashboardUserService = () => {
       const { data } = await axiosInstance.get("/api/user-dashboard/cash/payable");
       return data;
     } else {
+
       const { data } = await axiosInstance.get("/api/user-dashboard/cash/receivable");
       return data;
     }

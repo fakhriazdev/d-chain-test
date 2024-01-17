@@ -85,7 +85,7 @@ const RequestPartnership = (props) => {
                             <h1>{error?.data}</h1>
                         ) : (
                             <>
-                                {company ? (
+                                {company !== null ? (
                                     <>
                                         <h1 className="text-[14px] font-medium">{company?.companyName}</h1>
                                         <h2 className="text-[10px] ">{company?.emailUser}</h2>

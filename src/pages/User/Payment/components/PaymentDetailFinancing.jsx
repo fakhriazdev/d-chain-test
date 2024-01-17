@@ -82,9 +82,9 @@ const PaymentDetailFinancing = () => {
                     {formatIDRCurrency(selectedPayment.amount)}
                   </h4>
                   <h4 className="w-1/2 text-subtitle">
-                    {toTitleCase(
-                      selectedPayment.paymentMethod.replace(/_/g, " ")
-                    )}
+                    {
+                      console.log(selectedPayment.paymentMethod)
+                    }
                   </h4>
                 </div>
               </div>

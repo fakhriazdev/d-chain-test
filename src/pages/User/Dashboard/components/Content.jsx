@@ -8,55 +8,41 @@ import { useFormik } from "formik";
 import { ServiceContext } from "../../../../context/ServiceContext";
 import { formatIDRCurrency } from "../../../../utils/utility";
 
-const data = [
-  { name: "Segment 1", value: 50, color: "#96D9FF" },
-  { name: "Segment 2", value: 50, color: "#FF6347" },
-  { name: "Segment 3", value: 50, color: "#98FB98" },
-  { name: "Segment 4", value: 50, color: "#9370DB" },
-];
-const COLORS = ["#FFB84E", "#FF6C6C", "#97AEFF", "#96D9FF"];
-
 export default function Content() {
   const { dashboardUserServise } = useContext(ServiceContext);
   const [isChecked, setIsChecked] = useState(false);
   const [limit, setLimit] = useState({});
+  const [cash, setCash] = useState({});
+  const [dataChart, setDataChart] = useState([]);
 
-  const formik = useFormik({
+  const {
+    values: { type },
+    setValues,
+  } = useFormik({
     initialValues: {
-      type: "",
+      type: "payable",
     },
   });
 
-  const handleCheckboxChange = () => {
+  const handleCheckboxChange = async () => {
     setIsChecked(!isChecked);
     console.log(isChecked);
     let checked = "";
     if (!isChecked) {
-      //   formik.setValues({
-      //     type: "Receivable",
-      //   });
-      checked = "Receivable";
+      setValues({
+        type: "receivable",
+      });
+      checked = "receivable";
     } else {
-      //   formik.setValues({
-      //     type: "Payable",
-      //   });
-      checked = "Payable";
+      setValues({
+        type: "payable",
+      });
+      checked = "payable";
     }
     console.log(checked);
 
-    // dispatch(
-    //   invoiceAction(async () => {
-    //     const result = await invoiceService.fetchInvoices({
-    //       page: 1,
-    //       size: 10,
-    //       direction: "asc",
-    //       type: checked,
-    //       status: null,
-    //     });
-    //     console.log(result);
-    //     return result;
-    //   })
-    // );
+    const result = await dashboardUserServise.getCashCycle(type);
+    setCash(result.data);
   };
 
   useEffect(() => {
@@ -64,16 +50,75 @@ export default function Content() {
       try {
         const { data } = await dashboardUserServise.getLimit();
         setLimit(data);
+        const result = await dashboardUserServise.getCashCycle("payable");
+        setCash(result.data);
       } catch (error) {
         console.log(error);
       }
     };
     getLimit();
-  }, [dashboardUserServise]);
+  }, [dashboardUserServise, type]);
 
-  
-  const percentage = Math.floor((limit.limitUsed/limit.limit)*100)
+  const percentage = Math.floor((limit.limitUsed / limit.limit) * 100);
   console.log(percentage);
+
+  useEffect(() => {
+    if (Object.entries(cash).length !== 0) {
+      console.log(type, "====================");
+      if (type === "payable") {
+        setDataChart([
+          {
+            name: "Unpaid Invoice",
+            value: cash.unpaidInvoice,
+            color: "#96D9FF",
+          },
+          {
+            name: "Paid Financing",
+            value: cash.paidFinancingPayable,
+            color: "#FF6347",
+          },
+          {
+            name: "Unpaid Financing",
+            value: cash.unpaidFinancingPayable,
+            color: "#98FB98",
+          },
+          { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
+        ]);
+      } else {
+        setDataChart([
+          {
+            name: "Unpaid Invoice",
+            value: cash.unpaidInvoice,
+            color: "#96D9FF",
+          },
+          {
+            name: "Early Disbursement",
+            value: cash.totalFinancingEarlyDisbursement,
+            color: "#FF6347",
+          },
+          { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
+        ]);
+      }
+    }
+  }, [cash, type]);
+
+  // let dataChartPayable = [
+  //   { name: "Unpaid Invoice", value: cash.unpaidInvoice, color: "#96D9FF" },
+  //   { name: "Paid Financing", value: 20, color: "#FF6347" },
+  //   { name: "Unpaid Financing", value: 30, color: "#98FB98" },
+  //   { name: "Paid Invoice", value: 40, color: "#9370DB" },
+  // ];
+  const COLORS = ["#FFB84E", "#FF6C6C", "#97AEFF", "#96D9FF"];
+
+  // let dataChartReceivable = [
+  //   { name: "Unpaid Invoice", value: 10, color: "#96D9FF" },
+  //   { name: "Early Disbursement", value: 20, color: "#FF6347" },
+  //   { name: "Paid Invoice", value: 40, color: "#9370DB" },
+  // ];
+
+  console.log(dataChart);
+
+  console.log(cash);
 
   return (
     <>
@@ -93,9 +138,7 @@ export default function Content() {
             </p>
 
             <div className="w-full mt-3 bg-lightgray/50 rounded-full h-2.5 dark:bg-gray">
-              <div
-                className={`bg-orange h-2.5 rounded-full w-[0%]`}
-              ></div>
+              <div className={`bg-orange h-2.5 rounded-full w-[0%]`}></div>
             </div>
           </div>
           <div className="flex flex-col justify-between w-full h-1/3 bg-white rounded-2xl p-5 shadow-md">
@@ -156,7 +199,7 @@ export default function Content() {
             <div>
               <PieChart width={400} height={770}>
                 <Pie
-                  data={data}
+                  data={dataChart}
                   cx={200}
                   cy={150}
                   innerRadius={80}
@@ -165,7 +208,7 @@ export default function Content() {
                   paddingAngle={0}
                   dataKey="value"
                 >
-                  {data.map((entry, index) => (
+                  {dataChart.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
@@ -193,14 +236,25 @@ export default function Content() {
                 <span className=" bg-[#FFB84E] w-5 h-5 rounded-md mt-1" />
                 Unpaid Invoice
               </div>
-              <div className="flex gap-3">
-                <span className=" bg-[#FF6C6C] w-5 h-5 rounded-md mt-1" />
-                Paid Financing
-              </div>
-              <div className="flex gap-3">
-                <span className=" bg-[#97AEFF] w-5 h-5 rounded-md mt-1" />
-                Unpaid Financing
-              </div>
+              {type === "payable" ? (
+                <>
+                  <div className="flex gap-3">
+                    <span className=" bg-[#FF6C6C] w-5 h-5 rounded-md mt-1" />
+                    Paid Financing
+                  </div>
+                  <div className="flex gap-3">
+                    <span className=" bg-[#97AEFF] w-5 h-5 rounded-md mt-1" />
+                    Unpaid Financing
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-3">
+                    <span className=" bg-[#FF6C6C] w-5 h-5 rounded-md mt-1" />
+                    Early Disbursement
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -24,6 +24,7 @@ export default function RequestFinancingReceivable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [limit, setLimit] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
+  const currentDate = new Date().toISOString().split("T")[0];
 
   const schema = Yup.object().shape({
     request: Yup.array().of(
@@ -131,10 +132,10 @@ export default function RequestFinancingReceivable() {
     //   selectInvoiceAction(async () => {
     //     const { data } = await invoiceService.getById(id);
     //     console.log(data);
-        setFieldValue(`request[${idx}].invoice_number`, id);
-        setFieldValue(`request[${idx}].maxAmount`, amount);
-        setFieldValue(`request[${idx}].dueDate`, dueDate);
-        // return null;
+    setFieldValue(`request[${idx}].invoice_number`, id);
+    setFieldValue(`request[${idx}].maxAmount`, amount);
+    setFieldValue(`request[${idx}].dueDate`, dueDate);
+    // return null;
     //   })
     // );
   };
@@ -326,6 +327,7 @@ export default function RequestFinancingReceivable() {
                       name={`request[${idx}].disbursment_date`}
                       onChange={(e) => handleChangeDate(e, idx)}
                       className="block rounded-md border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
+                      min={currentDate}
                     />
                   </div>
                   <div className="w-1/3">

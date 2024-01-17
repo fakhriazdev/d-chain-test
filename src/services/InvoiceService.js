@@ -30,8 +30,13 @@ const InvoiceService = () => {
     return data;
   }
 
-  const updateStatusInvoice = async (payload) => {
-    const {data} = await axiosInstance.put('/api/invoice/update', payload)
+  const approveInvoice = async (invId) => {
+    const {data} = await axiosInstance.get(`/api/invoice/approve/${invId}`)
+    return data;
+  }
+
+  const rejectInvoice = async (payload) => {
+    const {data} = await axiosInstance.post("/api/incoive/reject", payload);
     return data;
   }
 
@@ -40,7 +45,8 @@ const InvoiceService = () => {
     saveInvoice,
     fetchPartnership,
     getById,
-    updateStatusInvoice
+    approveInvoice,
+    rejectInvoice,
   };
 };
 

@@ -17,7 +17,6 @@ import { formatIDRCurrency, formatDate } from "../../../utils/utility";
 import { selectInvoiceAction } from "../../../slices/invoiceSlice";
 import proceedPayment from "../../../assets/icons/Icon Proceed Payment.svg";
 import rejectPayment from "../../../assets/icons/Icon Reject.svg";
-import ModalReject from "./ModalReject";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -50,7 +49,7 @@ export default function InvoiceDetail() {
       if (confirm("Yakin mau reject?")) {
         dispatch(
           selectInvoiceAction(async () => {
-            const result = await invoiceService.updateStatusInvoice({
+            const result = await invoiceService.rejectInvoice({
               invNumber: id,
               processingType: "REJECT_INVOICE",
               reasonType: reasonType,
@@ -92,12 +91,7 @@ export default function InvoiceDetail() {
     if (confirm("Yakin mau aprove?")) {
       dispatch(
         selectInvoiceAction(async () => {
-          const result = await invoiceService.updateStatusInvoice({
-            invNumber: id,
-            processingType: "APPROVE_INVOICE",
-            reasonType: "",
-            reason: "",
-          });
+          const result = await invoiceService.approveInvoice(id);
           alert(result.message);
           return result.data;
         })
@@ -330,8 +324,8 @@ export default function InvoiceDetail() {
             {selectedInvoices.processingStatus === "WAITING_STATUS" &&
               selectedInvoices.type === "Receivable" && (
                 <button
-                  data-modal-target="modal-reject"
-                  data-modal-toggle="modal-reject"
+                  // data-modal-target="modal-reject"
+                  // data-modal-toggle="modal-reject"
                   type="button"
                   className="flex justify-center items-center gap-2 text-red mt-5 font-bold w-full h-12 rounded-lg border-2 hover:bg-red hover:opacity-90 hover:text-white"
                 >
@@ -345,8 +339,8 @@ export default function InvoiceDetail() {
                 <div className="flex flex-wrap w-full mt-5 mb-3 gap-">
                   <div className="w-full md:w-1/2 md:pr-2 px-0 mb-2">
                     <button
-                      data-modal-target="modal-reject"
-                      data-modal-toggle="modal-reject"
+                      // data-modal-target="modal-reject"
+                      // data-modal-toggle="modal-reject"
                       type="button"
                       className="flex justify-center items-center gap-2 text-red font-bold w-full h-12 rounded-lg border-2 hover:bg-red hover:opacity-90 hover:text-white"
                     >
@@ -382,9 +376,9 @@ export default function InvoiceDetail() {
       ) : (
         "kosong"
       )}
-
       <div
         id="modal-reject"
+        data-modal-target="modal-reject"
         tabIndex="-1"
         aria-hidden="true"
         className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 inset-0 overflow-auto bg-black bg-opacity-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"

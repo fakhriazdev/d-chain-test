@@ -13,7 +13,7 @@ import { invoiceAction } from "../../../../slices/invoiceSlice";
 import * as Yup from "yup";
 import { decodeJWT } from "../../../../utils/decodeJWT.js";
 
-import { ExportCurve } from 'iconsax-react';
+import { ExportCurve } from "iconsax-react";
 
 const InvoiceGeneration = () => {
   const schema = Yup.object().shape({
@@ -24,7 +24,7 @@ const InvoiceGeneration = () => {
   const navigate = useNavigate();
   const { invoiceService } = useContext(ServiceContext);
   const [partnerships, setPartnerships] = useState([]);
-  const {company_id} = decodeJWT();
+  const { company_id } = decodeJWT();
   const currentDate = new Date().toISOString().split("T")[0];
   const decode = decodeJWT();
   console.log(decode, "--------------------");
@@ -175,10 +175,17 @@ const InvoiceGeneration = () => {
                     partnerships.data.length &&
                     partnerships.data.map((partnership, idx) => {
                       return (
-                        <option key={idx} value={partnership.partner.companyId}>
+                        <option
+                          key={idx}
+                          value={
+                            company_id === partnership?.company?.companyId
+                              ? partnership.partner?.companyId
+                              : partnership.company?.companyId
+                          }
+                        >
                           {company_id === partnership?.company?.companyId
-                        ? `${partnership.partner?.companyName}`
-                        : `${partnership.company?.companyName}`}
+                            ? `${partnership.partner?.companyName}`
+                            : `${partnership.company?.companyName}`}
                           {/* {partnership.partner.companyName} */}
                         </option>
                       );
@@ -279,7 +286,10 @@ const InvoiceGeneration = () => {
               className="text-[18px] py-3 group cursor-pointer lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
             >
               {/* <img src={IconUpload} alt="Icon Upload" /> */}
-              <ExportCurve className="text-white group-hover:text-orange" variant="Outline"/>
+              <ExportCurve
+                className="text-white group-hover:text-orange"
+                variant="Outline"
+              />
               Create Invoice
             </button>
           </div>

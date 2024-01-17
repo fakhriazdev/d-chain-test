@@ -9,6 +9,8 @@ import { useFetchFinancingLimit } from "../../../../features/financing/useFetchF
 import * as Yup from "yup";
 import { useCreateCompany } from "../../../../features/company/useCreateCompany.js";
 import { useRequestFinancingPayable } from "../../../../features/financing/useRequestFinancingPayable.js";
+import { useNavigate } from "react-router-dom";
+
 
 const RequestFinancingPayable = () => {
   const { data: payments, isLoading } = useFetchPaymentOngoing();
@@ -18,6 +20,8 @@ const RequestFinancingPayable = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [totalInstallments, setTotalInstallments] = useState(0);
   const [remainingLimit, setRemainingLimit] = useState(0);
+  const navigate = useNavigate();
+
 
   const validationSchema = Yup.object().shape({
     payments: Yup.array().of(
@@ -64,7 +68,10 @@ const RequestFinancingPayable = () => {
   });
 
   const { mutate, isPending } = useRequestFinancingPayable({
-    onSuccess: () => {},
+    onSuccess: () => {
+      alert("Successfully request financing payable")
+      navigate('/dashboard/financing')
+    },
   });
   const handleAddDatas = () => {
     if (
@@ -135,7 +142,7 @@ const RequestFinancingPayable = () => {
     );
     if (newTotalInstallments !== totalInstallments) {
       setTotalInstallments(newTotalInstallments);
-      setRemainingLimit(newTotalInstallments - financingLimit?.remaining_limit);
+      setRemainingLimit(financingLimit?.remaining_limit - newTotalInstallments);
     }
   }, [formik.values]);
 
