@@ -226,34 +226,7 @@ const Sidebar = (props) => {
                 </NavLink>
               </li>
 
-              <p className="text-darkgray">Backoffice</p>
-
-              <li>
-                <NavLink
-                  to={`/profile/superuser/:id`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <GroupsOutlinedIcon />
-                  <span className="ms-3">Profile</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/backoffice/company`}
-                  className={({ isActive }) =>
-                    `flex items-center p-3 rounded-lg hover:bg-orange/20 hover:text-orange group ${
-                      isActive ? "bg-orange/20 text-orange" : "text-darkgray"
-                    }`
-                  }
-                >
-                  <ManageCompanyLogo />
-                  <span className="ms-3">Manage Company</span>
-                </NavLink>
-              </li>
+              
             </ul>
           </div>
         </aside>
