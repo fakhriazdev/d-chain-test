@@ -10,16 +10,15 @@ import { useFetchRoles } from '../../../../features/user/useFetchRoles';
 import Loading from '../../../../components/Loading'
 import { useFetchUser } from '../../../../features/user/useFetchUser';
 import {useEditUser} from "../../../../features/user/useEditUser.js";
+import {useFetchAccessibility} from "../../../../features/user/useFetchAccessibility.js";
 export const UserForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const {data,isLoading:isLoadingCompany} = useCompanies()
   const {data:roles,isLoading:isLoadingRoles} = useFetchRoles()
   const {data:user} = useFetchUser(id)
+  console.log(user)
 
-
-  console.log(user,"s")
-  // console.log(roles)
   const formik = useFormik({
     initialValues:{
       id: null,
@@ -33,22 +32,24 @@ export const UserForm = () => {
     enableReinitialize: true,
     //validationSchema: validationSchema,
     onSubmit:()=>{
-   
       const requestData = {
         username: formik.values.username,
         name: formik.values.name,
         email: formik.values.email,
         password:formik.values.password,
-        rolesList: formik.values.rolesList,
+        rolesList: formik.values.rolesList[0],
       };
 
       if(id){
         requestData.id = formik.values.id
-        requestData.roles = [formik.values.rolesList];
+        requestData.roles = formik.values.rolesList;
         delete requestData.rolesList;
       }
 
-      if (check?.roleName === "RELATIONSHIP_MANAGER") {
+      if (formik.values.rolesList[0] === "RELATIONSHIP_MANAGER" && id) {
+        requestData.companies = formik.values.companyRequests;
+      }
+      if (formik.values.rolesList[0] === "RELATIONSHIP_MANAGER" && !id) {
         requestData.companyRequests = formik.values.companyRequests;
       }
 
@@ -66,7 +67,7 @@ export const UserForm = () => {
         username: user?.data?.username || '',
         name: user?.data?.name || '',
         email: user?.data?.email || '',
-        rolesList: "",
+        rolesList: [user?.data?.roles] || [],
         companyRequests: user?.data?.companyRequests || [],
       });
     }
@@ -93,9 +94,11 @@ const {mutate:editUser,isPending:isPendingCreateUser} = useEditUser({
       navigate("/backoffice/user");
     }
   })
-
-const check = roles?.data.find((role) => formik.values.rolesList === role.id)
-  console.log(formik.values)
+const check = roles?.data.find((role) => formik.values.rolesList === role.roleName)
+  console.log(formik.values.rolesList)
+  const {data:accessibility} = useFetchAccessibility(formik.values.rolesList || formik.values.rolesList[0])
+  console.log(accessibility,'check')
+console.log(formik.values)
   return (
     <>
     {isPendingCreateUser ||isPending || isLoadingCompany || isLoadingRoles ? <Loading/> :
@@ -169,9 +172,9 @@ const check = roles?.data.find((role) => formik.values.rolesList === role.id)
                   <input
                     type="radio"
                     name="rolesList"
-                    onChange={formik.handleChange}
-                    value={role.id}
-                    checked={formik.values.rolesList === role.id || formik.values.rolesList === role.roleName}
+                    onChange={() => formik.setFieldValue('rolesList[0]', role.roleName)}
+                    value={role.roleName}
+                    checked={role.roleName === formik.values.rolesList[0]}
                     className="rounded-md checked:bg-orange w-6 h-6 border-2 border-orange checked:ring-orange"
                   />
                   <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -207,7 +210,7 @@ const check = roles?.data.find((role) => formik.values.rolesList === role.id)
                     </button>
                   </div>
                 </form> */}
-              {check?.roleName === "RELATIONSHIP_MANAGER" ?
+              {formik.values.rolesList[0] === "RELATIONSHIP_MANAGER" ?
               (
                 <>
                <label className="block text-[18px] font-medium leading-6">
@@ -258,6 +261,7 @@ const check = roles?.data.find((role) => formik.values.rolesList === role.id)
                       <label className="block text-[18px] font-medium leading-6 mb-5">
                       Access
             </label>
+
                     <p>Dashboard</p>
                     <p>Manage Compony</p>
                     <p>Manage BO User</p>
