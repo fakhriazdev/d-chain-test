@@ -28,8 +28,8 @@ const FormCompany = () => {
             phoneNumber:"",
             files:{},
             username:"",
-            financingLimit:20000000,
-            remainingLimit:20000000,
+            financingLimit:2000000000,
+            remainingLimit:2000000000,
             emailUser: "",
 
         },

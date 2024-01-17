@@ -54,6 +54,7 @@ import DetailFinancingPayable from "../pages/User/Financing/components/DetailFin
 import RequestFinancingPayable from "../pages/User/Financing/components/RequestFinancingPayable.jsx";
 import DashboardBO from "../pages/BackOffice/Dashboard/index.jsx";
 import AuthenticatedLayout from "../layout/AuthenticatedLayout.jsx";
+import { UserForm } from "../pages/BackOffice/ManageUser/components/UserForm.jsx";
 
 const setupRouter = () =>
   createBrowserRouter([
@@ -282,6 +283,14 @@ const setupRouter = () =>
                 {
                   index: true,
                   element: <UserListBackoffice />,
+                },
+                {
+                  path: "manage",
+                  element: <UserForm />,
+                },
+                {
+                  path: "manage/:id/edit",
+                  element: <UserForm />,
                 },
               ],
             },

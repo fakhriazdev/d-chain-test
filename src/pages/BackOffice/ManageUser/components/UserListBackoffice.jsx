@@ -120,7 +120,7 @@ const UserListBackoffice = () => {
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Manage Back-Office User</h1>
         <div>
-          <Link to={`/backoffice/manageuser/add`}>
+          <Link to={`manage`}>
             <button className="my-auto text-white bg-orange hover:text-orange border border-orange hover:bg-white focus:outline-none font-medium rounded-lg text-sm lg:px-6 py-3 my-auto text-center  ">
               <AddOutlinedIcon /> Add New User
             </button>
@@ -241,7 +241,7 @@ const UserListBackoffice = () => {
                         scope="col"
                         className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px] flex space-x-3"
                       >
-                        <Link to={`/backoffice/manageruser/edit/${i.id}`}>
+                        <Link to={`/backoffice/user/manage/${i.id}/edit`}>
                           <button>
                             <img src={IconEdit} alt="Icon View" />
                           </button>

@@ -428,8 +428,8 @@ const PaymentListOngoing = () => {
                         <Link
                           to={
                             i.type == "INVOICING"
-                              ? `/payment/detail/${i.transactionId}`
-                              : `/payment/detail/financing/${i.transactionId}`
+                              ? `detail/${i.transactionId}`
+                              : `detail/financing/${i.transactionId}`
                           }
                         >
                           {console.log(i.type)}
