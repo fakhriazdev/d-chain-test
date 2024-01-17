@@ -24,11 +24,11 @@ const RequestFinancingPayable = () => {
 
 
   const validationSchema = Yup.object().shape({
-    payments: Yup.array().of(
+    financing: Yup.array().of(
       Yup.object().shape({
         payment_id: Yup.string().required("Payment is required"),
         amount: Yup.number().required("Amount is required").min(75000000, "Amount must be greather than Rp. 75.000.000"),
-        tenure: Yup.number().required("Tenure is required")
+        tenure: Yup.number().required("Tenure is required").min(1)
       })
     ),
     checkbox: Yup.boolean().oneOf(
@@ -37,24 +37,25 @@ const RequestFinancingPayable = () => {
     ),
   });
 
-  console.log(payments);
-
   const formik = useFormik({
-    initialValues: [
-      {
-        id: 1,
-        payment_id: "",
-        amount: 0,
-        tenure: 0,
-        monthly_instalment: 0,
-      },
-    ],
-    checkbox: false,
+    initialValues: {
+      financing:[
+        {
+          id: 1,
+          payment_id: "",
+          amount: 0,
+          tenure: 0,
+          monthly_instalment: 0,
+        },
+      ],
+      checkbox: false,
+    },
+
     validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async () => {
       try {
-        const arrayData = formik.values.map(
+        const arrayData = formik.values.financing.map(
           ({ payment_id, amount, tenure, monthly_instalment }) => ({
             payment_id,
             amount,
@@ -82,57 +83,66 @@ const RequestFinancingPayable = () => {
 
   const handleAddDatas = () => {
     if (
-      formik.values[formik.values.length - 1].payment_id !== "" &&
-      remainingLimit > 0
+        formik.values.financing[formik.values.financing.length - 1].payment_id !== "" &&
+        remainingLimit > 0
     ) {
-      formik.setValues((prevValues) => [
+      formik.setValues((prevValues) => ({
         ...prevValues,
-        {
-          id: formik.values.length + 1,
-          payment_id: "",
-          amount: 0,
-          tenure: 0,
-          monthly_instalment: 0,
-        },
-      ]);
-    } else {
+        financing: [
+          ...prevValues.financing,
+          {
+            id: formik.values.financing.length + 1,
+            payment_id: "",
+            amount: 0,
+            tenure: 0,
+            monthly_instalment: 0,
+          },
+        ],
+      }));
     }
-    
   };
   const handleRemoveById = (id) => {
-    formik.setValues((prevValues) =>
-      prevValues.filter((item) => item.id !== id)
-    );
+    formik.setValues((prevValues) => ({
+      ...prevValues,
+      financing: prevValues.financing.filter((item) => item.id !== id),
+    }));
   };
   const handleChangeTenure = (event, index) => {
     const selectedTenure = event.target.value;
     const tenure = parseFloat(selectedTenure);
-    const updatedValues = formik.values.map((value, i) =>
-      i === index
-        ? {
+
+    formik.setValues((prevValues) => ({
+      ...prevValues,
+      financing: prevValues.financing.map((value, i) =>
+          i === index ? {
             ...value,
             tenure: tenure,
-            monthly_instalment: parseFloat(
-              MonthlyInstallmentCount(formik.values[index].amount, tenure)
+            monthly_instalment: Math.ceil(parseFloat(
+                MonthlyInstallmentCount(value.amount, tenure))
             ),
-          }
-        : value
-    );
-
-    formik.setValues(updatedValues);
+          } : value
+      ),
+    }));
   };
   const handleChoosePayment = (transaction, amount, index) => {
-    const updatedValues = formik.values.map((value, i) =>
-      i === index
-        ? {
-            ...value,
-            payment_id: transaction,
-            amount,
-          }
-        : value
+    // Map over the financing array to update the values
+    const updatedValues = formik.values.financing.map((value, i) =>
+        i === index
+            ? {
+              ...value,
+              payment_id: transaction,
+              amount,
+            }
+            : value
     );
 
-    formik.setValues(updatedValues);
+    // Set the updated values using formik.setValues
+    formik.setValues((prevValues) => ({
+      ...prevValues,
+      financing: updatedValues,
+    }));
+
+    // Toggle the visibility of a modal (assuming you have modal-related state)
     setModalVisible(!isModalVisible);
   };
   const handleToggleModal = () => {
@@ -141,9 +151,8 @@ const RequestFinancingPayable = () => {
   const handleCheckBox = () => {
     formik.setFieldValue("checkbox", !formik.values.checkbox);
   };
-
   useEffect(() => {
-    const newTotalInstallments = formik.values.reduce(
+    const newTotalInstallments = formik.values.financing.reduce(
       (total, value) => total + value.amount,
       0
     );
@@ -152,10 +161,7 @@ const RequestFinancingPayable = () => {
       setRemainingLimit(financingLimit?.remaining_limit - newTotalInstallments);
     }
   }, [formik.values]);
-
-  console.log(formik.values, "ajag");
-  console.log(totalInstallments);
-  console.log(payments)
+  console.log(formik.values)
   return (
     <>
       <div>
@@ -165,7 +171,7 @@ const RequestFinancingPayable = () => {
       </div>
       <div className="w-full rounded-lg shadow-md p-3 md:p-6 lg:p-6">
         <form onSubmit={formik.handleSubmit}>
-          {formik.values.map((datas, i) => {
+          {formik.values.financing.map((datas, i) => {
             return (
               <div
                 className="border-b-2 border-lightgray mb-10"
@@ -292,10 +298,10 @@ const RequestFinancingPayable = () => {
                         Tenure
                       </label>
                       <select
-                        disabled={formik.values[i].payment_id === ""}
+                        disabled={formik.values.financing[i].payment_id === ""}
                         name="tenure"
                         placeholder="tenure"
-                        value={formik.values[i]?.tenure}
+                        value={formik.values.financing[i]?.tenure}
                         onChange={(event) => handleChangeTenure(event, i)}
                         className="rounded-md border-0 text-darkgray shadow-sm ring-1 ring-inset ring-lightgray placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange sm:text-sm sm:leading-6 w-full"
                       >
@@ -402,10 +408,9 @@ const RequestFinancingPayable = () => {
             </p>
           </div>
           <div className="mb-10">
-            {console.log(formik.isValid)}
             <button
               type="submit"
-              disabled={remainingLimit < 75000000 && formik.isValid}
+              disabled={!formik.isValid || !formik.dirty}
               className="w-full bg-orange border-2 py-5 rounded-lg text-white border-orange border-dashed text-[18px] font-medium"
             >
               Apply Financing Request
