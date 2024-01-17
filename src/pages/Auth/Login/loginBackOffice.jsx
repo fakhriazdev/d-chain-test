@@ -8,6 +8,8 @@ import { ServiceContext } from "../../../context/ServiceContext";
 import { authAction } from "../../../slices/authSlice";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 export default function LoginBackOffice() {
   const schema = Yup.object({
@@ -43,9 +45,11 @@ export default function LoginBackOffice() {
         authAction(async () => {
           const result = await authService.shortcutLogin({ email, password });
           if (result.statusCode === 200) {
-            alert(result.data.message)
+            toast.success(`Success login`);
             sessionStorage.setItem("token", result.data.token);
-            navigate("/backoffice");
+            setTimeout(() => {
+              navigate("/backoffice");
+            }, 1000);
           }
           // const resultInfo = await authService.getUserInfo();
           return null;
@@ -67,6 +71,9 @@ export default function LoginBackOffice() {
 
   return (
     <div className="flex h-screen bg-gradient-to-l from-white to-orange justify-end">
+      <div>
+        <Toaster/>
+      </div>
       <img src={loginBackoffice} alt="" className="absolute w-2/4 left-20" />
       <div className="flex bg-white w-2/3 rounded-l-2xl justify-end">
         <div className="flex flex-col w-4/5 items-center">

@@ -48,7 +48,6 @@ export default function Login() {
         authAction(async () => {
           const result = await authService.shortcutLogin({ email, password });
           if (result.statusCode === 200) {
-            setValid(true);
             toast.success(`Success login`);
             sessionStorage.setItem("token", result.data.token);
             setTimeout(() => {

@@ -31,7 +31,7 @@ export default function RequestFinancingReceivable() {
   const schema = Yup.object().shape({
     request: Yup.array().of(
       Yup.object().shape({
-        amount: Yup.number().required("Amount is required"),
+        amount: Yup.number().required("Amount is required").min(75000000, "Amount minimum Rp. 75.000.000"),
         disbursment_date: Yup.date()
           .required("Disbursement date is required")
           .min(new Date(), "Disbursement date cannot be in the past"),
@@ -373,6 +373,13 @@ export default function RequestFinancingReceivable() {
                   </div>
                 </div>
                 <div className="mt-10 mb-16">
+                <div className="flex justify-between mb-5">
+                    <p></p>
+                    <p className="text-red text-[10px]">
+                      {console.log(errors)}
+                      {Object.entries(errors).length !== 0 ? errors?.request[idx].amount && "*"+ errors?.request[idx].amount : ""}
+                    </p>
+                  </div>
                   <div className="flex justify-between mb-5">
                     <p>Request Amount</p>
                     <p className="font-semibold text-[16px]">
@@ -432,10 +439,10 @@ export default function RequestFinancingReceivable() {
                 <p>Remaining Limit</p>
                 <p
                   className={`font-semibold text-[24px] ${
-                    totalAmount - limit  < 0 ? "text-red" : "text-black"
+                    limit- totalAmount  < 0 ? "text-red" : "text-black"
                   }`}
                 >
-                  {formatIDRCurrency(totalAmount - limit)}
+                  {formatIDRCurrency(limit - totalAmount)}
                 </p>
               </div>
             </div>

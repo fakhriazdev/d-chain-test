@@ -14,6 +14,7 @@ export default function Content() {
   const [limit, setLimit] = useState({});
   const [cash, setCash] = useState({});
   const [dataChart, setDataChart] = useState([]);
+  const [COLORS, setCOLORS] = useState([]);
 
   const {
     values: { type },
@@ -63,41 +64,53 @@ export default function Content() {
   console.log(percentage);
 
   useEffect(() => {
-    if (Object.entries(cash).length !== 0) {
-      console.log(type, "====================");
-      if (type === "payable") {
+    if (Object.entries(cash).length !== 0 ) {
+      if ( Object.values(cash).every(value => value === 0 || value === null)) {
+        console.log("masuk sini");
         setDataChart([
           {
-            name: "Unpaid Invoice",
-            value: cash.unpaidInvoice,
+            name: "KOSONG",
+            value: 100,
             color: "#96D9FF",
           },
-          {
-            name: "Paid Financing",
-            value: cash.paidFinancingPayable,
-            color: "#FF6347",
-          },
-          {
-            name: "Unpaid Financing",
-            value: cash.unpaidFinancingPayable,
-            color: "#98FB98",
-          },
-          { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
         ]);
+        setCOLORS(["#b1b5bc"]);
       } else {
-        setDataChart([
-          {
-            name: "Unpaid Invoice",
-            value: cash.unpaidInvoice,
-            color: "#96D9FF",
-          },
-          {
-            name: "Early Disbursement",
-            value: cash.totalFinancingEarlyDisbursement,
-            color: "#FF6347",
-          },
-          { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
-        ]);
+        if (type === "payable") {
+          setDataChart([
+            {
+              name: "Unpaid Invoice",
+              value: cash.unpaidInvoice,
+              color: "#96D9FF",
+            },
+            {
+              name: "Paid Financing",
+              value: cash.paidFinancingPayable,
+              color: "#FF6347",
+            },
+            {
+              name: "Unpaid Financing",
+              value: cash.unpaidFinancingPayable,
+              color: "#98FB98",
+            },
+            { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
+          ]);
+        } else {
+          setDataChart([
+            {
+              name: "Unpaid Invoice",
+              value: cash.unpaidInvoice,
+              color: "#96D9FF",
+            },
+            {
+              name: "Early Disbursement",
+              value: cash.totalFinancingEarlyDisbursement,
+              color: "#FF6347",
+            },
+            { name: "Paid Invoice", value: cash.paidInvoice, color: "#9370DB" },
+          ]);
+        }
+        setCOLORS(["#FFB84E", "#FF6C6C", "#97AEFF", "#96D9FF"]);
       }
     }
   }, [cash, type]);
@@ -108,7 +121,7 @@ export default function Content() {
   //   { name: "Unpaid Financing", value: 30, color: "#98FB98" },
   //   { name: "Paid Invoice", value: 40, color: "#9370DB" },
   // ];
-  const COLORS = ["#FFB84E", "#FF6C6C", "#97AEFF", "#96D9FF"];
+  // const COLORS = ["#FFB84E", "#FF6C6C", "#97AEFF", "#96D9FF"];
 
   // let dataChartReceivable = [
   //   { name: "Unpaid Invoice", value: 10, color: "#96D9FF" },

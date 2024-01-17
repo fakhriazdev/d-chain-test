@@ -9,7 +9,7 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined.js";
 import TabFilter from "../../../../components/TabFilter.jsx";
 import { useFetchFinancing } from "../../../../features/financing/useFetchFinancing.js";
 import { Link } from "react-router-dom";
-import { toTitleCase } from "../../../../utils/utility.js";
+import { formatDate, formatIDRCurrency, toTitleCase } from "../../../../utils/utility.js";
 
 const ListFinancing = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -280,7 +280,7 @@ const ListFinancing = () => {
                       scope="col-span-4"
                       className="px-6 py-4 font-normal text-graylight whitespace-nowrap text-[14px]"
                     >
-                      {d?.date}
+                      {formatDate(d?.date)}
                     </th>
                     <th
                       scope="col-span-4"
@@ -290,9 +290,9 @@ const ListFinancing = () => {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-4 font-bold text-orange whitespace-nowrap text-[14px]"
+                      className="px-6 py-4 text-orange  font-normal whitespace-nowrap text-[14px]"
                     >
-                      {`Rp. ${Number(d?.amount).toLocaleString("id-ID")}`}
+                      {formatIDRCurrency(d?.amount)}
                     </th>
                     <th
                       scope="col-span-4"
