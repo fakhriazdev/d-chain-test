@@ -19,8 +19,10 @@ const AuthService = () => {
     return data;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { data } = await axiosInstance.post("/api/auth/logout");
     sessionStorage.removeItem("token");
+    return data;
   };
 
   const forgetPassword = async (queryParams) => {

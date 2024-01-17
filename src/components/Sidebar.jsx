@@ -1,5 +1,5 @@
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import ManageCompanyLogo from "../assets/icons/ManageCompany.svg?react";
 import ManageUser from "../assets/icons/Manage User.svg?react";
@@ -14,14 +14,36 @@ import {
   Shapes,
 } from "iconsax-react";
 import { NavLink } from "react-router-dom";
+import { ServiceContext } from "../context/ServiceContext";
+import { useContext } from "react";
+import { toast, Toaster } from "react-hot-toast";
 
 const Sidebar = (props) => {
   const { children } = props;
   const { company_id, actor, role } = decodeJWT();
+  const { authService } = useContext(ServiceContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if (confirm("Are you sure to logout?")) {
+      try {
+        const { message } = await authService.logout();
+        toast.success(message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   return (
     <>
-    {console.log(["SUPER_USER", "INVOICE_STAFF"].some(value => role.includes(value)))}
+      <Toaster />
+      {console.log(
+        ["SUPER_USER", "INVOICE_STAFF"].some((value) => role.includes(value))
+      )}
       <nav className="fixed top-0 z-50 w-full bg-white">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
@@ -75,54 +97,21 @@ const Sidebar = (props) => {
                 >
                   <div className="px-4 py-3" role="none">
                     <p
-                      className="text-sm text-gray-900 dark:text-white"
+                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                       role="none"
                     >
                       {company_id}
                     </p>
-                    <p
-                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                      role="none"
-                    >
-                      neil.sims@flowbite.com
-                    </p>
                   </div>
                   <ul className="py-1" role="none">
                     <li>
-                      <a
-                        href="#"
+                      <button
+                        type="button"
+                        onClick={handleLogout}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
                       >
-                        Dashboard
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Earnings
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
+                        Log out
+                      </button>
                     </li>
                   </ul>
                 </div>

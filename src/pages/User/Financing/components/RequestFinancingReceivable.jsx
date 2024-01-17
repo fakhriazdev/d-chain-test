@@ -81,7 +81,7 @@ export default function RequestFinancingReceivable() {
           );
           console.log(result);
           if (result.statusCode === 200) {
-            alert("berhasil wlek");
+            alert(result.messagexq);
             navigate(`/dashboard/financing`);
           }
           return null;
