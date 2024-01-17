@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import { decodeJWT } from "../../../../utils/decodeJWT.js";
 
 import { ExportCurve } from "iconsax-react";
+import { Toaster } from "react-hot-toast";
 
 const InvoiceGeneration = () => {
   const schema = Yup.object().shape({
@@ -106,7 +107,7 @@ const InvoiceGeneration = () => {
   const handleRemoveItem = (idx) => {
     const updatedItems = [...itemList];
     updatedItems.splice(idx, 1);
-    setFieldValue("itemList", updatedItems)
+    setFieldValue("itemList", updatedItems);
     // setValues({
     //   itemList: updatedItems,
     // });
@@ -127,10 +128,11 @@ const InvoiceGeneration = () => {
     getPartnerships();
   }, [company_id, invoiceService]);
 
-  console.log(dueDate,recipientId, itemList, checkbox);
+  console.log(dueDate, recipientId, itemList, checkbox);
 
   return (
     <>
+      <Toaster />
       <div className="relative flex justify-between mb-6 mx-4">
         <h1 className="text-title my-auto">Invoice Generation</h1>
       </div>

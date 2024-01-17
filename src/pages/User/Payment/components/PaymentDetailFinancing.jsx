@@ -83,7 +83,7 @@ const PaymentDetailFinancing = () => {
                   </h4>
                   <h4 className="w-1/2 text-subtitle">
                     {
-                      console.log(selectedPayment.paymentMethod)
+                      toTitleCase(selectedPayment.paymentMethod.replace(/_/g, " "))
                     }
                   </h4>
                 </div>

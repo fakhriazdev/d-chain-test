@@ -9,6 +9,8 @@ import { authAction } from "../../../slices/authSlice";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import MessageBox from "../../../components/MessageBox";
+import { toast, Toaster } from "react-hot-toast";
+import { useState } from "react";
 
 export default function Login() {
   const schema = Yup.object({
@@ -24,6 +26,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const { authService } = useContext(ServiceContext);
   const { error, errorKey } = useSelector((state) => state.ui);
+  const [valid, setValid] = useState(false);
 
   const {
     values: { email, password, showPassword },
@@ -45,10 +48,14 @@ export default function Login() {
         authAction(async () => {
           const result = await authService.shortcutLogin({ email, password });
           if (result.statusCode === 200) {
-            alert(result.data.message)
+            setValid(true);
+            toast.success(`Success login`);
             sessionStorage.setItem("token", result.data.token);
-            navigate("/dashboard");
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 1000);
           }
+
           const resultInfo = await authService.getUserInfo();
           return resultInfo;
         })
@@ -56,6 +63,8 @@ export default function Login() {
     },
     validationSchema: schema,
   });
+
+
 
   useEffect(() => {
     const onGetUserInfo = async () => {
@@ -69,6 +78,10 @@ export default function Login() {
 
   return (
     <AuthLayout>
+      <div>
+        <Toaster/>
+      </div>
+
       <div className="mt-52">
         <h1 className="text-title mb-3">Welcome</h1>
         <h5 className="text-lightgray">Login to access your account</h5>

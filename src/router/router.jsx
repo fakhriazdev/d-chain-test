@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import App from "../App";
 import Login from "../pages/Auth/Login";
 import OtpPage from "../pages/Auth/OTP";
@@ -55,17 +55,24 @@ import RequestFinancingPayable from "../pages/User/Financing/components/RequestF
 import DashboardBO from "../pages/BackOffice/Dashboard/index.jsx";
 import AuthenticatedLayout from "../layout/AuthenticatedLayout.jsx";
 import { UserForm } from "../pages/BackOffice/ManageUser/components/UserForm.jsx";
+import { useState } from "react";
+import { decodeJWT } from "../utils/decodeJWT.js";
+import NotAllowedAccess from "../components/NotAllowedAccess.jsx";
+
+
+
+const token = decodeJWT();
 
 const setupRouter = () =>
+
   createBrowserRouter([
     {
       path: "/",
       element: <App />,
-      errorElement: <>Error Cuyyy....</>,
+      errorElement: <NotAllowedAccess/>,
       children: [
         {
           index: true,
-          // path: "login",
           element: <Login />,
         },
         {
@@ -94,7 +101,7 @@ const setupRouter = () =>
             },
             {
               path: "partnership",
-              element: <PartnershipUser />,
+              element: ["SUPER_USER"].some(value => token?.role.includes(value)) ? <PartnershipUser /> : redirect("dashboard"),
               children: [
                 {
                   index: true,
@@ -104,7 +111,7 @@ const setupRouter = () =>
             },
             {
               path: "invoice",
-              element: <Invoice />,
+              element: ["SUPER_USER", "INVOICE_STAFF"].some(value => token?.role.includes(value)) ? <Invoice /> : redirect("/"),
               children: [
                 {
                   index: true,
@@ -134,7 +141,7 @@ const setupRouter = () =>
             },
             {
               path: "financing",
-              element: <PartnershipUser />,
+              element: ["SUPER_USER", "FINANCE_STAFF"].some(value => token?.role.includes(value)) ? <Financing /> : redirect("/"),
               children: [
                 {
                   index: true,
@@ -168,7 +175,7 @@ const setupRouter = () =>
             },
             {
               path: "payment",
-              element: <Payment />,
+              element: ["SUPER_USER", "PAYMENT_STAFF"].some(value => token?.role.includes(value)) ? <Payment /> : redirect("/"),
               children: [
                 {
                   index: true,
@@ -194,7 +201,7 @@ const setupRouter = () =>
             },
             {
               path: "user",
-              element: <User />,
+              element:  ["SUPER_USER"].some(value => token?.role.includes(value)) ? <User /> : redirect("/"),
               children: [
                 {
                   index: true,
