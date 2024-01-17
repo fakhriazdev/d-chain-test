@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, Label, Legend } from "recharts";
 import Status from "../../../../components/Status";
 import { useEffect } from "react";
 import { useContext } from "react";
+import { useFormik } from "formik";
 import { ServiceContext } from "../../../../context/ServiceContext";
 import { formatIDRCurrency } from "../../../../utils/utility";
 
@@ -19,6 +20,12 @@ export default function Content() {
   const { dashboardUserServise } = useContext(ServiceContext);
   const [isChecked, setIsChecked] = useState(false);
   const [limit, setLimit] = useState({});
+
+  const formik = useFormik({
+    initialValues: {
+      type: "",
+    },
+  });
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
