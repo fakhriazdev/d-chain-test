@@ -1,8 +1,7 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { useNavigate,useParams } from "react-router-dom";
 import {useFormik} from "formik";
 import { useCreateUser } from '../../../../features/user/useCreateUser';
-import { useEffect } from "react";
 import { useFetchCompany } from '../../../../features/company/useFetchCompany';
 import useFetchPartnership from '../../../../features/partnership/useFetchPartnership';
 import { useCompanies } from '../../../../features/company/useCompanies';
@@ -10,17 +9,20 @@ import IconSearch from "../../../../assets/icons/Icon Search.svg";
 import { useFetchRoles } from '../../../../features/user/useFetchRoles';
 import Loading from '../../../../components/Loading'
 import { useFetchUser } from '../../../../features/user/useFetchUser';
+import {useEditUser} from "../../../../features/user/useEditUser.js";
 export const UserForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const {data,isLoading:isLoadingCompany} = useCompanies()
   const {data:roles,isLoading:isLoadingRoles} = useFetchRoles()
   const {data:user} = useFetchUser(id)
+
+
   console.log(user,"s")
-  console.log(data)
+  // console.log(roles)
   const formik = useFormik({
     initialValues:{
-      userId: null,
+      id: null,
       username: "",
       name: "",
       email: "",
@@ -28,6 +30,7 @@ export const UserForm = () => {
       password:"string",
       companyRequests:[]
     },
+    enableReinitialize: true,
     //validationSchema: validationSchema,
     onSubmit:()=>{
    
@@ -40,18 +43,34 @@ export const UserForm = () => {
       };
 
       if(id){
-        requestData.userId = formik.values.userId
+        requestData.id = formik.values.id
+        requestData.roles = [formik.values.rolesList];
+        delete requestData.rolesList;
       }
 
       if (check?.roleName === "RELATIONSHIP_MANAGER") {
         requestData.companyRequests = formik.values.companyRequests;
       }
 
-      
-
-      mutate(requestData);
+      if (id) {
+        editUser(requestData);
+      } else {
+        createUser(requestData);
+      }
     }
 })
+  useEffect(() => {
+    if (id && user) {
+      formik.setValues({
+        id: user?.data?.id || null,
+        username: user?.data?.username || '',
+        name: user?.data?.name || '',
+        email: user?.data?.email || '',
+        rolesList: "",
+        companyRequests: user?.data?.companyRequests || [],
+      });
+    }
+  }, [id, user]);
 
 const handleFormInput = (e) => {
   const { name } = e.target;
@@ -59,19 +78,27 @@ const handleFormInput = (e) => {
 };
 
 
-const {mutate,isPending} = useCreateUser({
+const {mutate:editUser,isPending:isPendingCreateUser} = useEditUser({
     onSuccess:() =>{
         formik.resetForm();
-        alert("Success Add User")
+        alert("Success Edit User")
         navigate("/backoffice/user");
     }
 })
 
-const check = roles?.data.find((role) => formik.values.rolesList === role.id)
+  const {mutate:createUser,isPending} = useCreateUser({
+    onSuccess:() =>{
+      formik.resetForm();
+      alert("Success Add User")
+      navigate("/backoffice/user");
+    }
+  })
 
+const check = roles?.data.find((role) => formik.values.rolesList === role.id)
+  console.log(formik.values)
   return (
     <>
-    {isPending || isLoadingCompany || isLoadingRoles ? <Loading/> :
+    {isPendingCreateUser ||isPending || isLoadingCompany || isLoadingRoles ? <Loading/> :
     (
       <>
       <div className="relative flex justify-between mb-6 mx-4">
@@ -144,7 +171,7 @@ const check = roles?.data.find((role) => formik.values.rolesList === role.id)
                     name="rolesList"
                     onChange={formik.handleChange}
                     value={role.id}
-                    checked={formik.values.rolesList === role.id}
+                    checked={formik.values.rolesList === role.id || formik.values.rolesList === role.roleName}
                     className="rounded-md checked:bg-orange w-6 h-6 border-2 border-orange checked:ring-orange"
                   />
                   <label className="ms-4 text-sm font-medium text-gray dark:text-gray-300 text-center">
@@ -299,7 +326,7 @@ const check = roles?.data.find((role) => formik.values.rolesList === role.id)
             className="text-[18px] py-3 lg:py-5 rounded-lg font-normal bg-orange leading-6 text-white w-full border-2 border-white hover:text-orange hover:bg-white hover:border-orange flex justify-center gap-3"
           >
             {/* <img src={IconUpload} alt="Icon Upload" /> */}
-            {/* {id ? "Edit User" : "Add User"} */}
+             {id ? "Edit User" : "Add User"}
           </button>
         </div>
       </form>
