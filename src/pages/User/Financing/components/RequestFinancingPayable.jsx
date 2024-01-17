@@ -27,6 +27,8 @@ const RequestFinancingPayable = () => {
     payments: Yup.array().of(
       Yup.object().shape({
         payment_id: Yup.string().required("Payment is required"),
+        amount: Yup.number().required("Amount is required").min(75000000, "Amount must be greather than Rp. 75.000.000"),
+        tenure: Yup.number().required("Tenure is required")
       })
     ),
     checkbox: Yup.boolean().oneOf(
@@ -59,8 +61,8 @@ const RequestFinancingPayable = () => {
             tenure: parseFloat(tenure),
             monthly_instalment,
           })
-        );
-        await mutate(arrayData);
+          );
+          await mutate(arrayData);
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -72,7 +74,12 @@ const RequestFinancingPayable = () => {
       alert("Successfully request financing payable")
       navigate('/dashboard/financing')
     },
+    onError: (error) => {
+      console.error("Request failed:", error);
+      alert("Failed, Request financing already Created.");
+    }
   });
+
   const handleAddDatas = () => {
     if (
       formik.values[formik.values.length - 1].payment_id !== "" &&
@@ -187,6 +194,7 @@ const RequestFinancingPayable = () => {
                         <ViewLogo />
                       </p>
                       <button
+                        type="button"
                         onClick={handleToggleModal}
                         className="bg-orange px-2 md:px-4 lg:px-4 py-2 md:py-4 lg:py-4 text-white rounded-lg"
                       >
@@ -320,7 +328,7 @@ const RequestFinancingPayable = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap justify-center md:justify-between lg:justify-between mb-10">
+                {/* <div className="flex flex-wrap justify-center md:justify-between lg:justify-between mb-10">
                   <div className="flex gap-5 items-center">
                     <p className="my-auto">Payment Method</p>
                   </div>
@@ -331,7 +339,7 @@ const RequestFinancingPayable = () => {
                       width="300"
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             );
           })}
@@ -394,9 +402,10 @@ const RequestFinancingPayable = () => {
             </p>
           </div>
           <div className="mb-10">
+            {console.log(formik.isValid)}
             <button
               type="submit"
-              // disabled={remainingLimit < 0 && !formik.isValid}
+              disabled={remainingLimit < 75000000 && formik.isValid}
               className="w-full bg-orange border-2 py-5 rounded-lg text-white border-orange border-dashed text-[18px] font-medium"
             >
               Apply Financing Request

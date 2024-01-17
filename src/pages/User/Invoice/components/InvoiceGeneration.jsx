@@ -18,6 +18,15 @@ import { ExportCurve } from "iconsax-react";
 const InvoiceGeneration = () => {
   const schema = Yup.object().shape({
     checkbox: Yup.boolean().oneOf([true]),
+    dueDate: Yup.date().required("Date required"),
+    recipientId: Yup.string().required("Billed to required"),
+    itemList: Yup.array().of(
+      Yup.object().shape({
+        itemsName: Yup.string().required("Items name is required"),
+        itemsQuantity: Yup.number().required("Items quantity is required"),
+        unitPrice: Yup.number().required("Unit price is required"),
+      })
+    ),
   });
 
   const dispatch = useDispatch();
@@ -27,16 +36,17 @@ const InvoiceGeneration = () => {
   const { company_id } = decodeJWT();
   const currentDate = new Date().toISOString().split("T")[0];
   const decode = decodeJWT();
-  console.log(decode, "--------------------");
+  // console.log(decode, "--------------------");
 
   const {
-    values: { dueDate, itemList, checkbox },
+    values: { dueDate, recipientId, itemList, checkbox },
     dirty,
     isValid,
     handleBlur,
     handleChange,
     handleSubmit,
     setValues,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       checkbox: false,
@@ -96,9 +106,10 @@ const InvoiceGeneration = () => {
   const handleRemoveItem = (idx) => {
     const updatedItems = [...itemList];
     updatedItems.splice(idx, 1);
-    setValues({
-      itemList: updatedItems,
-    });
+    setFieldValue("itemList", updatedItems)
+    // setValues({
+    //   itemList: updatedItems,
+    // });
   };
 
   useEffect(() => {
@@ -115,6 +126,8 @@ const InvoiceGeneration = () => {
     };
     getPartnerships();
   }, [company_id, invoiceService]);
+
+  console.log(dueDate,recipientId, itemList, checkbox);
 
   return (
     <>
